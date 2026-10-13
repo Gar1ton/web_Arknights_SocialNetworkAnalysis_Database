@@ -1,3 +1,5 @@
+import { createPortal } from "react-dom";
+import { gravityLeaders } from "./gravity";
 import { useState, useMemo, useRef, useEffect, type PointerEvent } from "react";
 import { Plus, Minus, Maximize, Play, Pause, RotateCcw } from "lucide-react";
 import {
@@ -20,6 +22,7 @@ type Props = {
   onAnimate: () => void;
   landing?: boolean;
   resetKey: number;
+  flowTarget?: HTMLElement | null;
 };
 export default function Graph({
   nodes,
@@ -31,6 +34,7 @@ export default function Graph({
   onAnimate,
   landing = false,
   resetKey,
+  flowTarget,
 }: Props) {
   const svg = useRef<SVGSVGElement>(null);
   const [zoom, setZoom] = useState(1);
@@ -80,13 +84,9 @@ export default function Graph({
     if (settings.animate) svg.current?.unpauseAnimations();
     else svg.current?.pauseAnimations();
   }, [settings.animate]);
-  const anchors = useMemo(
-    () =>
-      nodes
-        .filter((n) => Number(n.id.slice(1)) % 8 === 0)
-        .map((n) => positions.get(n.id)!)
-        .filter(Boolean),
-    [nodes, positions],
+  const leaders = useMemo(
+    () => gravityLeaders(nodes, edges, settings.gravityNodes),
+    [nodes, edges, settings.gravityNodes],
   );
   const [displayPositions, setDisplayPositions] = useState(positions);
   const displayRef = useRef(positions);
@@ -119,6 +119,19 @@ export default function Graph({
   }, [positions, settings.animate, landing]);
   const point = (id: string) =>
     overrides[id] || displayPositions.get(id) || positions.get(id)!;
+  const anchors = useMemo(
+    () =>
+      leaders.map((n) => {
+        const p =
+          overrides[n.id] || displayPositions.get(n.id) || positions.get(n.id)!;
+        return {
+          x: (p.x - 500) * zoom + 500 + pan.x,
+          y: (p.y - 380) * zoom + 380 + pan.y,
+          mass: n.mass,
+        };
+      }),
+    [leaders, overrides, displayPositions, positions, pan, zoom],
+  );
   const focus = hover || selected;
   const connected = new Set(
     focus
@@ -183,7 +196,24 @@ export default function Graph({
       className={"graph-stage " + (landing ? "hero-graph" : "")}
       data-testid="graph-stage"
     >
-      {!landing && <FlowField settings={settings} subtle anchors={anchors} />}
+      {landing ? (
+        flowTarget &&
+        createPortal(
+          <FlowField
+            settings={settings}
+            anchors={anchors}
+            anchorElement={svg}
+          />,
+          flowTarget,
+        )
+      ) : (
+        <FlowField
+          settings={settings}
+          subtle
+          anchors={anchors}
+          anchorElement={svg}
+        />
+      )}
       <svg
         ref={svg}
         id={landing ? "hero-svg" : "network-svg"}
@@ -218,21 +248,22 @@ export default function Graph({
         <g
           transform={`translate(${pan.x} ${pan.y}) translate(500 380) scale(${zoom}) translate(-500 -380)`}
         >
-          {nodes
-            .filter((n) => Number(n.id.slice(1)) % 8 === 0)
-            .map((n) => {
-              const p = point(n.id);
-              return p ? (
-                <circle
-                  key={"halo-" + n.id}
-                  cx={p.x}
-                  cy={p.y}
-                  r="100"
-                  fill={`url(#${landing ? "hero-halo" : "field-halo"})`}
-                  pointerEvents="none"
-                />
-              ) : null;
-            })}
+          {leaders.map((n) => {
+            const p = point(n.id);
+            return p ? (
+              <circle
+                key={"halo-" + n.id}
+                cx={p.x}
+                cy={p.y}
+                r={80 + n.mass * 22}
+                opacity={
+                  settings.flowOpacity * Math.min(1, settings.flowGravity)
+                }
+                fill={`url(#${landing ? "hero-halo" : "field-halo"})`}
+                pointerEvents="none"
+              />
+            ) : null;
+          })}
           {edges.map((e, i) => {
             const a = point(e.source),
               b = point(e.target);
@@ -336,7 +367,7 @@ export default function Graph({
                     x={(a.x + b.x) / 2}
                     y={(a.y + b.y) / 2 - 5}
                     fill="currentColor"
-                    fontSize="9"
+                    fontSize="12"
                     textAnchor="middle"
                   >
                     {e.label}
@@ -353,6 +384,14 @@ export default function Graph({
             const isSelected = selected === n.id;
             const prominent = d >= 8 || n.id === "n0";
             const muted = focus && !connected.has(n.id);
+            const radialLabel =
+              !landing &&
+              settings.mode !== "ego" &&
+              (settings.layout === "circular" || settings.mode === "chord");
+            const leftLabel = p.x < 500;
+            const labelAngle =
+              (Math.atan2(p.y - 380, p.x - 500) * 180) / Math.PI +
+              (leftLabel ? 180 : 0);
             return (
               <g
                 key={n.id}
@@ -418,9 +457,15 @@ export default function Graph({
                     n.id === "n17" ||
                     n.id === "n33") && (
                     <text
-                      y={r + 19}
-                      textAnchor="middle"
-                      fontSize={prominent ? 15 : 12}
+                      x={radialLabel ? (leftLabel ? -1 : 1) * (r + 12) : 0}
+                      y={radialLabel ? 5 : r + 19}
+                      transform={
+                        radialLabel ? "rotate(" + labelAngle + ")" : undefined
+                      }
+                      textAnchor={
+                        radialLabel ? (leftLabel ? "end" : "start") : "middle"
+                      }
+                      fontSize={prominent ? 18 : 15}
                       fill={prominent ? "#eee0d0" : "#b9adaf"}
                       fontFamily="Inter, Microsoft YaHei, sans-serif"
                       style={{
@@ -436,7 +481,7 @@ export default function Graph({
                   <text
                     y={r + 33}
                     textAnchor="middle"
-                    fontSize="7.5"
+                    fontSize="9.5"
                     letterSpacing="1.3"
                     fill="#8d8089"
                   >

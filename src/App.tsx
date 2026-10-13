@@ -1,3 +1,4 @@
+import Select from "./Select";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { flushSync } from "react-dom";
 import {
@@ -302,14 +303,14 @@ export default function App() {
                   );
                 })}
                 {settings.mode === "ego" && (
-                  <select
+                  <Select
                     aria-label="邻域深度"
                     value={settings.hops}
                     onChange={(e) => update("hops", +e.target.value)}
                   >
                     <option value={1}>1 跳</option>
                     <option value={2}>2 跳</option>
-                  </select>
+                  </Select>
                 )}
               </div>
               <Graph
@@ -508,7 +509,7 @@ export default function App() {
                         )}
                       </label>
                       <div className="filter-row">
-                        <select
+                        <Select
                           aria-label="社群筛选"
                           value={faction}
                           onChange={(e) => {
@@ -522,8 +523,8 @@ export default function App() {
                               {factions[i].name}
                             </option>
                           ))}
-                        </select>
-                        <select
+                        </Select>
+                        <Select
                           aria-label="节点排序"
                           value={sort}
                           onChange={(e) => setSort(e.target.value)}
@@ -531,7 +532,7 @@ export default function App() {
                           <option value="degree">关联度排序</option>
                           <option value="messages">消息数排序</option>
                           <option value="name">名称排序</option>
-                        </select>
+                        </Select>
                       </div>
                       <div className="list-heading">
                         <span>节点索引</span>

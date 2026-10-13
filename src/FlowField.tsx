@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type RefObject } from "react";
 import { palettes, type Settings } from "./settings";
 import {
   createThreadField,
@@ -13,82 +13,113 @@ export default function FlowField({
   settings,
   subtle = false,
   anchors = noAnchors,
+  anchorElement,
 }: {
   settings: Settings;
   subtle?: boolean;
   anchors?: FlowAnchor[];
+  anchorElement?: RefObject<SVGSVGElement | null>;
 }) {
-  const ref = useRef<HTMLCanvasElement>(null),
-    moving = useRef(settings.animate);
+  const ref = useRef<HTMLCanvasElement>(null);
+  const live = useRef({ settings, anchors });
+  live.current = { settings, anchors };
+  const syncRef = useRef<() => void>(() => {}),
+    paintRef = useRef<() => void>(() => {});
   useEffect(() => {
-    moving.current = settings.animate;
-  }, [settings.animate]);
-  useEffect(() => {
-    const canvas = ref.current!;
-    const ctx = canvas.getContext("2d", { alpha: true })!;
+    const canvas = ref.current!,
+      ctx = canvas.getContext("2d", { alpha: true })!;
     let field: ThreadField | undefined,
       raf = 0,
       last = 0,
       visible = true,
-      resizeFrame = 0;
-    const colors = palettes[settings.palette].colors;
+      resizeFrame = 0,
+      box = canvas.getBoundingClientRect();
+    const project = () => {
+      if (!field) return;
+      const points = live.current.anchors;
+      if (!anchorElement && !points.length) return;
+      const area = anchorElement?.current?.getBoundingClientRect() || box;
+      const scale = Math.min(area.width / 1000, area.height / 760);
+      const ox = area.left - box.left + (area.width - 1000 * scale) / 2,
+        oy = area.top - box.top + (area.height - 760 * scale) / 2;
+      // At most five leaders; projection and grid updates are throttled, never an all-pairs force.
+      while (field.anchors.length > points.length) field.anchors.pop();
+      points.forEach((p, i) => {
+        const a = field!.anchors[i] || (field!.anchors[i] = { x: 0, y: 0 });
+        a.x = (ox + p.x * scale) / box.width;
+        a.y = (oy + p.y * scale) / box.height;
+        a.mass = p.mass;
+      });
+      canvas.dataset.attractors = String(points.length);
+    };
     const paint = () => {
       if (!field) return;
-      // A complete clear is essential: alpha-fading an 8-bit canvas leaves residual
-      // pixels that accumulate indefinitely. Every frame here has finite geometry.
+      const s = live.current.settings,
+        colors = palettes[s.palette].colors;
       ctx.clearRect(0, 0, field.width, field.height);
-      ctx.lineWidth = subtle ? 0.65 : 0.7;
+      if (s.flowOpacity === 0) return;
+      ctx.lineWidth = subtle ? 0.7 : 0.75;
       ctx.lineCap = "round";
       for (const p of field.particles) {
         const fade = Math.max(
           0,
           Math.min(1, p.age / 26, (p.life - p.age) / 40),
         );
-        ctx.globalAlpha = fade * (subtle ? 0.27 : 0.43);
+        ctx.globalAlpha = fade * (subtle ? 0.27 : 0.43) * s.flowOpacity;
         ctx.strokeStyle = colors[p.color];
         ctx.beginPath();
         for (let j = 0; j < p.length; j++) {
           const index =
             (p.head - p.length + 1 + j + TRAIL_LENGTH) % TRAIL_LENGTH;
-          const x = p.trail[index * 2],
-            y = p.trail[index * 2 + 1];
-          if (j === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
+          if (j === 0) ctx.moveTo(p.trail[index * 2], p.trail[index * 2 + 1]);
+          else ctx.lineTo(p.trail[index * 2], p.trail[index * 2 + 1]);
         }
         ctx.stroke();
       }
       ctx.globalAlpha = 1;
     };
+    const loop = (now: number) => {
+      raf = 0;
+      const s = live.current.settings;
+      if (!visible || document.hidden || !s.animate || s.flowOpacity === 0)
+        return;
+      if (field && now - last >= 1000 / 24) {
+        if (field.tick % 6 === 0) project();
+        stepThreadField(field, s.speed, s.turbulence, s.flowGravity);
+        paint();
+        last = now;
+      }
+      raf = requestAnimationFrame(loop);
+    };
+    const sync = () => {
+      const s = live.current.settings;
+      if (visible && !document.hidden && s.animate && s.flowOpacity > 0) {
+        if (!raf) raf = requestAnimationFrame(loop);
+      } else {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+    };
     const resize = () => {
-      const box = canvas.getBoundingClientRect();
+      box = canvas.getBoundingClientRect();
       if (!box.width || !box.height) return;
-      const dpr = Math.min(devicePixelRatio || 1, subtle ? 1 : 1.25);
+      const dpr = Math.min(devicePixelRatio || 1, subtle ? 1 : 1.25),
+        s = live.current.settings;
       canvas.width = Math.round(box.width * dpr);
       canvas.height = Math.round(box.height * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const budget = particleBudget(
-        settings.particles,
-        box.width,
-        box.height,
-        subtle,
-      );
-      let centers = anchors;
-      if (anchors.length) {
-        const scale = Math.min(box.width / 1000, box.height / 760),
-          ox = (box.width - 1000 * scale) / 2,
-          oy = (box.height - 760 * scale) / 2;
-        centers = anchors.map((p) => ({
-          x: (ox + p.x * scale) / box.width,
-          y: (oy + p.y * scale) / box.height,
-        }));
-      }
-      field = createThreadField(box.width, box.height, budget, centers);
+      const budget = particleBudget(s.particles, box.width, box.height, subtle);
+      field = createThreadField(box.width, box.height, budget);
+      project();
       for (let i = 0; i < TRAIL_LENGTH; i++)
-        stepThreadField(field, settings.speed, settings.turbulence);
+        stepThreadField(field, s.speed, s.turbulence, s.flowGravity);
       canvas.dataset.particles = String(budget);
       canvas.dataset.trailLength = String(TRAIL_LENGTH);
       paint();
+      sync();
     };
+    syncRef.current = sync;
+    paintRef.current = paint;
     const ro = new ResizeObserver(() => {
       cancelAnimationFrame(resizeFrame);
       resizeFrame = requestAnimationFrame(resize);
@@ -96,33 +127,24 @@ export default function FlowField({
     ro.observe(canvas);
     const io = new IntersectionObserver((entries) => {
       visible = entries[0]?.isIntersecting ?? true;
+      sync();
     });
     io.observe(canvas);
-    const loop = (now: number) => {
-      if (now - last >= 1000 / 24) {
-        if (field && moving.current && visible && !document.hidden) {
-          stepThreadField(field, settings.speed, settings.turbulence);
-          paint();
-        }
-        last = now;
-      }
-      raf = requestAnimationFrame(loop);
-    };
-    raf = requestAnimationFrame(loop);
+    document.addEventListener("visibilitychange", sync);
     return () => {
       cancelAnimationFrame(raf);
       cancelAnimationFrame(resizeFrame);
       ro.disconnect();
       io.disconnect();
+      document.removeEventListener("visibilitychange", sync);
+      syncRef.current = () => {};
+      paintRef.current = () => {};
     };
-  }, [
-    settings.palette,
-    settings.particles,
-    settings.speed,
-    settings.turbulence,
-    subtle,
-    anchors,
-  ]);
+  }, [settings.particles, subtle, anchorElement]);
+  useEffect(() => {
+    paintRef.current();
+    syncRef.current();
+  }, [settings.animate, settings.flowOpacity, settings.palette]);
   return (
     <canvas
       ref={ref}

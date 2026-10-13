@@ -1,7 +1,6 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowUpRight, ArrowDown, ArrowRight, Pause, Play } from "lucide-react";
 import Brand from "./Brand";
-import FlowField from "./FlowField";
 import Graph from "./Graph";
 import { nodes, edges } from "./data";
 import { archives } from "./archives";
@@ -14,6 +13,7 @@ export default function Landing({
   onAnimate: () => void;
 }) {
   const root = useRef<HTMLElement>(null);
+  const [flowTarget, setFlowTarget] = useState<HTMLDivElement | null>(null);
   const artSettings = useMemo(
     () => ({
       ...settings,
@@ -26,6 +26,7 @@ export default function Landing({
     [settings],
   );
   useEffect(() => {
+    document.documentElement.classList.add("landing-snap");
     let raf = 0;
     const update = () => {
       cancelAnimationFrame(raf);
@@ -47,6 +48,7 @@ export default function Landing({
     );
     root.current?.querySelectorAll(".reveal").forEach((e) => io.observe(e));
     return () => {
+      document.documentElement.classList.remove("landing-snap");
       removeEventListener("scroll", update);
       cancelAnimationFrame(raf);
       io.disconnect();
@@ -60,7 +62,7 @@ export default function Landing({
       ref={root}
     >
       <div className="landing-atmosphere">
-        <FlowField settings={settings} />
+        <div className="landing-flow-host" ref={setFlowTarget} />
         <div className="landing-shade" />
       </div>
       <div className="landing-sticky">
@@ -94,11 +96,9 @@ export default function Landing({
             href="#about"
             onClick={(e) => {
               e.preventDefault();
-              document
-                .getElementById("about")
-                ?.scrollIntoView({
-                  behavior: settings.animate ? "smooth" : "auto",
-                });
+              document.getElementById("about")?.scrollIntoView({
+                behavior: settings.animate ? "smooth" : "auto",
+              });
             }}
             className="secondary-cta"
           >
@@ -133,6 +133,7 @@ export default function Landing({
               onEdge={() => {}}
               onAnimate={onAnimate}
               landing
+              flowTarget={flowTarget}
               resetKey={0}
             />
           </div>
@@ -208,7 +209,16 @@ export default function Landing({
             </a>
           </div>
           <div className="intro-footer">
-            <span>INDEPENDENT SNA SHOWCASE</span>
+            <button
+              onClick={() =>
+                window.scrollTo({
+                  top: 0,
+                  behavior: settings.animate ? "smooth" : "instant",
+                })
+              }
+            >
+              ↑ 回到序章
+            </button>
             <a href="#archives">
               ENTER THE ARCHIVE <ArrowRight size={11} />
             </a>

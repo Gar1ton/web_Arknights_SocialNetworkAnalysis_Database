@@ -1,5 +1,5 @@
 export const TRAIL_LENGTH = 48;
-export type FlowAnchor = { x: number; y: number };
+export type FlowAnchor = { x: number; y: number; mass?: number };
 export type ThreadParticle = {
   trail: Float32Array;
   head: number;
@@ -88,7 +88,7 @@ export function createThreadField(
   refreshGrid(field, 1.2);
   return field;
 }
-function refreshGrid(f: ThreadField, turbulence: number) {
+function refreshGrid(f: ThreadField, turbulence: number, gravity = 1) {
   for (let gy = 0; gy < f.rows; gy++)
     for (let gx = 0; gx < f.columns; gx++) {
       const x = gx / (f.columns - 1),
@@ -100,13 +100,15 @@ function refreshGrid(f: ThreadField, turbulence: number) {
           oy = y - a.y;
         const d = ox * ox + oy * oy + 0.035;
         const spin = k % 2 ? 1 : -1;
-        dx += (-oy / d) * 0.14 * spin;
-        dy += (ox / d) * 0.14 * spin;
+        const pull = gravity * (a.mass ?? 1);
+        dx += ((-oy * 0.14 * spin - ox * 0.09) / d) * pull;
+        dy += ((ox * 0.14 * spin - oy * 0.09) / d) * pull;
       });
       const wave =
         Math.sin(x * 5.2 + y * 3.8 + f.phase * 0.14) * 0.62 +
         Math.cos(y * 7.4 - x * 2.1 - f.phase * 0.1) * 0.33;
-      const angle = Math.atan2(dy, dx) + wave * turbulence;
+      const angle =
+        Math.atan2(dy, dx) + (wave * turbulence) / (1 + gravity * 0.5);
       const j = (gy * f.columns + gx) * 2;
       f.grid[j] = Math.cos(angle);
       f.grid[j + 1] = Math.sin(angle);
@@ -116,8 +118,9 @@ export function stepThreadField(
   f: ThreadField,
   speed = 0.65,
   turbulence = 1.2,
+  gravity = 1,
 ) {
-  if (f.tick % 10 === 0) refreshGrid(f, turbulence);
+  if (f.tick % 10 === 0) refreshGrid(f, turbulence, gravity);
   f.tick++;
   f.phase += 0.006;
   for (const p of f.particles) {

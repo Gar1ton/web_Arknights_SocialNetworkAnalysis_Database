@@ -1,0 +1,593 @@
+/* Readable control typography and themed popovers. */
+.workbench .explorer {
+  grid-template-columns: minmax(0, 1fr) 376px;
+}
+.workbench .panel-collapsed {
+  grid-template-columns: 1fr;
+}
+.sidebar-tabs button {
+  font-size: 14px;
+  padding: 18px 0;
+  gap: 8px;
+}
+.sidebar-tabs button > span {
+  font-size: 11px;
+}
+.workbench-context span {
+  font-size: 12px;
+}
+.workbench .panel-heading h2 {
+  font-size: 40px;
+}
+.workbench .panel-heading .eyebrow {
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+.workbench .panel-heading p {
+  font-size: 13px;
+  line-height: 1.7;
+}
+.search-box input {
+  font-size: 13px;
+}
+.search-box {
+  padding: 13px 12px;
+}
+.list-heading {
+  font-size: 12px;
+}
+.list-heading > span:last-child {
+  font-size: 10px;
+}
+.row-name {
+  font-size: 15px;
+}
+.row-name small {
+  font-size: 13px;
+}
+.row-index {
+  font-size: 10px;
+}
+.row-degree {
+  font-size: 18px;
+}
+.row-degree small {
+  font-size: 8px;
+}
+.node-row {
+  padding: 16px 12px;
+}
+.panel-bottom a {
+  font-size: 13px;
+}
+.panel-bottom small {
+  font-size: 11px;
+  line-height: 1.6;
+}
+.control-section h3,
+.mini-heading {
+  font-size: 14px;
+}
+.control-section h3 > span,
+.mini-heading > span {
+  font-size: 10px;
+}
+.select-control,
+.range-control > span,
+.toggle-control {
+  font-size: 14px;
+}
+.range-control output {
+  font-size: 12px;
+}
+.range-control {
+  margin: 25px 0;
+}
+.range-control input {
+  height: 3px;
+  margin-top: 18px;
+}
+.range-control input::-webkit-slider-thumb {
+  width: 13px;
+  height: 13px;
+}
+.toggle-control {
+  margin-top: 22px;
+  min-height: 24px;
+}
+.preset-row button {
+  font-size: 14px;
+  padding: 14px 5px;
+}
+.preset-row button span {
+  font-size: 14px;
+}
+.palette-row small {
+  font-size: 12px;
+}
+.control-note {
+  font-size: 12px;
+  line-height: 1.9;
+}
+.wide-button,
+.export-row button,
+.text-button {
+  font-size: 13px;
+}
+.wide-button {
+  min-height: 44px;
+}
+.text-button {
+  min-height: 30px;
+}
+.back-link {
+  font-size: 13px;
+}
+.detail-prose {
+  font-size: 14px;
+  line-height: 1.9;
+}
+.detail-content > .eyebrow {
+  font-size: 10px;
+}
+.tag {
+  font-size: 12px;
+}
+.detail-metrics .metric > span {
+  font-size: 11px;
+}
+.traits > div {
+  font-size: 12px;
+}
+.traits > div > span {
+  width: 51px;
+}
+.traits b {
+  font-size: 11px;
+  width: 23px;
+}
+.connection-name,
+.connection-type {
+  font-size: 13px;
+}
+.connections > div {
+  padding: 15px 0;
+}
+.sentiment > div:first-child {
+  font-size: 13px;
+}
+.sentiment b,
+.sentiment > small {
+  font-size: 11px;
+}
+.evidence-note p {
+  font-size: 12px;
+}
+.evidence-note .eyebrow {
+  font-size: 9px;
+}
+.workbench-breadcrumb,
+.workbench-breadcrumb a {
+  font-size: 12px;
+}
+.workbench .canvas-heading p {
+  font-size: 12px;
+}
+.graph-demo-tag {
+  font-size: 9px;
+}
+.view-switch button {
+  font-size: 12px;
+}
+.legend button {
+  font-size: 11px;
+}
+.canvas-help {
+  font-size: 10px;
+}
+.graph-corner {
+  font-size: 9px;
+}
+.workspace-footer {
+  font-size: 9px;
+}
+.workspace-footer b,
+.workspace-footer button {
+  font-size: 10px;
+}
+.art-select {
+  position: relative;
+  min-width: 0;
+  width: 100%;
+}
+.art-select > button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 44px;
+  padding: 11px 13px;
+  border: 1px solid #c4a2b238;
+  border-radius: 6px;
+  background: linear-gradient(120deg, #2e233030, #120f1690);
+  color: #dbc5cf;
+  font-size: 13px;
+  text-align: left;
+  transition:
+    background 0.2s,
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+.art-select > button > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.art-select > button > svg {
+  flex-shrink: 0;
+  color: #bb97a9;
+  transition: transform 0.3s;
+}
+.art-select > button:hover,
+.art-select > button[aria-expanded="true"] {
+  border-color: #c4a28790;
+  background: #a7829412;
+  box-shadow: 0 0 0 3px #be9a8010;
+}
+.art-select > button[aria-expanded="true"] > svg {
+  transform: rotate(180deg);
+}
+.select-control > .art-select {
+  margin-top: 10px;
+}
+.filter-row > .art-select {
+  width: 50%;
+}
+.filter-row .art-select > button {
+  padding: 10px;
+  font-size: 12px;
+}
+.view-switch .art-select {
+  width: 76px;
+}
+.view-switch .art-select > button {
+  padding: 5px 7px;
+  min-height: 30px;
+  font-size: 12px;
+  gap: 5px;
+}
+.art-select-menu {
+  position: fixed;
+  z-index: 1000;
+  padding: 6px;
+  border: 1px solid #c7a28e65;
+  border-radius: 8px;
+  background: #241d29;
+  box-shadow:
+    0 16px 50px #0009,
+    0 0 0 1px #17121b;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  animation: menu-in 0.18s var(--ease-out);
+  font-family: var(--sans);
+  color: #d7bfcd;
+}
+.art-select-menu [role="option"] {
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 11px 13px;
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 1.5;
+  cursor: pointer;
+}
+.art-select-menu [role="option"][data-active="true"] {
+  background: #c8a6901a;
+  color: #f0d6bd;
+}
+.art-select-menu [aria-selected="true"] {
+  color: #e6be9f;
+}
+.art-select-menu [role="option"] > svg {
+  flex-shrink: 0;
+}
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.library-intro > div > p {
+  font-size: 14px;
+}
+.archive-tabs button,
+.archive-search input {
+  font-size: 14px;
+}
+.archive-result-count {
+  font-size: 10px;
+}
+.archive-result-count > span:last-child {
+  font-size: 12px;
+}
+.archive-card-top {
+  font-size: 10px;
+}
+.archive-category {
+  font-size: 12px;
+}
+.archive-description {
+  font-size: 13px;
+  line-height: 1.8;
+}
+.archive-card-bottom {
+  font-size: 13px;
+}
+.archive-card-bottom small {
+  font-size: 9px;
+}
+.quiet-link {
+  font-size: 13px;
+}
+.landing-sticky .hero-description {
+  font-size: 14px;
+  line-height: 1.9;
+}
+.primary-cta {
+  font-size: 14px;
+}
+.secondary-cta {
+  font-size: 13px;
+}
+.landing-rail {
+  font-size: 9px;
+}
+.scene-caption small {
+  font-size: 9px;
+}
+.scene-number,
+.scroll-cue {
+  font-size: 10px;
+}
+.landing-flow-host {
+  position: absolute;
+  inset: 0;
+}
+html.landing-snap {
+  scroll-snap-type: y mandatory;
+  overscroll-behavior-y: none;
+}
+.landing-experience .scene-hero,
+.landing-experience .scene-introduction {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+.landing-sticky,
+.scene-hero {
+  height: 100svh;
+  min-height: 0;
+}
+.scene-introduction {
+  height: 100svh;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 38px 4vw 24px;
+  scrollbar-gutter: stable;
+}
+.scene-introduction h2 {
+  font-size: clamp(43px, 4vw, 62px);
+  margin: 22px 0;
+  line-height: 1;
+}
+.scene-introduction .eyebrow {
+  font-size: 10px;
+}
+.intro-lead {
+  font-size: 20px;
+  line-height: 1.6;
+}
+.intro-prose {
+  font-size: 14px;
+  line-height: 1.8;
+  margin-top: 18px;
+}
+.intro-chapters {
+  margin-top: 25px;
+}
+.intro-chapters article {
+  padding: 16px 0;
+  gap: 18px;
+}
+.intro-chapters article > span {
+  font-size: 11px;
+}
+.intro-chapters h3 {
+  font-size: 17px;
+}
+.intro-chapters p {
+  font-size: 13px;
+  line-height: 1.7;
+  margin-top: 7px;
+}
+.intro-signoff {
+  margin: 18px 0 24px;
+}
+.intro-signoff p {
+  font-size: 13px;
+}
+.intro-signoff small {
+  font-size: 11px;
+}
+.intro-footer {
+  font-size: 9px;
+  align-items: center;
+}
+.intro-footer button {
+  font-size: 12px;
+  padding: 5px 0;
+}
+@media (min-width: 1500px) {
+  .workbench .explorer {
+    grid-template-columns: minmax(0, 1fr) 400px;
+  }
+  .workbench .panel-collapsed {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 1100px) {
+  .workbench .explorer {
+    grid-template-columns: minmax(0, 1fr) 350px;
+  }
+  .workbench .panel-collapsed {
+    grid-template-columns: 1fr;
+  }
+  .workbench .canvas-heading p {
+    max-width: 350px;
+    line-height: 1.8;
+  }
+  .landing-sticky .hero-copy h1 {
+    font-size: 60px;
+  }
+  .landing-sticky .hero-copy .eyebrow {
+    font-size: 8px;
+  }
+}
+@media (max-width: 760px) {
+  .workbench .side-panel {
+    height: 750px;
+    min-height: 750px;
+  }
+  .workbench .canvas-heading p {
+    font-size: 10px;
+  }
+  .workbench .legend button {
+    font-size: 10px;
+  }
+  .workbench .workspace-footer {
+    font-size: 8px;
+  }
+  .workbench .workspace-footer > span:nth-child(2) {
+    font-size: 8px;
+  }
+  .workbench .workspace-footer button {
+    font-size: 0;
+  }
+  .landing-experience {
+    overflow: clip;
+  }
+  .landing-sticky {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    height: 100svh;
+    min-height: 680px;
+  }
+  .landing-sticky .hero-copy {
+    padding: 40px 0 115px;
+  }
+  .landing-sticky .hero-copy h1 {
+    font-size: clamp(51px, 14vw, 73px);
+  }
+  .landing-sticky .hero-copy .eyebrow {
+    font-size: 7px;
+  }
+  .landing-sticky .hero-description {
+    font-size: 13px;
+  }
+  .landing-sticky .primary-cta {
+    font-size: 14px;
+  }
+  .landing-sticky .secondary-cta {
+    font-size: 12px;
+  }
+  .landing-rail {
+    font-size: 7px;
+  }
+  .landing-experience .scene-hero {
+    scroll-snap-align: none;
+    height: 235px;
+    min-height: 0;
+  }
+  .landing-experience .scene-introduction {
+    height: 100svh;
+    padding: 32px 27px 24px;
+    overscroll-behavior-y: auto;
+  }
+  .scene-introduction h2 {
+    font-size: 49px;
+  }
+  .intro-prose {
+    font-size: 13px;
+  }
+  .intro-footer {
+    font-size: 7px;
+  }
+  .library-intro > div > p {
+    font-size: 13px;
+  }
+  .archive-tabs button {
+    font-size: 12px;
+  }
+  .archive-result-count {
+    font-size: 9px;
+  }
+  .archive-result-count > span:last-child {
+    font-size: 10px;
+  }
+  .archive-total .archive-description {
+    margin-bottom: 58px;
+  }
+}
+@media (max-height: 720px) and (min-width: 761px) {
+  .landing-sticky {
+    padding-top: 25px;
+    padding-bottom: 20px;
+  }
+  .landing-sticky .hero-copy {
+    padding: 22px 0;
+  }
+  .landing-sticky .hero-copy h1 {
+    font-size: clamp(56px, 5.5vw, 82px);
+    margin-top: 24px;
+  }
+  .landing-sticky .hero-divider {
+    margin: 20px 0;
+  }
+  .landing-sticky .hero-description {
+    margin-top: 13px;
+    font-size: 13px;
+  }
+  .landing-sticky .hero-chinese {
+    font-size: 21px;
+  }
+  .landing-sticky .primary-cta {
+    margin-top: 22px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .art-select-menu {
+    animation: none;
+  }
+}
+
+/* Opacity-only arrival keeps fixed backgrounds bound to the viewport. */
+.landing-experience.route-surface,
+.archive-library.route-surface {
+  animation: ambient-page-in 0.6s ease-out both;
+  overflow-x: clip;
+}
+@keyframes ambient-page-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

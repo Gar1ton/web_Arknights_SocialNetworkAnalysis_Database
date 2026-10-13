@@ -1,3 +1,4 @@
+import Select from "./Select";
 import { type Settings, palettes, defaults } from "./settings";
 import {
   SlidersHorizontal,
@@ -141,9 +142,9 @@ export default function Controls({
           <h3>
             布局与引力 <span>I</span>
           </h3>
-          <label className="select-control">
+          <div className="select-control">
             布局算法
-            <select
+            <Select
               aria-label="布局算法"
               value={s.layout}
               onChange={(e) =>
@@ -153,8 +154,8 @@ export default function Controls({
               <option value="organic">社群星系 · Clustered force</option>
               <option value="force">力导向 · D3 force</option>
               <option value="circular">环形 · Circular</option>
-            </select>
-          </label>
+            </Select>
+          </div>
           <Range
             label="节点斥力"
             value={s.repulsion}
@@ -197,9 +198,9 @@ export default function Controls({
           <h3>
             关系与可见性 <span>II</span>
           </h3>
-          <label className="select-control">
+          <div className="select-control">
             关系权重
-            <select
+            <Select
               aria-label="关系权重"
               value={s.weight}
               onChange={(e) =>
@@ -209,11 +210,11 @@ export default function Controls({
               <option value="affinity">关系强度</option>
               <option value="messages">互动消息数</option>
               <option value="equal">等权重</option>
-            </select>
-          </label>
-          <label className="select-control">
+            </Select>
+          </div>
+          <div className="select-control">
             边的着色
-            <select
+            <Select
               aria-label="边的着色"
               value={s.coloring}
               onChange={(e) =>
@@ -223,8 +224,8 @@ export default function Controls({
               <option value="faction">所属社群</option>
               <option value="affect">情感倾向 · Benevolence</option>
               <option value="power">权力倾向 · Power</option>
-            </select>
-          </label>
+            </Select>
+          </div>
           <Range
             label="最低消息数"
             value={s.minMessages}
@@ -285,6 +286,32 @@ export default function Controls({
           <h3>
             流场与粒子 <span>III</span>
           </h3>
+          <Range
+            label="背景亮度"
+            value={s.flowOpacity}
+            min={0}
+            max={1}
+            step={0.05}
+            onChange={(v) => update("flowOpacity", v)}
+          />
+          <Range
+            label="节点引力"
+            value={s.flowGravity}
+            min={0}
+            max={2}
+            step={0.1}
+            onChange={(v) => update("flowGravity", v)}
+          />
+          <Range
+            label="引力中心数量"
+            value={s.gravityNodes}
+            min={1}
+            max={5}
+            onChange={(v) => update("gravityNodes", v)}
+          />
+          <p className="control-note">
+            由关系权重最高的节点牵引流场，与序章共享视觉设置。
+          </p>
           <Range
             label="粒子密度"
             value={s.particles}

@@ -6,6 +6,9 @@ export type Settings = {
   particles: number;
   speed: number;
   turbulence: number;
+  flowOpacity: number;
+  flowGravity: number;
+  gravityNodes: number;
   opacity: number;
   width: number;
   labels: boolean;
@@ -31,6 +34,9 @@ export const defaults: Settings = {
   particles: 1600,
   speed: 0.65,
   turbulence: 1.2,
+  flowOpacity: 0.55,
+  flowGravity: 1,
+  gravityNodes: 3,
   opacity: 0.35,
   width: 1,
   labels: true,
@@ -89,6 +95,9 @@ export function parseSettings(raw: unknown): Settings {
     particles: [0, 3000],
     speed: [0.1, 2],
     turbulence: [0.2, 3],
+    flowOpacity: [0, 1],
+    flowGravity: [0, 2],
+    gravityNodes: [1, 5],
     opacity: [0.05, 1],
     width: [0.4, 3],
     gravity: [0.1, 2],
@@ -112,6 +121,7 @@ export function parseSettings(raw: unknown): Settings {
       target[key] = value;
   }
   out.hops = Math.round(out.hops);
+  out.gravityNodes = Math.round(out.gravityNodes);
   out.particles = Math.round(out.particles);
   return out;
 }
