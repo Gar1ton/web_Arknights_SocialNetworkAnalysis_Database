@@ -39,6 +39,7 @@ export default function Graph({
   const svg = useRef<SVGSVGElement>(null);
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [draggedId, setDraggedId] = useState<string | null>(null);
   const [hover, setHover] = useState<string | null>(null);
   const [overrides, setOverrides] = useState<Record<string, Point>>({});
   const drag = useRef<{
@@ -121,16 +122,22 @@ export default function Graph({
     overrides[id] || displayPositions.get(id) || positions.get(id)!;
   const anchors = useMemo(
     () =>
-      leaders.map((n) => {
+      [
+        ...leaders,
+        ...(draggedId && !leaders.some((n) => n.id === draggedId)
+          ? [{ id: draggedId, mass: 0.7 }]
+          : []),
+      ].map((n) => {
         const p =
           overrides[n.id] || displayPositions.get(n.id) || positions.get(n.id)!;
         return {
           x: (p.x - 500) * zoom + 500 + pan.x,
           y: (p.y - 380) * zoom + 380 + pan.y,
           mass: n.mass,
+          id: n.id,
         };
       }),
-    [leaders, overrides, displayPositions, positions, pan, zoom],
+    [leaders, draggedId, overrides, displayPositions, positions, pan, zoom],
   );
   const focus = hover || selected;
   const connected = new Set(
@@ -149,10 +156,12 @@ export default function Graph({
     return new DOMPoint(e.clientX, e.clientY).matrixTransform(m!.inverse());
   };
   const down = (e: PointerEvent<SVGSVGElement>) => {
-    if (landing || e.button !== 0) return;
+    if (e.button !== 0) return;
     const p = coordinate(e);
     const el = (e.target as Element).closest("[data-node]");
     const id = el?.getAttribute("data-node") || null;
+    if (landing && !id) return;
+    if (id && !settings.locked) setDraggedId(id);
     drag.current = {
       id,
       x: p.x,
@@ -180,6 +189,8 @@ export default function Graph({
     if (drag.current?.id && drag.current.distance < 5)
       onSelect(drag.current.id);
     drag.current = null;
+    setDraggedId(null);
+    setHover(null);
   };
   const color = (n: AtlasNode) =>
     settings.palette === "dusk"
@@ -225,6 +236,8 @@ export default function Graph({
         onPointerUp={up}
         onPointerCancel={() => {
           drag.current = null;
+          setDraggedId(null);
+          setHover(null);
         }}
         onWheel={(e) => {
           if (!landing) setZoom((z) => clamp(z - e.deltaY * 0.001));
@@ -412,9 +425,6 @@ export default function Graph({
                     e.preventDefault();
                     onSelect(n.id);
                   }
-                }}
-                onClick={() => {
-                  if (landing) onSelect(n.id);
                 }}
               >
                 <circle r={r + 13} fill="transparent" />

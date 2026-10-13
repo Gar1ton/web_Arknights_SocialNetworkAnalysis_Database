@@ -1,5 +1,5 @@
 export const TRAIL_LENGTH = 160;
-export type FlowAnchor = { x: number; y: number; mass?: number };
+export type FlowAnchor = { x: number; y: number; mass?: number; id?: string };
 export type ThreadParticle = {
   trail: Float32Array;
   head: number;
@@ -19,6 +19,7 @@ export type ThreadField = {
   rows: number;
   phase: number;
   tick: number;
+  dirty: boolean;
   random: () => number;
   anchors: FlowAnchor[];
 };
@@ -59,6 +60,7 @@ export function createThreadField(
     rows: 30,
     phase: 0,
     tick: 0,
+    dirty: false,
     random,
     anchors: anchors.length
       ? anchors
@@ -92,7 +94,7 @@ function refreshGrid(f: ThreadField, turbulence: number, gravity = 1) {
   const unit = Math.min(f.width, f.height);
   const aspectX = f.width / unit,
     aspectY = f.height / unit;
-  const phase = f.phase * 0.1;
+  const phase = f.phase * 0.2;
   const amplitude = 0.15 * (0.75 + turbulence * 0.12);
   const totalMass = f.anchors.reduce((sum, a) => sum + (a.mass ?? 1), 0) || 1;
   for (let gy = 0; gy < f.rows; gy++)
@@ -105,20 +107,27 @@ function refreshGrid(f: ThreadField, turbulence: number, gravity = 1) {
       // Curl of a smooth stream function plus through-flow: no inward force,
       // no point sinks, and no per-cell normalization (which creates compression).
       let dx =
-        1 +
+        1.1 +
         amplitude * 2.8 * Math.sin(sx) * Math.cos(sy) +
         0.088 * Math.cos(ribbon);
       let dy =
         0.1 -
         amplitude * 7 * Math.cos(sx) * Math.sin(sy) -
         0.18 * Math.cos(ribbon);
+      // Incommensurate stream-function modes break up parallel ribbons.
+      const detail = 0.025 + turbulence * 0.015;
+      const a = Math.cos(9.3 * x + 2.1 * y + phase * 1.4 + 1.8);
+      const b = Math.cos(5.7 * x - 1.3 * y - phase * 0.8 + 4.2);
+      const c = Math.cos(14.1 * x + 4.7 * y + phase * 0.6);
+      dx += detail * (2.1 * a - 1.3 * b) + turbulence * 0.003 * 4.7 * c;
+      dy -= detail * (9.3 * a + 5.7 * b) + turbulence * 0.003 * 14.1 * c;
       f.anchors.forEach((a, k) => {
         const ox = x - a.x * aspectX,
           oy = y - a.y * aspectY;
         const radius = 0.28 + (k % 3) * 0.035;
         const envelope = Math.exp(-(ox * ox + oy * oy) / (2 * radius * radius));
         // All nodes share one bounded influence budget, even when they overlap.
-        const strength = (0.26 * gravity * (a.mass ?? 1)) / totalMass;
+        const strength = (0.42 * gravity * (a.mass ?? 1)) / totalMass;
         const spin = k % 2 ? 1 : -1;
         dx += (-oy / radius) * envelope * strength * spin;
         dy += (ox / radius) * envelope * strength * spin;
@@ -128,13 +137,75 @@ function refreshGrid(f: ThreadField, turbulence: number, gravity = 1) {
       f.grid[j + 1] = dy;
     }
 }
+// Move existing local ribbons with their field centers; preserve fixed buffers.
+export function updateThreadAnchors(
+  f: ThreadField,
+  next: FlowAnchor[],
+  gravity = 1,
+  follow = true,
+) {
+  const changed =
+    next.length !== f.anchors.length ||
+    next.some((a, i) => {
+      const old = f.anchors[i];
+      return (
+        !old ||
+        a.id !== old.id ||
+        Math.abs(a.x - old.x) > 0.00001 ||
+        Math.abs(a.y - old.y) > 0.00001 ||
+        a.mass !== old.mass
+      );
+    });
+  if (!changed) return;
+  if (follow && gravity > 0) {
+    const unit = Math.min(f.width, f.height);
+    const radius2 = (unit * 0.24) ** 2 * 2;
+    const moves = next.flatMap((a, i) => {
+      const old = a.id ? f.anchors.find((p) => p.id === a.id) : f.anchors[i];
+      if (!old) return [];
+      const dx = (a.x - old.x) * f.width,
+        dy = (a.y - old.y) * f.height;
+      const limit = Math.min(1, (unit * 0.08) / (Math.hypot(dx, dy) || 1));
+      return [
+        {
+          x: old.x * f.width,
+          y: old.y * f.height,
+          dx: dx * limit,
+          dy: dy * limit,
+          gain: Math.min(1, gravity) * 0.42 * Math.min(1, (a.mass ?? 1) / 1.5),
+        },
+      ];
+    });
+    for (const p of f.particles) {
+      let dx = 0,
+        dy = 0;
+      for (const m of moves) {
+        const influence =
+          Math.exp(-((p.x - m.x) ** 2 + (p.y - m.y) ** 2) / radius2) * m.gain;
+        dx += m.dx * influence;
+        dy += m.dy * influence;
+      }
+      p.x += dx;
+      p.y += dy;
+      for (let j = 0; j < p.trail.length; j += 2) {
+        p.trail[j] += dx;
+        p.trail[j + 1] += dy;
+      }
+    }
+  }
+  f.anchors = next;
+  f.dirty = true;
+}
 export function stepThreadField(
   f: ThreadField,
   speed = 0.65,
   turbulence = 1.2,
   gravity = 1,
 ) {
-  if (f.tick % 10 === 0) refreshGrid(f, turbulence, gravity);
+  if (f.dirty || f.tick % 10 === 0) {
+    refreshGrid(f, turbulence, gravity);
+    f.dirty = false;
+  }
   f.tick++;
   f.phase += 0.006;
   for (const p of f.particles) {

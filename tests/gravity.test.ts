@@ -2,7 +2,11 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { gravityLeaders } from "../src/gravity";
 import { nodes, edges, type AtlasEdge } from "../src/data";
-import { createThreadField, stepThreadField } from "../src/particles";
+import {
+  createThreadField,
+  stepThreadField,
+  updateThreadAnchors,
+} from "../src/particles";
 import { defaults, parseSettings } from "../src/settings";
 test("gravity centers rank weighted in-scope links, not node id or raw degree", () => {
   const fixture = [
@@ -101,4 +105,50 @@ test("particles placed at a gravity center travel out instead of remaining trapp
   for (let tick = 0; tick < 120; tick++) stepThreadField(field, 0.65, 3, 2);
   assert.ok(field.particles.every((p) => p.x > 630));
   assert.equal(field.particles.length, 64);
+});
+
+test("moving a center displaces nearby existing trails and refreshes the next frame", () => {
+  const field = createThreadField(1200, 800, 1, [
+    { id: "leader", x: 0.5, y: 0.5, mass: 1.5 },
+  ]);
+  const p = field.particles[0],
+    trail = p.trail;
+  p.x = 600;
+  p.y = 400;
+  p.trail.fill(400);
+  p.trail[0] = 600;
+  const previousGrid = field.grid.slice();
+  field.tick = 1;
+  updateThreadAnchors(field, [{ id: "leader", x: 0.6, y: 0.5, mass: 1.5 }]);
+  assert.ok(p.x > 600 && p.x < 630);
+  assert.equal(p.trail, trail);
+  assert.ok(Math.abs(p.trail[0] - p.x) < 0.001);
+  assert.equal(p.y, 400);
+  assert.equal(field.dirty, true);
+  stepThreadField(field);
+  assert.notDeepEqual(field.grid, previousGrid);
+  assert.equal(field.dirty, false);
+});
+test("zero gravity, paused flow and newly introduced centers do not jump the ribbons", () => {
+  for (const [gravity, follow] of [
+    [0, true],
+    [1, false],
+  ] as const) {
+    const field = createThreadField(1200, 800, 12, [
+      { id: "a", x: 0.5, y: 0.5 },
+    ]);
+    const before = field.particles.map((p) => [p.x, p.y]);
+    updateThreadAnchors(field, [{ id: "a", x: 0.7, y: 0.6 }], gravity, follow);
+    assert.deepEqual(
+      field.particles.map((p) => [p.x, p.y]),
+      before,
+    );
+  }
+  const field = createThreadField(1200, 800, 12, [{ id: "a", x: 0.5, y: 0.5 }]);
+  const before = field.particles.map((p) => [p.x, p.y]);
+  updateThreadAnchors(field, [{ id: "b", x: 0.8, y: 0.8 }]);
+  assert.deepEqual(
+    field.particles.map((p) => [p.x, p.y]),
+    before,
+  );
 });

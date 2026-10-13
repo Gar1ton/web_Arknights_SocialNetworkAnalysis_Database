@@ -3,6 +3,7 @@ import { palettes, type Settings } from "./settings";
 import {
   createThreadField,
   stepThreadField,
+  updateThreadAnchors,
   particleBudget,
   TRAIL_LENGTH,
   type FlowAnchor,
@@ -42,14 +43,14 @@ export default function FlowField({
       const scale = Math.min(area.width / 1000, area.height / 760);
       const ox = area.left - box.left + (area.width - 1000 * scale) / 2,
         oy = area.top - box.top + (area.height - 760 * scale) / 2;
-      // At most five leaders; projection and grid updates are throttled, never an all-pairs force.
-      while (field.anchors.length > points.length) field.anchors.pop();
-      points.forEach((p, i) => {
-        const a = field!.anchors[i] || (field!.anchors[i] = { x: 0, y: 0 });
-        a.x = (ox + p.x * scale) / box.width;
-        a.y = (oy + p.y * scale) / box.height;
-        a.mass = p.mass;
-      });
+      const projected = points.map((p) => ({
+        id: p.id,
+        x: (ox + p.x * scale) / box.width,
+        y: (oy + p.y * scale) / box.height,
+        mass: p.mass,
+      }));
+      const s = live.current.settings;
+      updateThreadAnchors(field, projected, s.flowGravity, s.animate);
       canvas.dataset.attractors = String(points.length);
     };
     const paint = () => {
@@ -86,7 +87,7 @@ export default function FlowField({
       if (!visible || document.hidden || !s.animate || s.flowOpacity === 0)
         return;
       if (field && now - last >= 1000 / 24) {
-        if (field.tick % 6 === 0) project();
+        project();
         stepThreadField(field, s.speed, s.turbulence, s.flowGravity);
         paint();
         last = now;

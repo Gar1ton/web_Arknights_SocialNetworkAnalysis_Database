@@ -310,7 +310,7 @@ export default function Controls({
             onChange={(v) => update("gravityNodes", v)}
           />
           <p className="control-note">
-            高权重节点轻微偏转附近流向，保留贯穿画布的流动；与序章共享设置。
+            大节点持续影响流向；拖动任意节点，轻轻带动附近流线。与序章共享设置。
           </p>
           <Range
             label="粒子密度"
