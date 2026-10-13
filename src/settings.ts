@@ -31,7 +31,7 @@ export const defaults: Settings = {
   particles: 1600,
   speed: 0.65,
   turbulence: 1.2,
-  opacity: 0.34,
+  opacity: 0.35,
   width: 1,
   labels: true,
   arrows: false,
