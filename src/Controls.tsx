@@ -310,7 +310,7 @@ export default function Controls({
             onChange={(v) => update("gravityNodes", v)}
           />
           <p className="control-note">
-            由关系权重最高的节点牵引流场，与序章共享视觉设置。
+            高权重节点轻微偏转附近流向，保留贯穿画布的流动；与序章共享设置。
           </p>
           <Range
             label="粒子密度"

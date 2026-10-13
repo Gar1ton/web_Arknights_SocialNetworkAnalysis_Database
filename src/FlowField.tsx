@@ -65,15 +65,17 @@ export default function FlowField({
           0,
           Math.min(1, p.age / 26, (p.life - p.age) / 40),
         );
-        ctx.globalAlpha = fade * (subtle ? 0.27 : 0.43) * s.flowOpacity;
+        ctx.globalAlpha = fade * (subtle ? 0.22 : 0.32) * s.flowOpacity;
         ctx.strokeStyle = colors[p.color];
         ctx.beginPath();
-        for (let j = 0; j < p.length; j++) {
+        // Keep long silk-like trails without tripling Canvas path operations.
+        for (let j = 0; j < p.length; j += 3) {
           const index =
             (p.head - p.length + 1 + j + TRAIL_LENGTH) % TRAIL_LENGTH;
           if (j === 0) ctx.moveTo(p.trail[index * 2], p.trail[index * 2 + 1]);
           else ctx.lineTo(p.trail[index * 2], p.trail[index * 2 + 1]);
         }
+        ctx.lineTo(p.x, p.y);
         ctx.stroke();
       }
       ctx.globalAlpha = 1;

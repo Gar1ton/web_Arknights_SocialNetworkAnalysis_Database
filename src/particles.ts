@@ -1,4 +1,4 @@
-export const TRAIL_LENGTH = 48;
+export const TRAIL_LENGTH = 160;
 export type FlowAnchor = { x: number; y: number; mass?: number };
 export type ThreadParticle = {
   trail: Float32Array;
@@ -81,7 +81,7 @@ export function createThreadField(
       x,
       y,
       age: Math.floor(random() * 180),
-      life: 260 + Math.floor(random() * 220),
+      life: 520 + Math.floor(random() * 280),
       color: i % 4,
     });
   }
@@ -89,29 +89,43 @@ export function createThreadField(
   return field;
 }
 function refreshGrid(f: ThreadField, turbulence: number, gravity = 1) {
+  const unit = Math.min(f.width, f.height);
+  const aspectX = f.width / unit,
+    aspectY = f.height / unit;
+  const phase = f.phase * 0.1;
+  const amplitude = 0.15 * (0.75 + turbulence * 0.12);
+  const totalMass = f.anchors.reduce((sum, a) => sum + (a.mass ?? 1), 0) || 1;
   for (let gy = 0; gy < f.rows; gy++)
     for (let gx = 0; gx < f.columns; gx++) {
-      const x = gx / (f.columns - 1),
-        y = gy / (f.rows - 1);
-      let dx = 0.3,
-        dy = 0.12;
+      const x = (gx / (f.columns - 1)) * aspectX,
+        y = (gy / (f.rows - 1)) * aspectY;
+      const sx = 7 * x + phase,
+        sy = 2.8 * y - phase * 0.7;
+      const ribbon = 4.5 * x + 2.2 * y + phase * 0.4;
+      // Curl of a smooth stream function plus through-flow: no inward force,
+      // no point sinks, and no per-cell normalization (which creates compression).
+      let dx =
+        1 +
+        amplitude * 2.8 * Math.sin(sx) * Math.cos(sy) +
+        0.088 * Math.cos(ribbon);
+      let dy =
+        0.1 -
+        amplitude * 7 * Math.cos(sx) * Math.sin(sy) -
+        0.18 * Math.cos(ribbon);
       f.anchors.forEach((a, k) => {
-        const ox = x - a.x,
-          oy = y - a.y;
-        const d = ox * ox + oy * oy + 0.035;
+        const ox = x - a.x * aspectX,
+          oy = y - a.y * aspectY;
+        const radius = 0.28 + (k % 3) * 0.035;
+        const envelope = Math.exp(-(ox * ox + oy * oy) / (2 * radius * radius));
+        // All nodes share one bounded influence budget, even when they overlap.
+        const strength = (0.26 * gravity * (a.mass ?? 1)) / totalMass;
         const spin = k % 2 ? 1 : -1;
-        const pull = gravity * (a.mass ?? 1);
-        dx += ((-oy * 0.14 * spin - ox * 0.09) / d) * pull;
-        dy += ((ox * 0.14 * spin - oy * 0.09) / d) * pull;
+        dx += (-oy / radius) * envelope * strength * spin;
+        dy += (ox / radius) * envelope * strength * spin;
       });
-      const wave =
-        Math.sin(x * 5.2 + y * 3.8 + f.phase * 0.14) * 0.62 +
-        Math.cos(y * 7.4 - x * 2.1 - f.phase * 0.1) * 0.33;
-      const angle =
-        Math.atan2(dy, dx) + (wave * turbulence) / (1 + gravity * 0.5);
       const j = (gy * f.columns + gx) * 2;
-      f.grid[j] = Math.cos(angle);
-      f.grid[j + 1] = Math.sin(angle);
+      f.grid[j] = dx;
+      f.grid[j + 1] = dy;
     }
 }
 export function stepThreadField(

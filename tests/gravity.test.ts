@@ -59,3 +59,46 @@ test("visual settings migrate older saves and clamp new controls", () => {
   assert.equal(invalid.flowGravity, defaults.flowGravity);
   assert.equal(invalid.gravityNodes, defaults.gravityNodes);
 });
+
+test("overlapping centers retain through-flow even at maximum influence", () => {
+  for (const [width, height] of [
+    [1440, 900],
+    [390, 844],
+  ]) {
+    const field = createThreadField(
+      width,
+      height,
+      0,
+      Array.from({ length: 5 }, () => ({ x: 0.5, y: 0.5, mass: 1.5 })),
+    );
+    for (let phase = 0; phase < 40; phase++) {
+      field.phase = phase * 7;
+      field.tick = 0;
+      stepThreadField(field, 0.65, 3, 2);
+      for (let i = 0; i < field.grid.length; i += 2) {
+        assert.ok(
+          field.grid[i] > 0.15,
+          "flow must not stall or fold into a point sink",
+        );
+        assert.ok(Number.isFinite(field.grid[i + 1]));
+      }
+    }
+  }
+});
+test("particles placed at a gravity center travel out instead of remaining trapped", () => {
+  const field = createThreadField(
+    1200,
+    800,
+    64,
+    Array.from({ length: 5 }, () => ({ x: 0.5, y: 0.5, mass: 1.5 })),
+  );
+  for (const p of field.particles) {
+    p.x = 600;
+    p.y = 400;
+    p.age = 0;
+    p.life = 480;
+  }
+  for (let tick = 0; tick < 120; tick++) stepThreadField(field, 0.65, 3, 2);
+  assert.ok(field.particles.every((p) => p.x > 630));
+  assert.equal(field.particles.length, 64);
+});
