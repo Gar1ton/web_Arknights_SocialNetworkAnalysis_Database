@@ -9,6 +9,7 @@ import {
 } from "./data";
 import { type Settings, palettes } from "./settings";
 import { makeLayout, curve, type Point } from "./layout";
+import FlowField from "./FlowField";
 type Props = {
   nodes: AtlasNode[];
   edges: AtlasEdge[];
@@ -79,7 +80,45 @@ export default function Graph({
     if (settings.animate) svg.current?.unpauseAnimations();
     else svg.current?.pauseAnimations();
   }, [settings.animate]);
-  const point = (id: string) => overrides[id] || positions.get(id)!;
+  const anchors = useMemo(
+    () =>
+      nodes
+        .filter((n) => Number(n.id.slice(1)) % 8 === 0)
+        .map((n) => positions.get(n.id)!)
+        .filter(Boolean),
+    [nodes, positions],
+  );
+  const [displayPositions, setDisplayPositions] = useState(positions);
+  const displayRef = useRef(positions);
+  useEffect(() => {
+    const from = displayRef.current;
+    if (!settings.animate || landing || !from.size) {
+      displayRef.current = positions;
+      setDisplayPositions(positions);
+      return;
+    }
+    let frame = 0;
+    const start = performance.now();
+    const draw = (now: number) => {
+      const t = Math.min(1, (now - start) / 720);
+      const ease = 1 - Math.pow(1 - t, 4);
+      const next = new Map<string, Point>();
+      for (const [id, target] of positions) {
+        const old = from.get(id) || { x: 500, y: 380 };
+        next.set(id, {
+          x: old.x + (target.x - old.x) * ease,
+          y: old.y + (target.y - old.y) * ease,
+        });
+      }
+      displayRef.current = next;
+      setDisplayPositions(next);
+      if (t < 1) frame = requestAnimationFrame(draw);
+    };
+    frame = requestAnimationFrame(draw);
+    return () => cancelAnimationFrame(frame);
+  }, [positions, settings.animate, landing]);
+  const point = (id: string) =>
+    overrides[id] || displayPositions.get(id) || positions.get(id)!;
   const focus = hover || selected;
   const connected = new Set(
     focus
@@ -144,6 +183,7 @@ export default function Graph({
       className={"graph-stage " + (landing ? "hero-graph" : "")}
       data-testid="graph-stage"
     >
+      {!landing && <FlowField settings={settings} subtle anchors={anchors} />}
       <svg
         ref={svg}
         id={landing ? "hero-svg" : "network-svg"}
@@ -161,6 +201,10 @@ export default function Graph({
         }}
       >
         <defs>
+          <radialGradient id={landing ? "hero-halo" : "field-halo"}>
+            <stop offset="0" stopColor="#d49d9c" stopOpacity=".12" />
+            <stop offset="1" stopColor="#d49d9c" stopOpacity="0" />
+          </radialGradient>
           <filter
             id={landing ? "hero-glow" : "node-glow"}
             x="-100%"
@@ -172,26 +216,23 @@ export default function Graph({
           </filter>
         </defs>
         <g
-          className="orbital-grid"
-          fill="none"
-          stroke="#d9bea5"
-          strokeWidth=".6"
-          opacity=".11"
-        >
-          <circle cx="500" cy="380" r="305" />
-          <circle cx="500" cy="380" r="220" strokeDasharray="2 9" />
-          <ellipse
-            cx="500"
-            cy="380"
-            rx="390"
-            ry="150"
-            transform="rotate(-30 500 380)"
-          />
-          <path d="M80 380H920M500 50V710" strokeDasharray="2 12" />
-        </g>
-        <g
           transform={`translate(${pan.x} ${pan.y}) translate(500 380) scale(${zoom}) translate(-500 -380)`}
         >
+          {nodes
+            .filter((n) => Number(n.id.slice(1)) % 8 === 0)
+            .map((n) => {
+              const p = point(n.id);
+              return p ? (
+                <circle
+                  key={"halo-" + n.id}
+                  cx={p.x}
+                  cy={p.y}
+                  r="100"
+                  fill={`url(#${landing ? "hero-halo" : "field-halo"})`}
+                  pointerEvents="none"
+                />
+              ) : null;
+            })}
           {edges.map((e, i) => {
             const a = point(e.source),
               b = point(e.target);

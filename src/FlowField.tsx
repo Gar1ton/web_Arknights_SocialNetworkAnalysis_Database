@@ -1,118 +1,119 @@
 import { useEffect, useRef } from "react";
 import { palettes, type Settings } from "./settings";
-type Particle = {
-  x: number;
-  y: number;
-  age: number;
-  life: number;
-  color: string;
-};
+import {
+  createThreadField,
+  stepThreadField,
+  particleBudget,
+  TRAIL_LENGTH,
+  type FlowAnchor,
+  type ThreadField,
+} from "./particles";
+const noAnchors: FlowAnchor[] = [];
 export default function FlowField({
   settings,
   subtle = false,
+  anchors = noAnchors,
 }: {
   settings: Settings;
   subtle?: boolean;
+  anchors?: FlowAnchor[];
 }) {
-  const ref = useRef<HTMLCanvasElement>(null);
-  const moving = useRef(settings.animate);
+  const ref = useRef<HTMLCanvasElement>(null),
+    moving = useRef(settings.animate);
   useEffect(() => {
     moving.current = settings.animate;
   }, [settings.animate]);
   useEffect(() => {
     const canvas = ref.current!;
-    const ctx = canvas.getContext("2d")!;
-    let width = 0,
-      height = 0,
-      frame = 0,
+    const ctx = canvas.getContext("2d", { alpha: true })!;
+    let field: ThreadField | undefined,
+      raf = 0,
       last = 0,
-      time = 0;
-    let pts: Particle[] = [];
-    let seed = 317;
-    const random = () => {
-      seed = (seed * 16807) % 2147483647;
-      return (seed - 1) / 2147483646;
-    };
+      visible = true,
+      resizeFrame = 0;
     const colors = palettes[settings.palette].colors;
-    const spawn = (p?: Particle): Particle =>
-      Object.assign(p || {}, {
-        x: random() * width,
-        y: random() * height,
-        age: 0,
-        life: 90 + random() * 240,
-        color: colors[Math.floor(random() * colors.length)],
-      });
-    const paint = (initial = false) => {
-      ctx.globalCompositeOperation = "source-over";
-      ctx.fillStyle = palettes[settings.palette].bg;
-      ctx.globalAlpha = initial ? 0.007 : 0.035;
-      ctx.fillRect(0, 0, width, height);
-      ctx.globalAlpha = subtle ? 0.15 : 0.24;
-      ctx.lineWidth = 0.6;
-      for (const p of pts) {
-        let dx = 0.52,
-          dy = 0;
-        const nx = p.x / width,
-          ny = p.y / height;
-        for (let k = 0; k < 4; k++) {
-          const cx = 0.27 + (k % 2) * 0.42 + Math.sin(time * 0.02 + k) * 0.055;
-          const cy = 0.27 + Math.floor(k / 2) * 0.48;
-          const x = nx - cx,
-            y = ny - cy,
-            d = x * x + y * y + 0.024;
-          const sign = k % 2 === 0 ? 1 : -1;
-          dx += (-y / d) * 0.17 * sign;
-          dy += (x / d) * 0.17 * sign;
-        }
-        const a =
-          Math.atan2(dy, dx) +
-          Math.sin(nx * 7 + ny * 5 + time * 0.025) * settings.turbulence * 0.65;
-        const speed = (initial ? 1.7 : 1.1) * settings.speed;
-        const x = p.x + Math.cos(a) * speed,
-          y = p.y + Math.sin(a) * speed;
-        ctx.strokeStyle = p.color;
+    const paint = () => {
+      if (!field) return;
+      // A complete clear is essential: alpha-fading an 8-bit canvas leaves residual
+      // pixels that accumulate indefinitely. Every frame here has finite geometry.
+      ctx.clearRect(0, 0, field.width, field.height);
+      ctx.lineWidth = subtle ? 0.65 : 0.7;
+      ctx.lineCap = "round";
+      for (const p of field.particles) {
+        const fade = Math.max(
+          0,
+          Math.min(1, p.age / 26, (p.life - p.age) / 40),
+        );
+        ctx.globalAlpha = fade * (subtle ? 0.27 : 0.43);
+        ctx.strokeStyle = colors[p.color];
         ctx.beginPath();
-        ctx.moveTo(p.x, p.y);
-        ctx.lineTo(x, y);
+        for (let j = 0; j < p.length; j++) {
+          const index =
+            (p.head - p.length + 1 + j + TRAIL_LENGTH) % TRAIL_LENGTH;
+          const x = p.trail[index * 2],
+            y = p.trail[index * 2 + 1];
+          if (j === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
         ctx.stroke();
-        p.x = x;
-        p.y = y;
-        p.age++;
-        if (p.age > p.life || x < 0 || x > width || y < 0 || y > height)
-          spawn(p);
       }
       ctx.globalAlpha = 1;
-      time++;
     };
     const resize = () => {
       const box = canvas.getBoundingClientRect();
-      width = box.width;
-      height = box.height;
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-      canvas.width = Math.round(width * dpr);
-      canvas.height = Math.round(height * dpr);
+      if (!box.width || !box.height) return;
+      const dpr = Math.min(devicePixelRatio || 1, subtle ? 1 : 1.25);
+      canvas.width = Math.round(box.width * dpr);
+      canvas.height = Math.round(box.height * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.fillStyle = palettes[settings.palette].bg;
-      ctx.fillRect(0, 0, width, height);
-      pts = Array.from(
-        { length: Math.min(settings.particles, width < 600 ? 900 : 3000) },
-        () => spawn(),
+      const budget = particleBudget(
+        settings.particles,
+        box.width,
+        box.height,
+        subtle,
       );
-      for (let i = 0; i < 100; i++) paint(true);
+      let centers = anchors;
+      if (anchors.length) {
+        const scale = Math.min(box.width / 1000, box.height / 760),
+          ox = (box.width - 1000 * scale) / 2,
+          oy = (box.height - 760 * scale) / 2;
+        centers = anchors.map((p) => ({
+          x: (ox + p.x * scale) / box.width,
+          y: (oy + p.y * scale) / box.height,
+        }));
+      }
+      field = createThreadField(box.width, box.height, budget, centers);
+      for (let i = 0; i < TRAIL_LENGTH; i++)
+        stepThreadField(field, settings.speed, settings.turbulence);
+      canvas.dataset.particles = String(budget);
+      canvas.dataset.trailLength = String(TRAIL_LENGTH);
+      paint();
     };
-    const ro = new ResizeObserver(resize);
+    const ro = new ResizeObserver(() => {
+      cancelAnimationFrame(resizeFrame);
+      resizeFrame = requestAnimationFrame(resize);
+    });
     ro.observe(canvas);
+    const io = new IntersectionObserver((entries) => {
+      visible = entries[0]?.isIntersecting ?? true;
+    });
+    io.observe(canvas);
     const loop = (now: number) => {
-      if (moving.current && now - last > 32 && !document.hidden) {
-        paint();
+      if (now - last >= 1000 / 24) {
+        if (field && moving.current && visible && !document.hidden) {
+          stepThreadField(field, settings.speed, settings.turbulence);
+          paint();
+        }
         last = now;
       }
-      frame = requestAnimationFrame(loop);
+      raf = requestAnimationFrame(loop);
     };
-    frame = requestAnimationFrame(loop);
+    raf = requestAnimationFrame(loop);
     return () => {
+      cancelAnimationFrame(raf);
+      cancelAnimationFrame(resizeFrame);
       ro.disconnect();
-      cancelAnimationFrame(frame);
+      io.disconnect();
     };
   }, [
     settings.palette,
@@ -120,6 +121,13 @@ export default function FlowField({
     settings.speed,
     settings.turbulence,
     subtle,
+    anchors,
   ]);
-  return <canvas ref={ref} className="flow-field" aria-hidden="true" />;
+  return (
+    <canvas
+      ref={ref}
+      className={"flow-field " + (subtle ? "network-flow" : "")}
+      aria-hidden="true"
+    />
+  );
 }

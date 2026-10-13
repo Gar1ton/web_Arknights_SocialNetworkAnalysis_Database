@@ -88,7 +88,7 @@ export default function Controls({
     <>
       <div className="panel-heading">
         <span className="eyebrow">
-          <SlidersHorizontal size={12} /> NODE SETTING / 03
+          <SlidersHorizontal size={12} /> FIELD CONTROLS
         </span>
         <h2>
           Shape the <em>field.</em>
@@ -111,7 +111,7 @@ export default function Controls({
                   palette: "glacier",
                   layout: "circular",
                   mode: "chord",
-                  opacity: 0.48,
+                  opacity: 0.5,
                   particles: 900,
                   animate: s.animate,
                 })

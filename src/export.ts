@@ -13,6 +13,7 @@ export function exportGraph(
   nodes: AtlasNode[],
   edges: AtlasEdge[],
   settings: Settings,
+  archive?: { id: string; title: string },
 ) {
   if (type === "json") {
     download(
@@ -20,6 +21,7 @@ export function exportGraph(
       JSON.stringify(
         {
           schemaVersion: 1,
+          archive,
           source: "illustrative-demo-not-analysis",
           nodes,
           edges,
@@ -48,6 +50,7 @@ export function exportGraph(
             "power",
             "mutual",
             "provenance",
+            "archive",
           ],
           ...edges.map((e) => [
             e.source,
@@ -59,6 +62,7 @@ export function exportGraph(
             e.power,
             e.mutual,
             "illustrative-demo",
+            archive?.id || "all",
           ]),
         ]
           .map((r) => r.map(cell).join(","))
@@ -91,7 +95,10 @@ export function exportGraph(
   title.setAttribute("y", "735");
   title.setAttribute("fill", "#dcb99b");
   title.setAttribute("font-size", "11");
-  title.textContent = "TERRA / RELATION ATLAS · ILLUSTRATIVE DEMO DATA";
+  title.textContent =
+    "TERRA / " +
+    (archive?.title || "RELATION ATLAS") +
+    " · ILLUSTRATIVE DEMO DATA";
   copy.append(title);
   download(
     "terra-demo-atlas.svg",
