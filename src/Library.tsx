@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { ArrowUpRight, ArrowLeft, Search, X, Orbit } from "lucide-react";
 import Brand from "./Brand";
 import FlowField from "./FlowField";
@@ -79,6 +79,20 @@ function Cover({ archive, index }: { archive: Archive; index: number }) {
   );
 }
 export default function Library({ settings }: { settings: Settings }) {
+  const searchInput = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    const shortcut = (event: KeyboardEvent) => {
+      if (
+        event.key === "/" &&
+        !(event.target as HTMLElement).closest("input,textarea,select")
+      ) {
+        event.preventDefault();
+        searchInput.current?.focus();
+      }
+    };
+    addEventListener("keydown", shortcut);
+    return () => removeEventListener("keydown", shortcut);
+  }, []);
   const [query, setQuery] = useState(""),
     [category, setCategory] = useState("全部");
   const matches = useMemo(
@@ -143,6 +157,7 @@ export default function Library({ settings }: { settings: Settings }) {
           <label className="archive-search">
             <Search size={16} />
             <input
+              ref={searchInput}
               aria-label="搜索活动或章节"
               placeholder="搜索活动、章节或英文名…"
               value={query}

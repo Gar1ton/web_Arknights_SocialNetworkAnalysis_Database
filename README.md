@@ -1,8 +1,8 @@
 # Terra · Relation Atlas
 
-明日方舟 SNA 功能的独立交互 demo。三层体验：**Landing / Node Navigation / Node Setting**。
+明日方舟 SNA 功能的独立交互 demo。三层体验：**Landing → 活动／总表选择 → 图谱工作台**。节点导航与画布设置在同一侧栏切换。
 
-使用 React、TypeScript、Vite、D3 force、Canvas 2D 与 SVG。所有字体本地打包，运行时没有外部 API 或字体请求。
+React、TypeScript、Vite、D3 force、Canvas 2D 与 SVG。字体本地打包，运行时没有外部 API 或字体请求。
 
 ## 本地运行
 
@@ -13,40 +13,50 @@ npm run dev
 
 打开 http://localhost:4178 。构建：`npm run build`；验证：`npm test`；生产预览：`npm run preview`。
 
-## 已实现
+## 体验
 
-- 原创丝状流场、沿关系流动的粒子、节点光晕、轨道网格与四套配色。
-- 48 个演示角色、6 个预设社群、115 条演示关系；全部明确标注，**不是真实 SNA 结果，也不是原作关系断言**。
-- 中英文搜索、社群筛选、关联度／消息数／名称排序。
+- 固定左侧入口的滚动 Landing、渐进显现的项目介绍、页面转场。
+- 活动档案搜索与分类：一张总表、六段示例章节，每张卡片预留 bannerUrl。
+- 无顶栏的统一图谱工作台；节点导航、节点／关系详情和画布设置共用侧栏，切换保留视角。
+- 48 个演示角色、6 个预设社群、115 条演示关系；**不是真实 SNA 结果，也不是原作关系断言**。
+- 中英文节点搜索、社群筛选、关联度／消息数／名称排序。
 - 节点档案、人格轮廓、方向性关系、强度、情感与权力维度。
-- 全局网络、1／2 跳邻域、弦图；社群力导向、D3 force、环形布局。
-- 节点拖拽、画布平移、缩放、复位、锁定与防重叠。
-- 可生效的引力、斥力、边长、权重、透明度、大小、标签、方向、消息阈值、粒子参数。
-- 本地设置持久化，键盘节点／关系操作，减少动态效果偏好，移动端适配。
-- 当前可见网络的 SVG、JSON 和 CSV 导出。
+- 全局网络、1／2 跳邻域、弦图；社群力导向、D3 force、环形布局及连续形变。
+- 拖拽、平移、缩放、复位、锁定、防重叠、引力、斥力、边长、权重、透明度、大小、标签及过滤参数。
+- 有界丝状流场、沿关系流动的粒子、节点光晕、四套配色。
+- 设置本地持久化、键盘操作、减少动态效果偏好、移动端适配。
+- 当前可见网络的 SVG、JSON、CSV 导出，附带活动及演示来源信息。SVG 保存矢量网络，动态 Canvas 流场不包含在 SVG 中。
 
-快捷键：空格暂停／继续动效，Esc 取消选择，R 重置布局；在输入或交互控件聚焦时不抢占快捷键。
+快捷键：档案页 / 聚焦搜索；空格暂停／继续动效，Esc 取消选择，R 重置布局。侧栏标签支持方向键切换。
 
 ## 独立边界
 
-本项目没有连接 8767 批处理服务，没有读取真实分析产物，也没有修改 moirai 或相关项目。仅只读参考其节点档案、关系属性和参数语义，前端独立实现。
+没有连接 8767 批处理服务，没有读取真实分析产物，没有修改 moirai 或相关项目。仅只读参考其节点档案、关系属性和参数语义，前端独立实现。
 
-本 demo 使用 D3 的弹簧布局，**不将它标称为 ForceAtlas2、FR、KK 或 SFDP**。社群是 fixture 中的预设分组，未运行 Leiden。Moirai 的后台编辑、删除、重分析、身份绑定与其他面板不属于本演示。
+使用 D3 弹簧布局，不标称为 ForceAtlas2、FR、KK 或 SFDP。社群为 fixture 预设分组，未运行 Leiden。Moirai 后台编辑、删除、重分析、身份绑定和其他面板不属于本 demo。
 
-## 数据接入位置
+## 接入位置
 
-`src/data.ts` 定义 `AtlasNode` 与 `AtlasEdge`。目前数据完全确定性生成。后续可在此边界接入分析产物，保留 UI、布局和导出层。
+`src/archives.ts` 定义活动元数据与演示切片，可通过 bannerUrl 配置章节美术。当前活动按 fixture 社群切片，并非对应剧情的真实角色名单。
 
-- `src/App.tsx`：三个页面、筛选、详情与状态
-- `src/Graph.tsx`：SVG 图、交互、关系动效
-- `src/FlowField.tsx`：原创流场粒子
-- `src/layout.ts`：布局与曲线
-- `src/settings.ts`：设置范围、校验与持久化
-- `src/export.ts`：可见网络导出
-- `tests/graph.test.ts`：图一致性、邻域、布局边界与设置恢复验证
+`src/data.ts` 定义 AtlasNode 与 AtlasEdge，目前完全确定性生成。后续可以在这两处边界接入真实分析产物。
+
+- `src/App.tsx`：路由、统一工作台、筛选与状态
+- `src/Landing.tsx` / `src/Library.tsx`：序章与活动档案
+- `src/Details.tsx`：活动范围内的节点／关系详情
+- `src/Graph.tsx` / `src/layout.ts`：SVG 图、布局与交互
+- `src/FlowField.tsx` / `src/particles.ts`：Canvas 绘制与固定容量粒子引擎
+- `src/settings.ts` / `src/export.ts`：参数校验、持久化与导出
+- `tests/graph.test.ts` / `tests/experience.test.ts`：图一致性、邻域、布局、活动搜索、路由、长时粒子验证
+
+## 粒子预算
+
+每帧完整清空透明画布，再绘制固定 48 点的环形尾迹，不使用会产生残留的 alpha 累积。粒子数按画布面积缩减；Landing 上限 1600，工作台上限 720。绘制最多 24 FPS，DPR 上限分别为 1.25／1。页面不可见、离开视口或暂停时，不推进或绘制粒子。
+
+测试覆盖五小时**模拟时间**中的固定缓冲区与有限坐标，以及最大粒子预算的重复重生；不是五小时浏览器实机性能报告。
 
 ## 视觉参考
 
-[Currents — Flow Field Studio](https://miaai-lab.github.io/Claude-Opus-5.5-100-HTML-Files/034-flow-field-studio.html)：暖色丝状流场、衬线字体与工作室控制栏。本项目为独立原创实现，无参考页面代码复制。
+[Currents — Flow Field Studio](https://miaai-lab.github.io/Claude-Opus-5.5-100-HTML-Files/034-flow-field-studio.html)：暖色丝状流场、衬线字体与工作室控制栏。本项目独立实现，无参考页面代码复制。
 
-此项目是非官方展示原型，与《明日方舟》权利方无关联。
+非官方展示原型，与《明日方舟》权利方无关联。

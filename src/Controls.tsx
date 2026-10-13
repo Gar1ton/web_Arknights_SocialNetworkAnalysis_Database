@@ -286,7 +286,7 @@ export default function Controls({
             流场与粒子 <span>III</span>
           </h3>
           <Range
-            label="粒子数量"
+            label="粒子密度"
             value={s.particles}
             min={0}
             max={3000}
