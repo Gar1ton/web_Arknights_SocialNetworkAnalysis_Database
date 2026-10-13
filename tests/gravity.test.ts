@@ -6,6 +6,7 @@ import {
   createThreadField,
   stepThreadField,
   updateThreadAnchors,
+  reweaveThreadField,
 } from "../src/particles";
 import { defaults, parseSettings } from "../src/settings";
 test("gravity centers rank weighted in-scope links, not node id or raw degree", () => {
@@ -64,91 +65,106 @@ test("visual settings migrate older saves and clamp new controls", () => {
   assert.equal(invalid.gravityNodes, defaults.gravityNodes);
 });
 
-test("overlapping centers retain through-flow even at maximum influence", () => {
+test("multi-direction curl stays non-compressing with overlapping centers", () => {
   for (const [width, height] of [
     [1440, 900],
     [390, 844],
   ]) {
-    const field = createThreadField(
+    const f = createThreadField(
       width,
       height,
       0,
       Array.from({ length: 5 }, () => ({ x: 0.5, y: 0.5, mass: 1.5 })),
     );
-    for (let phase = 0; phase < 40; phase++) {
-      field.phase = phase * 7;
-      field.tick = 0;
-      stepThreadField(field, 0.65, 3, 2);
-      for (let i = 0; i < field.grid.length; i += 2) {
-        assert.ok(
-          field.grid[i] > 0.15,
-          "flow must not stall or fold into a point sink",
-        );
-        assert.ok(Number.isFinite(field.grid[i + 1]));
-      }
+    const hx = width / Math.min(width, height) / (f.columns - 1);
+    const hy = height / Math.min(width, height) / (f.rows - 1);
+    for (let phase = 0; phase < 20; phase++) {
+      f.phase = phase * 7;
+      f.tick = 0;
+      stepThreadField(f, 0.65, 3, 2);
+      let left = 0,
+        right = 0,
+        up = 0,
+        down = 0;
+      for (let y = 1; y < f.rows - 1; y++)
+        for (let x = 1; x < f.columns - 1; x++) {
+          const j = (y * f.columns + x) * 2;
+          const divergence =
+            (f.grid[j + 2] - f.grid[j - 2]) / (2 * hx) +
+            (f.grid[j + f.columns * 2 + 1] - f.grid[j - f.columns * 2 + 1]) /
+              (2 * hy);
+          assert.ok(
+            Math.abs(divergence) < 0.00003,
+            "flow must not compress into point sinks",
+          );
+          assert.ok(Math.hypot(f.grid[j], f.grid[j + 1]) <= 2.201);
+          if (f.grid[j] < -0.1) left++;
+          if (f.grid[j] > 0.1) right++;
+          if (f.grid[j + 1] < -0.1) up++;
+          if (f.grid[j + 1] > 0.1) down++;
+        }
+      for (const count of [left, right, up, down]) assert.ok(count > 100);
     }
   }
 });
-test("particles placed at a gravity center travel out instead of remaining trapped", () => {
-  const field = createThreadField(
-    1200,
-    800,
-    64,
-    Array.from({ length: 5 }, () => ({ x: 0.5, y: 0.5, mass: 1.5 })),
-  );
-  for (const p of field.particles) {
-    p.x = 600;
-    p.y = 400;
-    p.age = 0;
-    p.life = 480;
-  }
-  for (let tick = 0; tick < 120; tick++) stepThreadField(field, 0.65, 3, 2);
-  assert.ok(field.particles.every((p) => p.x > 630));
-  assert.equal(field.particles.length, 64);
-});
-
-test("moving a center displaces nearby existing trails and refreshes the next frame", () => {
-  const field = createThreadField(1200, 800, 1, [
+test("moving a node reshapes distant field cells and complete trails in the next frame", () => {
+  const f = createThreadField(1200, 800, 80, [
     { id: "leader", x: 0.5, y: 0.5, mass: 1.5 },
   ]);
-  const p = field.particles[0],
-    trail = p.trail;
-  p.x = 600;
-  p.y = 400;
-  p.trail.fill(400);
-  p.trail[0] = 600;
-  const previousGrid = field.grid.slice();
-  field.tick = 1;
-  updateThreadAnchors(field, [{ id: "leader", x: 0.6, y: 0.5, mass: 1.5 }]);
-  assert.ok(p.x > 600 && p.x < 630);
-  assert.equal(p.trail, trail);
-  assert.ok(Math.abs(p.trail[0] - p.x) < 0.001);
-  assert.equal(p.y, 400);
-  assert.equal(field.dirty, true);
-  stepThreadField(field);
-  assert.notDeepEqual(field.grid, previousGrid);
-  assert.equal(field.dirty, false);
-});
-test("zero gravity, paused flow and newly introduced centers do not jump the ribbons", () => {
-  for (const [gravity, follow] of [
-    [0, true],
-    [1, false],
-  ] as const) {
-    const field = createThreadField(1200, 800, 12, [
-      { id: "a", x: 0.5, y: 0.5 },
-    ]);
-    const before = field.particles.map((p) => [p.x, p.y]);
-    updateThreadAnchors(field, [{ id: "a", x: 0.7, y: 0.6 }], gravity, follow);
-    assert.deepEqual(
-      field.particles.map((p) => [p.x, p.y]),
-      before,
-    );
-  }
-  const field = createThreadField(1200, 800, 12, [{ id: "a", x: 0.5, y: 0.5 }]);
-  const before = field.particles.map((p) => [p.x, p.y]);
-  updateThreadAnchors(field, [{ id: "b", x: 0.8, y: 0.8 }]);
-  assert.deepEqual(
-    field.particles.map((p) => [p.x, p.y]),
-    before,
+  stepThreadField(f);
+  reweaveThreadField(f);
+  const before = f.grid.slice(),
+    buffers = f.particles.map((p) => p.trail);
+  const oldTrails = f.particles.map((p) => p.trail.slice());
+  f.tick = 1;
+  updateThreadAnchors(f, [{ id: "leader", x: 0.7, y: 0.3, mass: 1.5 }]);
+  stepThreadField(f);
+  reweaveThreadField(f);
+  let changed = 0;
+  for (let i = 0; i < f.grid.length; i += 2)
+    if (Math.hypot(f.grid[i] - before[i], f.grid[i + 1] - before[i + 1]) > 0.02)
+      changed++;
+  assert.ok(changed > f.columns * f.rows * 0.8);
+  assert.notEqual(
+    f.grid[0],
+    before[0],
+    "a corner must respond as well as the node neighborhood",
   );
+  f.particles.forEach((p, i) => {
+    assert.equal(p.trail, buffers[i]);
+    assert.notDeepEqual(p.trail, oldTrails[i]);
+    assert.ok([...p.trail].every(Number.isFinite));
+  });
+});
+test("zero gravity decouples node movement from the field", () => {
+  const a = createThreadField(1200, 800, 0, [{ id: "a", x: 0.5, y: 0.5 }]);
+  const b = createThreadField(1200, 800, 0, [{ id: "a", x: 0.5, y: 0.5 }]);
+  updateThreadAnchors(b, [{ id: "a", x: 0.9, y: 0.2 }]);
+  stepThreadField(a, 0.65, 1.2, 0);
+  stepThreadField(b, 0.65, 1.2, 0);
+  assert.deepEqual(a.grid, b.grid);
+});
+test("repeated whole-field dragging retains buffers and keeps full ribbons finite", () => {
+  const f = createThreadField(1440, 900, 720, [{ id: "a", x: 0.3, y: 0.5 }]);
+  const buffers = f.particles.map((p) => p.trail),
+    grid = f.grid,
+    potential = f.potential;
+  for (let i = 0; i < 240; i++) {
+    updateThreadAnchors(f, [
+      {
+        id: "a",
+        x: 0.5 + 0.4 * Math.sin(i / 21),
+        y: 0.5 + 0.4 * Math.cos(i / 27),
+      },
+    ]);
+    stepThreadField(f, 2, 3, 2);
+    reweaveThreadField(f);
+  }
+  assert.equal(f.grid, grid);
+  assert.equal(f.potential, potential);
+  assert.equal(new Set(f.particles.map((p) => p.color)).size, 6);
+  f.particles.forEach((p, i) => {
+    assert.equal(p.trail, buffers[i]);
+    assert.ok([...p.trail].every(Number.isFinite));
+  });
 });

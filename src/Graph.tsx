@@ -37,6 +37,14 @@ export default function Graph({
   flowTarget,
 }: Props) {
   const svg = useRef<SVGSVGElement>(null);
+  const stage = useRef<HTMLDivElement>(null);
+  const [fieldHost, setFieldHost] = useState<HTMLElement | null>(null);
+  useEffect(() => {
+    if (!landing)
+      setFieldHost(
+        stage.current?.closest<HTMLElement>(".canvas-section") ?? null,
+      );
+  }, [landing]);
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [draggedId, setDraggedId] = useState<string | null>(null);
@@ -206,25 +214,28 @@ export default function Graph({
     <div
       className={"graph-stage " + (landing ? "hero-graph" : "")}
       data-testid="graph-stage"
+      ref={stage}
     >
-      {landing ? (
-        flowTarget &&
-        createPortal(
-          <FlowField
-            settings={settings}
-            anchors={anchors}
-            anchorElement={svg}
-          />,
-          flowTarget,
-        )
-      ) : (
-        <FlowField
-          settings={settings}
-          subtle
-          anchors={anchors}
-          anchorElement={svg}
-        />
-      )}
+      {landing
+        ? flowTarget &&
+          createPortal(
+            <FlowField
+              settings={settings}
+              anchors={anchors}
+              anchorElement={svg}
+            />,
+            flowTarget,
+          )
+        : fieldHost &&
+          createPortal(
+            <FlowField
+              settings={settings}
+              subtle
+              anchors={anchors}
+              anchorElement={svg}
+            />,
+            fieldHost,
+          )}
       <svg
         ref={svg}
         id={landing ? "hero-svg" : "network-svg"}

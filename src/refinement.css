@@ -591,3 +591,20 @@ html.landing-snap {
     opacity: 1;
   }
 }
+
+/* Full-bleed flow remains independent of the graph's safe layout margins. */
+.workbench .canvas-section > .network-flow {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 1;
+  z-index: -1;
+  mix-blend-mode: normal;
+}
+.landing-shade {
+  background: linear-gradient(90deg, #14121660, transparent 58%);
+}
+
+.landing-flow-host .flow-field {
+  opacity: 1;
+}

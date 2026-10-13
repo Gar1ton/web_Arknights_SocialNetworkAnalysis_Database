@@ -20,6 +20,8 @@ export type ThreadField = {
   phase: number;
   tick: number;
   dirty: boolean;
+  reweave: boolean;
+  potential: Float32Array;
   random: () => number;
   anchors: FlowAnchor[];
 };
@@ -55,12 +57,14 @@ export function createThreadField(
     width,
     height,
     particles: [],
-    grid: new Float32Array(38 * 30 * 2),
-    columns: 38,
-    rows: 30,
+    grid: new Float32Array(52 * 40 * 2),
+    columns: 52,
+    rows: 40,
     phase: 0,
     tick: 0,
     dirty: false,
+    reweave: true,
+    potential: new Float32Array(54 * 42),
     random,
     anchors: anchors.length
       ? anchors
@@ -84,66 +88,84 @@ export function createThreadField(
       y,
       age: Math.floor(random() * 180),
       life: 520 + Math.floor(random() * 280),
-      color: i % 4,
+      color: pigment(x, y, width, height, random()),
     });
   }
   refreshGrid(field, 1.2);
   return field;
 }
+
+function pigment(
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  random: number,
+) {
+  const u = x / Math.min(width, height),
+    v = y / Math.min(width, height);
+  const band =
+    Math.sin(u * 4.7 + Math.sin(v * 3.1)) + Math.cos(v * 5.3 - u * 2.2);
+  return random < 0.23
+    ? Math.floor((random / 0.23) * 6)
+    : Math.min(5, Math.floor((band + 2) * 1.5));
+}
 function refreshGrid(f: ThreadField, turbulence: number, gravity = 1) {
   const unit = Math.min(f.width, f.height);
-  const aspectX = f.width / unit,
-    aspectY = f.height / unit;
-  const phase = f.phase * 0.2;
-  const amplitude = 0.15 * (0.75 + turbulence * 0.12);
+  const hx = f.width / unit / (f.columns - 1),
+    hy = f.height / unit / (f.rows - 1);
+  const stride = f.columns + 2,
+    phase = f.phase * 0.13;
   const totalMass = f.anchors.reduce((sum, a) => sum + (a.mass ?? 1), 0) || 1;
+  let mx = 0,
+    my = 0;
+  for (const a of f.anchors) {
+    const weight = (a.mass ?? 1) / totalMass;
+    mx += Math.sin(a.x * 4.1 + a.y * 2.7) * weight * gravity;
+    my += Math.cos(a.y * 3.7 - a.x * 2.3) * weight * gravity;
+  }
+  // A warped scalar potential, not a shared directional wind. Node positions
+  // influence its domain everywhere; broad vortices add local gravitational structure.
+  for (let gy = -1; gy <= f.rows; gy++)
+    for (let gx = -1; gx <= f.columns; gx++) {
+      const x = gx * hx,
+        y = gy * hy;
+      const u = x + 0.24 * Math.sin(2.1 * y + 0.8 * x + phase + mx) + mx * 0.36;
+      const v =
+        y + 0.22 * Math.cos(2.8 * x - 0.6 * y + phase * 0.7 + my) + my * 0.36;
+      let psi =
+        0.19 * Math.sin(3.1 * u + 1.7 * v + phase) +
+        0.15 * Math.cos(2.4 * u - 4.3 * v - phase * 0.7) +
+        0.11 * Math.sin(5.4 * u + 3.7 * v + 2.1) +
+        (0.016 + turbulence * 0.021) *
+          Math.sin(9.3 * u - 6.7 * v + phase * 0.8);
+      f.anchors.forEach((a, k) => {
+        const dx = x - (a.x * f.width) / unit,
+          dy = y - (a.y * f.height) / unit;
+        const radius = 0.52 + (k % 3) * 0.1;
+        psi +=
+          (((k % 2 ? 1 : -1) * 0.34 * gravity * (a.mass ?? 1)) / totalMass) *
+          Math.exp(-(dx * dx + dy * dy) / (2 * radius * radius));
+      });
+      f.potential[(gy + 1) * stride + gx + 1] = psi;
+    }
+  let peak = 0;
   for (let gy = 0; gy < f.rows; gy++)
     for (let gx = 0; gx < f.columns; gx++) {
-      const x = (gx / (f.columns - 1)) * aspectX,
-        y = (gy / (f.rows - 1)) * aspectY;
-      const sx = 7 * x + phase,
-        sy = 2.8 * y - phase * 0.7;
-      const ribbon = 4.5 * x + 2.2 * y + phase * 0.4;
-      // Curl of a smooth stream function plus through-flow: no inward force,
-      // no point sinks, and no per-cell normalization (which creates compression).
-      let dx =
-        1.1 +
-        amplitude * 2.8 * Math.sin(sx) * Math.cos(sy) +
-        0.088 * Math.cos(ribbon);
-      let dy =
-        0.1 -
-        amplitude * 7 * Math.cos(sx) * Math.sin(sy) -
-        0.18 * Math.cos(ribbon);
-      // Incommensurate stream-function modes break up parallel ribbons.
-      const detail = 0.025 + turbulence * 0.015;
-      const a = Math.cos(9.3 * x + 2.1 * y + phase * 1.4 + 1.8);
-      const b = Math.cos(5.7 * x - 1.3 * y - phase * 0.8 + 4.2);
-      const c = Math.cos(14.1 * x + 4.7 * y + phase * 0.6);
-      dx += detail * (2.1 * a - 1.3 * b) + turbulence * 0.003 * 4.7 * c;
-      dy -= detail * (9.3 * a + 5.7 * b) + turbulence * 0.003 * 14.1 * c;
-      f.anchors.forEach((a, k) => {
-        const ox = x - a.x * aspectX,
-          oy = y - a.y * aspectY;
-        const radius = 0.28 + (k % 3) * 0.035;
-        const envelope = Math.exp(-(ox * ox + oy * oy) / (2 * radius * radius));
-        // All nodes share one bounded influence budget, even when they overlap.
-        const strength = (0.42 * gravity * (a.mass ?? 1)) / totalMass;
-        const spin = k % 2 ? 1 : -1;
-        dx += (-oy / radius) * envelope * strength * spin;
-        dy += (ox / radius) * envelope * strength * spin;
-      });
-      const j = (gy * f.columns + gx) * 2;
+      const k = (gy + 1) * stride + gx + 1,
+        j = (gy * f.columns + gx) * 2;
+      const dx = (f.potential[k + stride] - f.potential[k - stride]) / (2 * hy);
+      const dy = -(f.potential[k + 1] - f.potential[k - 1]) / (2 * hx);
       f.grid[j] = dx;
       f.grid[j + 1] = dy;
+      peak = Math.max(peak, Math.hypot(dx, dy));
     }
+  // One global speed bound preserves curl; per-cell normalization would create sinks.
+  const scale = Math.min(1, 2.2 / (peak || 1));
+  for (let i = 0; i < f.grid.length; i++) f.grid[i] *= scale;
+  f.reweave = true;
 }
-// Move existing local ribbons with their field centers; preserve fixed buffers.
-export function updateThreadAnchors(
-  f: ThreadField,
-  next: FlowAnchor[],
-  gravity = 1,
-  follow = true,
-) {
+export function updateThreadAnchors(f: ThreadField, next: FlowAnchor[]) {
   const changed =
     next.length !== f.anchors.length ||
     next.some((a, i) => {
@@ -157,44 +179,55 @@ export function updateThreadAnchors(
       );
     });
   if (!changed) return;
-  if (follow && gravity > 0) {
-    const unit = Math.min(f.width, f.height);
-    const radius2 = (unit * 0.24) ** 2 * 2;
-    const moves = next.flatMap((a, i) => {
-      const old = a.id ? f.anchors.find((p) => p.id === a.id) : f.anchors[i];
-      if (!old) return [];
-      const dx = (a.x - old.x) * f.width,
-        dy = (a.y - old.y) * f.height;
-      const limit = Math.min(1, (unit * 0.08) / (Math.hypot(dx, dy) || 1));
-      return [
-        {
-          x: old.x * f.width,
-          y: old.y * f.height,
-          dx: dx * limit,
-          dy: dy * limit,
-          gain: Math.min(1, gravity) * 0.42 * Math.min(1, (a.mass ?? 1) / 1.5),
-        },
-      ];
-    });
-    for (const p of f.particles) {
-      let dx = 0,
-        dy = 0;
-      for (const m of moves) {
-        const influence =
-          Math.exp(-((p.x - m.x) ** 2 + (p.y - m.y) ** 2) / radius2) * m.gain;
-        dx += m.dx * influence;
-        dy += m.dy * influence;
-      }
-      p.x += dx;
-      p.y += dy;
-      for (let j = 0; j < p.trail.length; j += 2) {
-        p.trail[j] += dx;
-        p.trail[j + 1] += dy;
-      }
-    }
-  }
   f.anchors = next;
   f.dirty = true;
+}
+function velocity(f: ThreadField, x: number, y: number, out: Float32Array) {
+  const fx = Math.max(
+    0,
+    Math.min(f.columns - 1.001, (x / f.width) * (f.columns - 1)),
+  );
+  const fy = Math.max(
+    0,
+    Math.min(f.rows - 1.001, (y / f.height) * (f.rows - 1)),
+  );
+  const ix = Math.floor(fx),
+    iy = Math.floor(fy),
+    tx = fx - ix,
+    ty = fy - iy;
+  const base = (iy * f.columns + ix) * 2,
+    next = base + f.columns * 2;
+  for (let c = 0; c < 2; c++)
+    out[c] =
+      (f.grid[base + c] * (1 - tx) + f.grid[base + 2 + c] * tx) * (1 - ty) +
+      (f.grid[next + c] * (1 - tx) + f.grid[next + 2 + c] * tx) * ty;
+}
+// Re-integrate complete ribbons when the field changes, so a drag bends the whole
+// painting in the same frame instead of only changing tiny moving tips.
+const traceVelocity = new Float32Array(2);
+export function reweaveThreadField(f: ThreadField) {
+  if (!f.reweave) return;
+  for (const p of f.particles) {
+    let x = p.x,
+      y = p.y;
+    p.trail[p.head * 2] = x;
+    p.trail[p.head * 2 + 1] = y;
+    for (let offset = 3; offset < TRAIL_LENGTH; offset += 3) {
+      velocity(f, x, y, traceVelocity);
+      const nx = x - traceVelocity[0] * 5.4,
+        ny = y - traceVelocity[1] * 5.4;
+      for (let step = 1; step <= 3; step++) {
+        const index =
+          (p.head - offset + 3 - step + TRAIL_LENGTH) % TRAIL_LENGTH;
+        p.trail[index * 2] = x + ((nx - x) * step) / 3;
+        p.trail[index * 2 + 1] = y + ((ny - y) * step) / 3;
+      }
+      x = nx;
+      y = ny;
+    }
+    p.length = TRAIL_LENGTH;
+  }
+  f.reweave = false;
 }
 export function stepThreadField(
   f: ThreadField,
@@ -218,6 +251,7 @@ export function stepThreadField(
     ) {
       p.x = f.random() * f.width;
       p.y = f.random() * f.height;
+      p.color = pigment(p.x, p.y, f.width, f.height, f.random());
       p.age = 0;
       p.head = 0;
       p.length = 1;

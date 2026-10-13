@@ -1,9 +1,16 @@
 import { useEffect, useRef, type RefObject } from "react";
-import { palettes, type Settings } from "./settings";
+import { type Settings } from "./settings";
+const flowColors = {
+  dusk: ["#f3b572", "#ea79ad", "#a180df", "#67c1b9", "#c97bbb", "#dcbf86"],
+  glacier: ["#69c9c4", "#83a1de", "#bfddd0", "#638db5", "#aaa2d5", "#87baaa"],
+  ember: ["#ee895e", "#d36974", "#e5b968", "#ae648e", "#d989a2", "#eac6a0"],
+  mono: ["#ded6c8", "#afa8bd", "#bec7cc", "#9296a8", "#c3b7c6", "#e2d7ce"],
+};
 import {
   createThreadField,
   stepThreadField,
   updateThreadAnchors,
+  reweaveThreadField,
   particleBudget,
   TRAIL_LENGTH,
   type FlowAnchor,
@@ -49,14 +56,14 @@ export default function FlowField({
         y: (oy + p.y * scale) / box.height,
         mass: p.mass,
       }));
-      const s = live.current.settings;
-      updateThreadAnchors(field, projected, s.flowGravity, s.animate);
+      updateThreadAnchors(field, projected);
       canvas.dataset.attractors = String(points.length);
     };
     const paint = () => {
       if (!field) return;
       const s = live.current.settings,
-        colors = palettes[s.palette].colors;
+        colors = flowColors[s.palette];
+      reweaveThreadField(field);
       ctx.clearRect(0, 0, field.width, field.height);
       if (s.flowOpacity === 0) return;
       ctx.lineWidth = subtle ? 0.7 : 0.75;
@@ -66,7 +73,7 @@ export default function FlowField({
           0,
           Math.min(1, p.age / 26, (p.life - p.age) / 40),
         );
-        ctx.globalAlpha = fade * (subtle ? 0.22 : 0.32) * s.flowOpacity;
+        ctx.globalAlpha = fade * (subtle ? 0.44 : 0.46) * s.flowOpacity;
         ctx.strokeStyle = colors[p.color];
         ctx.beginPath();
         // Keep long silk-like trails without tripling Canvas path operations.
