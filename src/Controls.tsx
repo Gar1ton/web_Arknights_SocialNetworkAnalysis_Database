@@ -120,22 +120,6 @@ export default function Controls({
             >
               环形图
             </button>
-            <button
-              onClick={() =>
-                setAll({
-                  ...defaults,
-                  palette: "ember",
-                  particles: 2600,
-                  turbulence: 2,
-                  speed: 1,
-                  opacity: 0.6,
-                  layout: "force",
-                  animate: s.animate,
-                })
-              }
-            >
-              暖色动态
-            </button>
           </div>
         </section>
         <section className="control-section">
