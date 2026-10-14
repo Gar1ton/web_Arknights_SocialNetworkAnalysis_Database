@@ -78,7 +78,7 @@ npm run dev    # http://localhost:4178
 | **Moirai**（GNU AGPL-3.0） | 用于生成数据的记忆流水线。未经修改使用，本仓库不分发其代码。 |
 | `arc:chat`、`arc:embedvl`（KCL AI Hub） | 用于事件抽取、关系推断和人物画像合成的语言模型与嵌入模型（Qwen 系开源权重），受服务方条款和模型许可约束。 |
 | Claude 子代理（Anthropic） | 回放前识别未署名的说话人和旁白中的台词，结果经人工复核与更正。 |
-| ArknightsGameData | 剧情脚本与角色英文名所取自的社区游戏数据仓库，相关权利归游戏权利方所有。 |
+| [ArknightsGameData](https://github.com/Kengxxiao/ArknightsGameData) | 剧情脚本与角色英文名所取自的社区游戏数据仓库，相关权利归游戏权利方所有。 |
 | React、Vite、d3-force、Lucide、Fontsource 字体 | 网站使用的开源库，各自遵循其许可证。 |
 
 ### 五、联系
