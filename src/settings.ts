@@ -20,12 +20,17 @@ export type Settings = {
   overlap: boolean;
   locked: boolean;
   weight: "affinity" | "messages" | "equal";
-  coloring: "faction" | "affect" | "power";
+  coloring: "community" | "type" | "affect" | "power";
   minMessages: number;
   minWeight: number;
   animate: boolean;
   nodeSize: number;
+  labelSize: number;
 };
+/** Bumped when defaults change so old saves do not override them. */
+export const storageKey = "terra:settings:v2";
+/** Flow-field brightness on the landing and library pages, independent of the workbench. */
+export const showcaseFlow = 0.55;
 export const defaults: Settings = {
   layout: "organic",
   mode: "network",
@@ -34,7 +39,7 @@ export const defaults: Settings = {
   particles: 1600,
   speed: 0.65,
   turbulence: 1.2,
-  flowOpacity: 0.55,
+  flowOpacity: 0,
   flowGravity: 1,
   gravityNodes: 3,
   opacity: 0.35,
@@ -42,40 +47,37 @@ export const defaults: Settings = {
   labels: true,
   arrows: false,
   edgeLabels: false,
-  gravity: 0.6,
+  gravity: 1.2,
   repulsion: 190,
-  distance: 90,
+  distance: 100,
   overlap: true,
   locked: false,
   weight: "affinity",
-  coloring: "faction",
+  coloring: "community",
   minMessages: 0,
   minWeight: 0,
   animate: true,
   nodeSize: 1,
+  labelSize: 1,
 };
 export const palettes = {
   dusk: {
     name: "暮色",
-    en: "Kyoto dusk",
     colors: ["#df96a7", "#dcb27b", "#9b86b4", "#ba746f"],
     bg: "#141216",
   },
   glacier: {
     name: "冰川",
-    en: "Glacier",
     colors: ["#81c9cb", "#92b0db", "#c6decf", "#648baf"],
     bg: "#10191f",
   },
   ember: {
     name: "余烬",
-    en: "Ember",
     colors: ["#ed986b", "#d36851", "#d8b078", "#ac6461"],
     bg: "#1c1412",
   },
   mono: {
     name: "月白",
-    en: "Moonlight",
     colors: ["#d9d1c4", "#a6a1ad", "#b9b8bd", "#807b86"],
     bg: "#151518",
   },
@@ -88,7 +90,7 @@ export function parseSettings(raw: unknown): Settings {
     mode: ["network", "ego", "chord"],
     palette: Object.keys(palettes),
     weight: ["affinity", "messages", "equal"],
-    coloring: ["faction", "affect", "power"],
+    coloring: ["community", "type", "affect", "power"],
   };
   const ranges: Record<string, [number, number]> = {
     hops: [1, 2],
@@ -103,9 +105,10 @@ export function parseSettings(raw: unknown): Settings {
     gravity: [0.1, 2],
     repulsion: [50, 500],
     distance: [30, 180],
-    minMessages: [0, 1300],
+    minMessages: [0, 100000],
     minWeight: [0, 1],
     nodeSize: [0.6, 1.8],
+    labelSize: [0.6, 2],
   };
   const target = out as unknown as Record<string, unknown>;
   for (const [key, value] of Object.entries(raw)) {
@@ -128,7 +131,7 @@ export function parseSettings(raw: unknown): Settings {
 export function readSettings(): Settings {
   try {
     return parseSettings(
-      JSON.parse(localStorage.getItem("terra:settings:v1") || "null"),
+      JSON.parse(localStorage.getItem(storageKey) || "null"),
     );
   } catch {
     return { ...defaults };

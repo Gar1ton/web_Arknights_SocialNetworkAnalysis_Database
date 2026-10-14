@@ -8,9 +8,10 @@ import {
 } from "lucide-react";
 type Props = {
   settings: Settings;
+  maxMessages: number;
   update: <K extends keyof Settings>(key: K, value: Settings[K]) => void;
   setAll: (s: Settings) => void;
-  onExport: (type: "svg" | "json" | "csv") => void;
+  onExport: () => void;
   onReset: () => void;
 };
 export function Range({
@@ -80,6 +81,7 @@ export function Toggle({
 }
 export default function Controls({
   settings: s,
+  maxMessages,
   update,
   setAll,
   onExport,
@@ -89,21 +91,19 @@ export default function Controls({
     <>
       <div className="panel-heading">
         <span className="eyebrow">
-          <SlidersHorizontal size={12} /> FIELD CONTROLS
+          <SlidersHorizontal size={12} /> 画布设置
         </span>
         <h2>
-          Shape the <em>field.</em>
+          调整<em>显示</em>
         </h2>
-        <p>调整引力、光线与流动，让关系显现。</p>
+        <p>布局、连线、背景动效和配色都在这里调整，会自动保存在本机浏览器。</p>
       </div>
       <div className="panel-scroll">
         <section className="control-section">
-          <h3>
-            场景预设 <span>PRESETS</span>
-          </h3>
+          <h3>快速预设</h3>
           <div className="preset-row">
             <button onClick={() => setAll({ ...defaults, animate: s.animate })}>
-              星图 <span>Atlas</span>
+              默认
             </button>
             <button
               onClick={() =>
@@ -118,7 +118,7 @@ export default function Controls({
                 })
               }
             >
-              弦月 <span>Chord</span>
+              环形图
             </button>
             <button
               onClick={() =>
@@ -134,37 +134,35 @@ export default function Controls({
                 })
               }
             >
-              余烬 <span>Ember</span>
+              暖色动态
             </button>
           </div>
         </section>
         <section className="control-section">
-          <h3>
-            布局与引力 <span>I</span>
-          </h3>
+          <h3>布局</h3>
           <div className="select-control">
-            布局算法
+            布局方式
             <Select
-              aria-label="布局算法"
+              aria-label="布局方式"
               value={s.layout}
               onChange={(e) =>
                 update("layout", e.target.value as Settings["layout"])
               }
             >
-              <option value="organic">社群星系 · Clustered force</option>
-              <option value="force">力导向 · D3 force</option>
-              <option value="circular">环形 · Circular</option>
+              <option value="organic">按社群聚集</option>
+              <option value="force">自由分布</option>
+              <option value="circular">环形排列</option>
             </Select>
           </div>
           <Range
-            label="节点斥力"
+            label="节点之间的距离"
             value={s.repulsion}
             min={50}
             max={500}
             onChange={(v) => update("repulsion", v)}
           />
           <Range
-            label="中心引力"
+            label="向中心聚拢"
             value={s.gravity}
             min={0.1}
             max={2}
@@ -172,7 +170,7 @@ export default function Controls({
             onChange={(v) => update("gravity", v)}
           />
           <Range
-            label="理想边长"
+            label="连线长度"
             value={s.distance}
             min={30}
             max={180}
@@ -190,48 +188,47 @@ export default function Controls({
           />
           {(s.layout === "circular" || s.mode !== "network" || s.locked) && (
             <p className="control-note">
-              引力参数在未锁定的网络力导向布局中生效。
+              以上三项只在「全图」视图、非环形排列且未锁定时生效。
             </p>
           )}
         </section>
         <section className="control-section">
-          <h3>
-            关系与可见性 <span>II</span>
-          </h3>
+          <h3>关系与筛选</h3>
           <div className="select-control">
-            关系权重
+            连线粗细
             <Select
-              aria-label="关系权重"
+              aria-label="连线粗细"
               value={s.weight}
               onChange={(e) =>
                 update("weight", e.target.value as Settings["weight"])
               }
             >
-              <option value="affinity">关系强度</option>
-              <option value="messages">互动消息数</option>
-              <option value="equal">等权重</option>
+              <option value="affinity">按关系强度</option>
+              <option value="messages">按同场事件数</option>
+              <option value="equal">统一粗细</option>
             </Select>
           </div>
           <div className="select-control">
-            边的着色
+            连线颜色
             <Select
-              aria-label="边的着色"
+              aria-label="连线颜色"
               value={s.coloring}
               onChange={(e) =>
                 update("coloring", e.target.value as Settings["coloring"])
               }
             >
-              <option value="faction">所属社群</option>
-              <option value="affect">情感倾向 · Benevolence</option>
-              <option value="power">权力倾向 · Power</option>
+              <option value="community">按社群</option>
+              <option value="type">按关系类型（IPC 八类）</option>
+              <option value="affect">按友善度</option>
+              <option value="power">按支配度</option>
             </Select>
           </div>
           <Range
-            label="最低消息数"
-            value={s.minMessages}
+            label="最少发言数"
+            value={Math.min(s.minMessages, maxMessages)}
             min={0}
-            max={1300}
-            step={10}
+            max={maxMessages}
+            step={maxMessages > 400 ? 10 : 1}
             onChange={(v) => update("minMessages", v)}
           />
           <Range
@@ -243,7 +240,7 @@ export default function Controls({
             onChange={(v) => update("minWeight", v)}
           />
           <Range
-            label="边透明度"
+            label="连线透明度"
             value={s.opacity}
             min={0.05}
             max={1}
@@ -266,8 +263,17 @@ export default function Controls({
             step={0.1}
             onChange={(v) => update("nodeSize", v)}
           />
+          <Range
+            label="角色名大小"
+            value={s.labelSize}
+            min={0.6}
+            max={2}
+            step={0.1}
+            unit="×"
+            onChange={(v) => update("labelSize", v)}
+          />
           <Toggle
-            label="显示节点名称"
+            label="显示角色名"
             checked={s.labels}
             onChange={(v) => update("labels", v)}
           />
@@ -277,15 +283,17 @@ export default function Controls({
             onChange={(v) => update("arrows", v)}
           />
           <Toggle
-            label="显示关系标签"
+            label="显示关系类型"
             checked={s.edgeLabels}
             onChange={(v) => update("edgeLabels", v)}
           />
+          <p className="control-note">
+            关系强度按两人同场出现的事件数换算到
+            0–1；角色较多时默认隐藏发言少的角色。
+          </p>
         </section>
         <section className="control-section">
-          <h3>
-            流场与粒子 <span>III</span>
-          </h3>
+          <h3>背景动效</h3>
           <Range
             label="背景亮度"
             value={s.flowOpacity}
@@ -295,7 +303,7 @@ export default function Controls({
             onChange={(v) => update("flowOpacity", v)}
           />
           <Range
-            label="节点引力"
+            label="角色对背景的影响"
             value={s.flowGravity}
             min={0}
             max={2}
@@ -303,17 +311,18 @@ export default function Controls({
             onChange={(v) => update("flowGravity", v)}
           />
           <Range
-            label="引力中心数量"
+            label="影响背景的角色数"
             value={s.gravityNodes}
             min={1}
             max={5}
             onChange={(v) => update("gravityNodes", v)}
           />
           <p className="control-note">
-            大节点塑造整片流场；拖动节点可改变全局旋流与长线走向。与序章共享设置。
+            默认关闭：亮度为 0
+            时不渲染背景，节省性能。调高亮度后，关系最多的几个角色会带动背景线条。首页不受这里影响。
           </p>
           <Range
-            label="粒子密度"
+            label="背景线条数量"
             value={s.particles}
             min={0}
             max={3000}
@@ -330,7 +339,7 @@ export default function Controls({
             onChange={(v) => update("speed", v)}
           />
           <Range
-            label="流场扰动"
+            label="线条弯曲程度"
             value={s.turbulence}
             min={0.2}
             max={3}
@@ -338,15 +347,13 @@ export default function Controls({
             onChange={(v) => update("turbulence", v)}
           />
           <Toggle
-            label="运行动效"
+            label="播放动效"
             checked={s.animate}
             onChange={(v) => update("animate", v)}
           />
         </section>
         <section className="control-section">
-          <h3>
-            色彩叙事 <span>IV</span>
-          </h3>
+          <h3>配色</h3>
           <div className="palette-row">
             {Object.entries(palettes).map(([key, p]) => (
               <button
@@ -366,23 +373,14 @@ export default function Controls({
               </button>
             ))}
           </div>
-          <p className="palette-caption">
-            {palettes[s.palette].en} — a different light, the same connections.
-          </p>
         </section>
         <section className="control-section">
-          <h3>
-            保存此刻 <span>V</span>
-          </h3>
-          <button className="wide-button" onClick={() => onExport("svg")}>
-            <Download size={14} /> 导出矢量星图 <ArrowUpRight size={14} />
+          <h3>导出</h3>
+          <button className="wide-button" onClick={onExport}>
+            <Download size={14} /> 导出图片（SVG） <ArrowUpRight size={14} />
           </button>
-          <div className="export-row">
-            <button onClick={() => onExport("json")}>JSON 数据</button>
-            <button onClick={() => onExport("csv")}>CSV 关系表</button>
-          </div>
           <p className="control-note">
-            导出当前可见的演示网络。设置自动保存在此浏览器。
+            导出当前画面中可见的角色和关系，格式为 SVG 矢量图。
           </p>
           <button className="text-button" onClick={onReset}>
             <RotateCcw size={12} /> 恢复默认设置

@@ -16,9 +16,22 @@ import {
   PanelRightClose,
   PanelRightOpen,
 } from "lucide-react";
-import { factions, nodeById, degree, neighborhood } from "./data";
-import { defaults, readSettings, type Settings, palettes } from "./settings";
-import { archiveGraph } from "./archives";
+import {
+  type ArchiveData,
+  defaultMinMessages,
+  neighborhood,
+  octantKeys,
+  octants,
+} from "./data";
+import { nodeColor, scaleColors } from "./colors";
+import {
+  defaults,
+  readSettings,
+  storageKey,
+  type Settings,
+  palettes,
+} from "./settings";
+import { useArchive, useManifest } from "./archives";
 import { resolveRoute } from "./routes";
 import Landing from "./Landing";
 import Library from "./Library";
@@ -26,6 +39,24 @@ import Graph from "./Graph";
 import Controls from "./Controls";
 import { NodeDetail, EdgeDetail } from "./Details";
 import { exportGraph } from "./export";
+const empty: ArchiveData = {
+  id: "",
+  communities: [],
+  stats: {
+    nodes: 0,
+    pairs: 0,
+    relations: 0,
+    mutual: 0,
+    density: 0,
+    reciprocity: 0,
+    avgDegree: 0,
+    octants: Object.fromEntries(octantKeys.map((k) => [k, 0])) as never,
+    avgBenevolence: 0,
+    avgPower: 0,
+  },
+  nodes: [],
+  edges: [],
+};
 export default function App() {
   const [route, setRoute] = useState(() => resolveRoute(location.hash));
   const [settings, setSettings] = useState<Settings>(() => {
@@ -40,15 +71,27 @@ export default function App() {
   const [selected, setSelected] = useState<string | null>(null),
     [selectedEdge, setSelectedEdge] = useState<string | null>(null);
   const [query, setQuery] = useState(""),
-    [faction, setFaction] = useState(-1),
+    [community, setCommunity] = useState(-1),
     [sort, setSort] = useState("degree"),
     [panelOpen, setPanelOpen] = useState(true),
     [resetKey, setResetKey] = useState(0),
     [toast, setToast] = useState("");
-  const dataset = useMemo(
-    () => archiveGraph(route.archiveId),
-    [route.archiveId],
+  const manifest = useManifest();
+  const loaded = useArchive(route.page === "graph" ? route.archiveId : null);
+  const archive = manifest.data?.archives.find((a) => a.id === route.archiveId);
+  const dataset = loaded.data || empty;
+  const byId = useMemo(
+    () => new Map(dataset.nodes.map((n) => [n.id, n])),
+    [dataset],
   );
+  const maxMessages = useMemo(
+    () => Math.max(10, ...dataset.nodes.map((n) => n.messages)),
+    [dataset],
+  );
+  useEffect(() => {
+    if (route.page === "graph" && manifest.data && !archive)
+      location.hash = "archives";
+  }, [route, manifest.data, archive]);
   useEffect(() => {
     const cb = () => {
       const next = resolveRoute(location.hash);
@@ -78,20 +121,20 @@ export default function App() {
     setSelected(null);
     setSelectedEdge(null);
     setQuery("");
-    setFaction(-1);
+    setCommunity(-1);
     setPanelTab("nodes");
     setSettings((s) => ({
       ...s,
       mode: "network",
-      minMessages: 0,
+      minMessages: defaultMinMessages(dataset.nodes),
       minWeight: 0,
       locked: false,
     }));
     setResetKey((k) => k + 1);
-  }, [route.archiveId]);
+  }, [dataset]);
   useEffect(() => {
     try {
-      localStorage.setItem("terra:settings:v1", JSON.stringify(settings));
+      localStorage.setItem(storageKey, JSON.stringify(settings));
     } catch {}
     document.documentElement.style.setProperty(
       "--bg",
@@ -117,7 +160,7 @@ export default function App() {
       }
       if (
         (e.target as HTMLElement).closest(
-          'input,select,textarea,button,a,[role="button"]',
+          'input,select,textarea,button,a,[role="button"],summary',
         )
       )
         return;
@@ -134,10 +177,19 @@ export default function App() {
     () =>
       dataset.nodes.filter(
         (n) =>
-          (faction < 0 || n.faction === faction) &&
+          (community < 0 || n.community === community) &&
           n.messages >= settings.minMessages,
       ),
-    [dataset, faction, settings.minMessages],
+    [dataset, community, settings.minMessages],
+  );
+  const hiddenByMessages = useMemo(
+    () =>
+      dataset.nodes.filter(
+        (n) =>
+          (community < 0 || n.community === community) &&
+          n.messages < settings.minMessages,
+      ).length,
+    [dataset, community, settings.minMessages],
   );
   const baseEdges = useMemo(() => {
     const ids = new Set(baseNodes.map((n) => n.id));
@@ -148,7 +200,10 @@ export default function App() {
         e.weight >= settings.minWeight,
     );
   }, [dataset, baseNodes, settings.minWeight]);
-  const egoCenter = selected || baseNodes[0]?.id || null;
+  const egoCenter =
+    selected ||
+    [...baseNodes].sort((a, b) => b.degree - a.degree)[0]?.id ||
+    null;
   const visibleNodes = useMemo(() => {
     if (settings.mode !== "ego" || !egoCenter) return baseNodes;
     const ids = neighborhood(egoCenter, baseEdges, settings.hops);
@@ -162,23 +217,26 @@ export default function App() {
     () =>
       baseNodes
         .filter((n) =>
-          (n.name + " " + n.en + " " + n.tags.join(" "))
+          (n.name + " " + n.en)
             .toLowerCase()
             .includes(query.trim().toLowerCase()),
         )
         .sort((a, b) =>
           sort === "degree"
-            ? degree(b.id, dataset.edges) - degree(a.id, dataset.edges)
+            ? b.degree - a.degree || b.messages - a.messages
             : sort === "messages"
               ? b.messages - a.messages
-              : a.name.localeCompare(b.name, "zh-CN"),
+              : sort === "betweenness"
+                ? b.betweenness - a.betweenness
+                : a.name.localeCompare(b.name, "zh-CN"),
         ),
-    [baseNodes, query, sort, dataset],
+    [baseNodes, query, sort],
   );
   const choose = (id: string) => {
-    const n = nodeById.get(id)!;
-    if (faction >= 0 && n.faction !== faction) setFaction(-1);
-    if (n.messages < settings.minMessages) update("minMessages", 0);
+    const n = byId.get(id);
+    if (!n) return;
+    if (community >= 0 && n.community !== community) setCommunity(-1);
+    if (n.messages < settings.minMessages) update("minMessages", n.messages);
     setSelected(id);
     setSelectedEdge(null);
     setPanelOpen(true);
@@ -195,7 +253,7 @@ export default function App() {
     setSelectedEdge(null);
   };
   const resetFilters = () => {
-    setFaction(-1);
+    setCommunity(-1);
     setQuery("");
     setSettings((s) => ({
       ...s,
@@ -205,23 +263,33 @@ export default function App() {
     }));
     clearDetails();
   };
-  const doExport = (type: "svg" | "json" | "csv") => {
+  const doExport = () => {
     try {
-      exportGraph(type, visibleNodes, visibleEdges, settings, {
-        id: dataset.archive.id,
-        title: dataset.archive.title,
+      exportGraph(settings, {
+        id: archive?.id || "",
+        title: archive?.title || "",
       });
-      setToast(type.toUpperCase() + " 演示文件已生成");
+      setToast("已导出 SVG 图片");
     } catch {
       setToast("导出未完成，请重新打开图谱后重试");
     }
   };
   const setMode = (mode: Settings["mode"]) => {
-    if (mode === "ego" && !selected) setSelected(baseNodes[0]?.id || null);
+    if (mode === "ego" && !selected) setSelected(egoCenter);
     update("mode", mode);
     setSelectedEdge(null);
   };
-  const archive = dataset.archive;
+  const stats = dataset.stats;
+  const octantTotal = octantKeys.reduce((s, k) => s + stats.octants[k], 0);
+  const legend =
+    settings.coloring === "type"
+      ? octantKeys.map((k) => [octants[k].name, octants[k].color])
+      : settings.coloring === "affect"
+        ? ["敌对", "中性", "友善"].map((l, i) => [l, scaleColors.affect[i]])
+        : settings.coloring === "power"
+          ? ["顺从", "中性", "主导"].map((l, i) => [l, scaleColors.power[i]])
+          : null;
+  const title = archive?.title || "关系图谱";
   return (
     <div
       className={
@@ -260,34 +328,27 @@ export default function App() {
               "explorer route-surface " + (!panelOpen ? "panel-collapsed" : "")
             }
           >
-            <section
-              className="canvas-section"
-              aria-label={archive.title + "关系图谱"}
-            >
+            <section className="canvas-section" aria-label={title + "关系图谱"}>
               <div className="canvas-heading">
                 <div className="workbench-breadcrumb">
                   <a href="#archives">
-                    <ArrowLeft size={13} /> 活动档案
+                    <ArrowLeft size={13} /> 剧情目录
                   </a>
                   <span>/</span>
-                  <span>{archive.code}</span>
+                  <span>{archive?.code}</span>
                 </div>
-                <h1>
-                  {archive.title}
-                  <span className="graph-demo-tag">DEMO</span>
-                </h1>
+                <h1>{title}</h1>
                 <p>
-                  {archive.en} <i />{" "}
                   {settings.mode === "ego" && egoCenter
-                    ? nodeById.get(egoCenter)?.name + "的关系邻域"
-                    : "每一条线，都曾是一段故事。"}
+                    ? byId.get(egoCenter)?.name + " 的关系圈"
+                    : `${visibleNodes.length} 名角色 · ${visibleEdges.length} 组关系`}
                 </p>
               </div>
-              <div className="view-switch" role="group" aria-label="网络视图">
+              <div className="view-switch" role="group" aria-label="视图">
                 {[
-                  ["network", "网络", Network],
-                  ["ego", "邻域", Focus],
-                  ["chord", "弦图", AudioLines],
+                  ["network", "全图", Network],
+                  ["ego", "关系圈", Focus],
+                  ["chord", "环形图", AudioLines],
                 ].map(([mode, label, Icon]) => {
                   const I = Icon as typeof Network;
                   return (
@@ -304,18 +365,19 @@ export default function App() {
                 })}
                 {settings.mode === "ego" && (
                   <Select
-                    aria-label="邻域深度"
+                    aria-label="关系圈范围"
                     value={settings.hops}
                     onChange={(e) => update("hops", +e.target.value)}
                   >
-                    <option value={1}>1 跳</option>
-                    <option value={2}>2 跳</option>
+                    <option value={1}>直接相关</option>
+                    <option value={2}>再往外一层</option>
                   </Select>
                 )}
               </div>
               <Graph
                 nodes={visibleNodes}
                 edges={visibleEdges}
+                communities={dataset.communities}
                 settings={settings}
                 selected={settings.mode === "ego" ? egoCenter : selected}
                 onSelect={choose}
@@ -323,14 +385,25 @@ export default function App() {
                 onAnimate={() => update("animate", !settings.animate)}
                 resetKey={resetKey}
               />
-              {!visibleNodes.length && (
+              {loaded.data && !visibleNodes.length && (
                 <div className="empty-graph">
                   <Orbit size={32} />
-                  <h2>这一片星空，暂时安静。</h2>
-                  <p>当前筛选条件下没有节点。</p>
+                  <h2>没有符合条件的角色</h2>
+                  <p>当前筛选条件下没有角色。</p>
                   <button className="wide-button" onClick={resetFilters}>
-                    清除筛选，重新探索
+                    清除筛选
                   </button>
+                </div>
+              )}
+              {!loaded.data && (
+                <div className="empty-graph load-state" role="status">
+                  <Orbit size={32} />
+                  <h2>{loaded.error ? "数据载入失败" : "正在载入关系数据…"}</h2>
+                  {loaded.error && (
+                    <a className="wide-button" href="#archives">
+                      返回剧情目录
+                    </a>
+                  )}
                 </div>
               )}
               <button
@@ -346,30 +419,35 @@ export default function App() {
               </button>
               <div className="canvas-bottom">
                 <div className="legend">
-                  {archive.factions.map((i) => {
-                    const f = factions[i];
-                    return (
-                      <button
-                        key={f.en}
-                        className={faction === i ? "active" : ""}
-                        aria-pressed={faction === i}
-                        onClick={() => {
-                          setFaction(faction === i ? -1 : i);
-                          clearDetails();
-                        }}
-                      >
-                        <i
-                          style={{
-                            background:
-                              settings.palette === "dusk"
-                                ? f.color
-                                : palettes[settings.palette].colors[i % 4],
+                  {legend
+                    ? legend.map(([label, color]) => (
+                        <span key={label} className="legend-item">
+                          <i style={{ background: color }} />
+                          {label}
+                        </span>
+                      ))
+                    : dataset.communities.map((c, i) => (
+                        <button
+                          key={i}
+                          className={community === i ? "active" : ""}
+                          aria-pressed={community === i}
+                          onClick={() => {
+                            setCommunity(community === i ? -1 : i);
+                            clearDetails();
                           }}
-                        />
-                        {f.name}
-                      </button>
-                    );
-                  })}
+                        >
+                          <i
+                            style={{
+                              background: nodeColor(
+                                i,
+                                dataset.communities,
+                                settings.palette,
+                              ),
+                            }}
+                          />
+                          {c.label}
+                        </button>
+                      ))}
                 </div>
                 <div className="canvas-help">
                   <span>
@@ -377,32 +455,26 @@ export default function App() {
                     滚轮缩放
                   </span>
                   <span>
-                    <kbd>SPACE</kbd> 暂停 <kbd>ESC</kbd> 取消选择
+                    <kbd>空格</kbd> 暂停动效 <kbd>ESC</kbd> 取消选择
                   </span>
                 </div>
               </div>
             </section>
             <aside className="side-panel" aria-label="图谱侧栏">
               <div className="workbench-context">
-                <a href="#" aria-label="Terra 首页">
+                <a href="#" aria-label="返回首页">
                   <Orbit size={17} />
-                  <span>
-                    TERRA <i>/</i> ATLAS
-                  </span>
+                  <span>方舟关系图谱</span>
                 </a>
                 <a
                   href="#archives"
                   className="switch-archive"
-                  aria-label="切换活动"
+                  aria-label="切换剧情"
                 >
                   <ArrowUpRight size={14} />
                 </a>
               </div>
-              <div
-                className="sidebar-tabs"
-                role="tablist"
-                aria-label="图谱工具"
-              >
+              <div className="sidebar-tabs" role="tablist" aria-label="侧栏">
                 <button
                   id="nodes-tab"
                   role="tab"
@@ -417,8 +489,7 @@ export default function App() {
                     }
                   }}
                 >
-                  <Orbit size={14} /> 节点导航{" "}
-                  <span>{dataset.nodes.length}</span>
+                  <Orbit size={14} /> 角色 <span>{dataset.nodes.length}</span>
                 </button>
                 <button
                   id="settings-tab"
@@ -449,11 +520,15 @@ export default function App() {
                 {panelTab === "settings" ? (
                   <Controls
                     settings={settings}
+                    maxMessages={maxMessages}
                     update={update}
                     setAll={setSettings}
                     onExport={doExport}
                     onReset={() => {
-                      setSettings({ ...defaults });
+                      setSettings({
+                        ...defaults,
+                        minMessages: defaultMinMessages(dataset.nodes),
+                      });
                       setResetKey((k) => k + 1);
                       setToast("已恢复默认设置");
                     }}
@@ -463,15 +538,18 @@ export default function App() {
                   <div className="detail-scroll">
                     <EdgeDetail
                       edge={dataset.edges.find((e) => e.id === selectedEdge)!}
+                      byId={byId}
                       onBack={clearDetails}
                       onSelect={choose}
                     />
                   </div>
-                ) : selected ? (
+                ) : selected && byId.has(selected) ? (
                   <div className="detail-scroll" key={selected}>
                     <NodeDetail
-                      node={nodeById.get(selected)!}
+                      node={byId.get(selected)!}
                       graphEdges={dataset.edges}
+                      byId={byId}
+                      communities={dataset.communities}
                       onBack={() => setSelected(null)}
                       onSelect={choose}
                       onEdge={chooseEdge}
@@ -484,18 +562,67 @@ export default function App() {
                 ) : (
                   <>
                     <div className="panel-heading">
-                      <span className="eyebrow">THE PEOPLE IN THIS STORY</span>
+                      <span className="eyebrow">角色列表</span>
                       <h2>
-                        Find your <em>orbit.</em>
+                        {stats.nodes} 名<em>角色</em>
                       </h2>
-                      <p>从一个名字出发，走进整个网络。</p>
+                      <p>点击名字，查看人格画像和人际关系。</p>
+                    </div>
+                    <div className="network-stats" aria-label="网络概况">
+                      <div>
+                        <strong>{stats.pairs}</strong>
+                        <span>组关系</span>
+                      </div>
+                      <div>
+                        <strong>{Math.round(stats.reciprocity * 100)}%</strong>
+                        <span>双向关系</span>
+                      </div>
+                      <div>
+                        <strong>{stats.avgDegree}</strong>
+                        <span>人均关系</span>
+                      </div>
+                      <div>
+                        <strong>{stats.density.toFixed(3)}</strong>
+                        <span>网络密度</span>
+                      </div>
+                      {octantTotal > 0 && (
+                        <div className="network-octants">
+                          <span>关系类型</span>
+                          <div className="breakdown-bar">
+                            {octantKeys.map((k) =>
+                              stats.octants[k] ? (
+                                <i
+                                  key={k}
+                                  title={`${octants[k].name} ${stats.octants[k]}`}
+                                  style={{
+                                    flex: stats.octants[k],
+                                    background: octants[k].color,
+                                  }}
+                                />
+                              ) : null,
+                            )}
+                          </div>
+                          <small>
+                            {[...octantKeys]
+                              .sort(
+                                (a, b) => stats.octants[b] - stats.octants[a],
+                              )
+                              .slice(0, 3)
+                              .map(
+                                (k) =>
+                                  `${octants[k].name} ${Math.round((stats.octants[k] / octantTotal) * 100)}%`,
+                              )
+                              .join(" · ")}
+                          </small>
+                        </div>
+                      )}
                     </div>
                     <div className="navigation-controls">
                       <label className="search-box">
                         <Search size={15} />
                         <input
-                          aria-label="搜索节点"
-                          placeholder="搜索角色、英文名或社群…"
+                          aria-label="搜索角色"
+                          placeholder="搜索角色中文名或英文名…"
                           value={query}
                           onChange={(e) => setQuery(e.target.value)}
                         />
@@ -511,34 +638,37 @@ export default function App() {
                       <div className="filter-row">
                         <Select
                           aria-label="社群筛选"
-                          value={faction}
+                          value={community}
                           onChange={(e) => {
-                            setFaction(+e.target.value);
+                            setCommunity(+e.target.value);
                             clearDetails();
                           }}
                         >
                           <option value={-1}>全部社群</option>
-                          {archive.factions.map((i) => (
+                          {dataset.communities.map((c, i) => (
                             <option value={i} key={i}>
-                              {factions[i].name}
+                              {c.label}
                             </option>
                           ))}
                         </Select>
                         <Select
-                          aria-label="节点排序"
+                          aria-label="角色排序"
                           value={sort}
                           onChange={(e) => setSort(e.target.value)}
                         >
-                          <option value="degree">关联度排序</option>
-                          <option value="messages">消息数排序</option>
-                          <option value="name">名称排序</option>
+                          <option value="degree">按关系数</option>
+                          <option value="messages">按发言数</option>
+                          <option value="betweenness">按中介中心性</option>
+                          <option value="name">按名称</option>
                         </Select>
                       </div>
                       <div className="list-heading">
-                        <span>节点索引</span>
                         <span>
-                          {list.length.toString().padStart(2, "0")} OPERATORS
+                          {hiddenByMessages
+                            ? `已隐藏发言少于 ${settings.minMessages} 条的 ${hiddenByMessages} 人`
+                            : "全部角色"}
                         </span>
+                        <span>共 {list.length} 人</span>
                       </div>
                     </div>
                     <div className="node-list">
@@ -560,7 +690,11 @@ export default function App() {
                             className="node-symbol"
                             style={
                               {
-                                "--node-color": factions[n.faction].color,
+                                "--node-color": nodeColor(
+                                  n.community,
+                                  dataset.communities,
+                                  settings.palette,
+                                ),
                               } as React.CSSProperties
                             }
                           >
@@ -571,16 +705,26 @@ export default function App() {
                             <small>{n.en}</small>
                           </span>
                           <span className="row-degree">
-                            {degree(n.id, dataset.edges)}
-                            <small>LINKS</small>
+                            {sort === "messages"
+                              ? n.messages
+                              : sort === "betweenness"
+                                ? n.betweenness.toFixed(2)
+                                : n.degree}
+                            <small>
+                              {sort === "messages"
+                                ? "发言"
+                                : sort === "betweenness"
+                                  ? "中介"
+                                  : "关系"}
+                            </small>
                           </span>
                           <ArrowUpRight size={13} />
                         </button>
                       ))}
-                      {!list.length && (
+                      {!list.length && loaded.data && (
                         <div className="list-empty">
                           <Search size={23} />
-                          <p>没有找到匹配节点</p>
+                          <p>没有找到匹配的角色</p>
                           <button
                             className="text-button"
                             onClick={resetFilters}
@@ -592,10 +736,10 @@ export default function App() {
                     </div>
                     <div className="panel-bottom">
                       <a href="#archives">
-                        <ArrowLeft size={13} /> 选择另一段故事{" "}
+                        <ArrowLeft size={13} /> 换一段剧情{" "}
                         <ArrowUpRight size={14} />
                       </a>
-                      <small>当前：{archive.title} · 演示数据</small>
+                      <small>数值由大模型根据剧情对话推断，仅供参考。</small>
                     </div>
                   </>
                 )}
@@ -604,15 +748,15 @@ export default function App() {
           </main>
           <footer className="workspace-footer">
             <span>
-              <i className="status-dot" /> {archive.code} <b>演示数据</b>
+              <i className="status-dot" /> {archive?.code} <b>{title}</b>
             </span>
             <span>
-              {visibleNodes.length} NODES <i>/</i> {visibleEdges.length} EDGES{" "}
-              <i>/</i> {new Set(visibleNodes.map((n) => n.faction)).size}{" "}
-              COMMUNITIES
+              {visibleNodes.length} 名角色 <i>/</i> {visibleEdges.length} 组关系{" "}
+              <i>/</i> {new Set(visibleNodes.map((n) => n.community)).size}{" "}
+              个社群
             </span>
-            <button onClick={() => doExport("svg")}>
-              <Download size={12} /> EXPORT VIEW
+            <button onClick={doExport}>
+              <Download size={12} /> 导出 SVG
             </button>
           </footer>
         </>

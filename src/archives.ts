@@ -1,103 +1,108 @@
-import { nodes, edges } from "./data";
+import { useEffect, useState } from "react";
+import type { ArchiveData } from "./data";
+export type Category = "总览" | "主线" | "活动" | "密录" | "集成战略";
+/**
+ * Categories shown in this version. 总览 (merged tables) and 集成战略 are
+ * offline for now; their data files are still generated.
+ */
+export const categories: Category[] = ["主线", "活动", "密录"];
+export function visibleArchives(archives: Archive[]) {
+  return archives.filter((a) => categories.includes(a.category));
+}
 export type Archive = {
   id: string;
   title: string;
-  en: string;
-  category: "总览" | "主线" | "Side Story" | "Intermezzi";
+  category: Category;
   code: string;
+  order: number;
   description: string;
   color: string;
-  factions: number[];
+  source: string;
+  nodes: number;
+  pairs: number;
+  relations: number;
+  top: string[];
   bannerUrl?: string;
 };
-export const archives: Archive[] = [
-  {
-    id: "all",
-    title: "泰拉，全景关系档案",
-    en: "The complete constellation",
-    category: "总览",
-    code: "TERRA / ALL",
-    description: "跨越章节的总表。让每一条关系，在同一片星空中交汇。",
-    color: "#d3a6a0",
-    factions: [0, 1, 2, 3, 4, 5],
-  },
-  {
-    id: "dark-age",
-    title: "黑暗时代",
-    en: "The age of darkness",
-    category: "主线",
-    code: "EPISODE / 00",
-    description: "故事的起点，与命运初次相交的轨迹。",
-    color: "#b49baa",
-    factions: [0, 5],
-  },
-  {
-    id: "roaring-flare",
-    title: "怒号光明",
-    en: "Roaring flare",
-    category: "主线",
-    code: "EPISODE / 08",
-    description: "从切尔诺伯格到龙门，观察社群之间的桥梁。",
-    color: "#d2997e",
-    factions: [0, 1, 5],
-  },
-  {
-    id: "lone-trail",
-    title: "孤星",
-    en: "Lone trail",
-    category: "Side Story",
-    code: "SIDE STORY / 01",
-    description: "向群星发问，也向彼此寻找答案。",
-    color: "#a0bfbc",
-    factions: [0, 2],
-  },
-  {
-    id: "break-the-ice",
-    title: "风雪过境",
-    en: "Break the ice",
-    category: "Side Story",
-    code: "SIDE STORY / 02",
-    description: "雪山之下，那些从未静止的关系。",
-    color: "#a8b7d2",
-    factions: [0, 3],
-  },
-  {
-    id: "code-of-brawl",
-    title: "喧闹法则",
-    en: "Code of brawl",
-    category: "Side Story",
-    code: "SIDE STORY / 03",
-    description: "城市的脉搏，藏在每一次不期而遇。",
-    color: "#c69abd",
-    factions: [1, 4],
-  },
-  {
-    id: "darknights",
-    title: "生于黑夜",
-    en: "Darknights memoir",
-    category: "Intermezzi",
-    code: "INTERMEZZI / 01",
-    description: "沿着往昔留下的线索，重访故事的另一侧。",
-    color: "#b5a788",
-    factions: [0, 4, 5],
-  },
-];
-export function archiveGraph(id: string) {
-  const archive = archives.find((a) => a.id === id) || archives[0];
-  const subset = nodes.filter((n) => archive.factions.includes(n.faction));
-  const ids = new Set(subset.map((n) => n.id));
-  return {
-    archive,
-    nodes: subset,
-    edges: edges.filter((e) => ids.has(e.source) && ids.has(e.target)),
+export type Manifest = {
+  info: {
+    version: string;
+    totals: {
+      stories: number;
+      people: number;
+      namedPeople: number;
+      relations: number;
+    };
   };
+  archives: Archive[];
+};
+const base = "./data/";
+let manifestRequest: Promise<Manifest> | null = null;
+const archiveRequests = new Map<string, Promise<ArchiveData>>();
+async function getJson<T>(path: string): Promise<T> {
+  const response = await fetch(base + path);
+  if (!response.ok) throw Error(response.status + " " + path);
+  return response.json();
 }
-export function searchArchives(query: string, category = "全部") {
+export function loadManifest() {
+  manifestRequest ??= getJson<Manifest>("manifest.json").then(
+    (m) => ({ ...m, archives: visibleArchives(m.archives) }),
+    (error) => {
+      manifestRequest = null;
+      throw error;
+    },
+  );
+  return manifestRequest;
+}
+export function loadArchive(id: string) {
+  let request = archiveRequests.get(id);
+  if (!request) {
+    request = getJson<ArchiveData>(
+      "archives/" + encodeURIComponent(id) + ".json",
+    ).catch((error) => {
+      archiveRequests.delete(id);
+      throw error;
+    });
+    archiveRequests.set(id, request);
+  }
+  return request;
+}
+type Loaded<T> = { data: T | null; error: boolean };
+function useLoaded<T>(load: (() => Promise<T>) | null, key: string) {
+  const [state, setState] = useState<Loaded<T> & { key: string }>({
+    data: null,
+    error: false,
+    key,
+  });
+  useEffect(() => {
+    if (!load) return;
+    let live = true;
+    load().then(
+      (data) => live && setState({ data, error: false, key }),
+      () => live && setState({ data: null, error: true, key }),
+    );
+    return () => {
+      live = false;
+    };
+  }, [key]);
+  return state.key === key ? state : { data: null, error: false, key };
+}
+export function useManifest() {
+  return useLoaded(loadManifest, "manifest");
+}
+export function useArchive(id: string | null) {
+  return useLoaded(id ? () => loadArchive(id) : null, id || "");
+}
+export function searchArchives(
+  archives: Archive[],
+  query: string,
+  category = "全部",
+) {
   const q = query.trim().toLocaleLowerCase();
   return archives.filter(
     (a) =>
       (category === "全部" || a.category === category) &&
-      [a.title, a.en, a.code, a.category]
+      [a.title, a.code, a.category, ...a.top]
         .join(" ")
         .toLocaleLowerCase()
         .includes(q),

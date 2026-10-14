@@ -5,16 +5,20 @@ import { Plus, Minus, Maximize, Play, Pause, RotateCcw } from "lucide-react";
 import {
   type AtlasNode,
   type AtlasEdge,
-  factions,
-  degree,
-  nodeById,
+  type Community,
+  degreeMap,
+  isMutual,
+  octants,
+  primary,
 } from "./data";
 import { type Settings, palettes } from "./settings";
+import { nodeColor, edgeColor } from "./colors";
 import { makeLayout, curve, type Point } from "./layout";
 import FlowField from "./FlowField";
 type Props = {
   nodes: AtlasNode[];
   edges: AtlasEdge[];
+  communities: Community[];
   settings: Settings;
   selected: string | null;
   onSelect: (id: string) => void;
@@ -27,6 +31,7 @@ type Props = {
 export default function Graph({
   nodes,
   edges,
+  communities,
   settings,
   selected,
   onSelect,
@@ -59,7 +64,7 @@ export default function Graph({
   } | null>(null);
   const previous = useRef<Map<string, Point>>(new Map());
   const computed = useMemo(
-    () => makeLayout(nodes, edges, settings, selected),
+    () => makeLayout(nodes, edges, settings, selected, landing),
     [
       nodes,
       edges,
@@ -147,6 +152,19 @@ export default function Graph({
       }),
     [leaders, draggedId, overrides, displayPositions, positions, pan, zoom],
   );
+  const byId = useMemo(() => new Map(nodes.map((n) => [n.id, n])), [nodes]);
+  const degrees = useMemo(() => degreeMap(edges), [edges]);
+  const rank = useMemo(() => {
+    const order = [...nodes].sort(
+      (a, b) =>
+        (degrees.get(b.id) || 0) - (degrees.get(a.id) || 0) ||
+        b.messages - a.messages,
+    );
+    return new Map(order.map((n, i) => [n.id, i]));
+  }, [nodes, degrees]);
+  const crowded = nodes.length > 70;
+  const prominentCount = Math.max(3, Math.ceil(nodes.length * 0.08));
+  const particleStep = edges.length > 400 ? Math.ceil(edges.length / 200) : 2;
   const focus = hover || selected;
   const connected = new Set(
     focus
@@ -158,7 +176,17 @@ export default function Graph({
         ]
       : [],
   );
-  const clamp = (v: number) => Math.max(0.55, Math.min(2.5, v));
+  const clamp = (v: number) => Math.max(0.3, Math.min(2.5, v));
+  /** Zoom that shows every node; the layout is centred on (500, 380). */
+  const fitZoom = () => {
+    let dx = 0,
+      dy = 0;
+    for (const p of positions.values()) {
+      dx = Math.max(dx, Math.abs(p.x - 500));
+      dy = Math.max(dy, Math.abs(p.y - 380));
+    }
+    return clamp(Math.min(1, 440 / Math.max(1, dx), 330 / Math.max(1, dy)));
+  };
   const coordinate = (e: PointerEvent<SVGSVGElement>) => {
     const m = svg.current!.getScreenCTM();
     return new DOMPoint(e.clientX, e.clientY).matrixTransform(m!.inverse());
@@ -201,15 +229,10 @@ export default function Graph({
     setHover(null);
   };
   const color = (n: AtlasNode) =>
-    settings.palette === "dusk"
-      ? factions[n.faction].color
-      : palettes[settings.palette].colors[n.faction % 4];
+    nodeColor(n.community, communities, settings.palette);
   const linkColor = (e: AtlasEdge) =>
-    settings.coloring === "faction"
-      ? color(nodeById.get(e.source)!)
-      : (settings.coloring === "affect" ? e.affect : e.power) >= 0
-        ? "#94c4b2"
-        : "#e18d9c";
+    edgeColor(e, settings.coloring, color(byId.get(e.source)!));
+  const name = (id: string) => byId.get(id)?.name || "";
   return (
     <div
       className={"graph-stage " + (landing ? "hero-graph" : "")}
@@ -241,7 +264,7 @@ export default function Graph({
         id={landing ? "hero-svg" : "network-svg"}
         viewBox="0 0 1000 760"
         role="group"
-        aria-label="交互式关系网络：选择节点查看档案，拖拽平移，滚轮缩放"
+        aria-label="关系图：点击角色查看详情，拖拽平移，滚轮缩放"
         onPointerDown={down}
         onPointerMove={move}
         onPointerUp={up}
@@ -300,7 +323,7 @@ export default function Graph({
               (settings.weight === "equal"
                 ? 1
                 : settings.weight === "messages"
-                  ? 0.5 + e.messages / 180
+                  ? 0.5 + Math.min(3, Math.sqrt(e.events) / 2)
                   : 0.5 + e.weight * 1.8);
             return (
               <g
@@ -331,16 +354,16 @@ export default function Graph({
                         onEdge(e.id);
                       }
                     }}
-                    aria-label={`${nodeById.get(e.source)!.name}与${nodeById.get(e.target)!.name}的关系`}
+                    aria-label={`${name(e.source)}与${name(e.target)}的关系`}
                     onClick={() => onEdge(e.id)}
                   >
                     <title>
-                      {nodeById.get(e.source)!.name} {e.mutual ? "⇄" : "→"}{" "}
-                      {nodeById.get(e.target)!.name} · {e.label}
+                      {name(e.source)} {isMutual(e) ? "⇄" : e.ab ? "→" : "←"}{" "}
+                      {name(e.target)} · {octants[primary(e).type].name}
                     </title>
                   </path>
                 )}
-                {(!focus || active) && i % 2 === 0 && (
+                {(!focus || active) && i % particleStep === 0 && (
                   <circle
                     r={active ? 2 : 1.3}
                     fill="currentColor"
@@ -356,34 +379,35 @@ export default function Graph({
                 )}
                 {settings.arrows && (
                   <g fill="currentColor" opacity={opacity}>
-                    {[e.mutual ? 0.65 : 0.8, ...(e.mutual ? [0.35] : [])].map(
-                      (t, j) => {
-                        const c = curve(a, b, i, settings.mode === "chord").c;
-                        const x =
-                            (1 - t) ** 2 * a.x +
-                            2 * (1 - t) * t * c.x +
-                            t * t * b.x,
-                          y =
-                            (1 - t) ** 2 * a.y +
-                            2 * (1 - t) * t * c.y +
-                            t * t * b.y;
-                        const angle =
-                          (Math.atan2(
-                            (1 - t) * (c.y - a.y) + t * (b.y - c.y),
-                            (1 - t) * (c.x - a.x) + t * (b.x - c.x),
-                          ) *
-                            180) /
-                            Math.PI +
-                          (j ? 180 : 0);
-                        return (
-                          <path
-                            key={j}
-                            d="M-5 -2.5L1 0L-5 2.5Z"
-                            transform={`translate(${x} ${y}) rotate(${angle})`}
-                          />
-                        );
-                      },
-                    )}
+                    {[
+                      ...(e.ab ? [[isMutual(e) ? 0.65 : 0.8, 0]] : []),
+                      ...(e.ba ? [[isMutual(e) ? 0.35 : 0.2, 1]] : []),
+                    ].map(([t, j]) => {
+                      const c = curve(a, b, i, settings.mode === "chord").c;
+                      const x =
+                          (1 - t) ** 2 * a.x +
+                          2 * (1 - t) * t * c.x +
+                          t * t * b.x,
+                        y =
+                          (1 - t) ** 2 * a.y +
+                          2 * (1 - t) * t * c.y +
+                          t * t * b.y;
+                      const angle =
+                        (Math.atan2(
+                          (1 - t) * (c.y - a.y) + t * (b.y - c.y),
+                          (1 - t) * (c.x - a.x) + t * (b.x - c.x),
+                        ) *
+                          180) /
+                          Math.PI +
+                        (j ? 180 : 0);
+                      return (
+                        <path
+                          key={j}
+                          d="M-5 -2.5L1 0L-5 2.5Z"
+                          transform={`translate(${x} ${y}) rotate(${angle})`}
+                        />
+                      );
+                    })}
                   </g>
                 )}
                 {settings.edgeLabels && (!focus || active) && (
@@ -394,7 +418,7 @@ export default function Graph({
                     fontSize="12"
                     textAnchor="middle"
                   >
-                    {e.label}
+                    {octants[primary(e).type].name}
                   </text>
                 )}
               </g>
@@ -403,10 +427,19 @@ export default function Graph({
           {nodes.map((n) => {
             const p = point(n.id);
             if (!p) return null;
-            const d = degree(n.id, edges),
+            const d = degrees.get(n.id) || 0,
               r = (4 + Math.sqrt(d) * 1.6) * settings.nodeSize;
             const isSelected = selected === n.id;
-            const prominent = d >= 8 || n.id === "n0";
+            const prominent = rank.get(n.id)! < prominentCount;
+            const showLabel =
+              focus === n.id ||
+              isSelected ||
+              (landing
+                ? prominent
+                : settings.labels &&
+                  (!crowded ||
+                    rank.get(n.id)! < 45 ||
+                    (!!focus && connected.has(n.id))));
             const muted = focus && !connected.has(n.id);
             const radialLabel =
               !landing &&
@@ -425,7 +458,7 @@ export default function Graph({
                 className="graph-node"
                 role="button"
                 tabIndex={landing ? -1 : 0}
-                aria-label={`${n.name} · ${factions[n.faction].name} · ${d}条关系`}
+                aria-label={`${n.name} · ${communities[n.community]?.label || ""} · ${d}组关系`}
                 aria-pressed={isSelected}
                 onMouseEnter={() => setHover(n.id)}
                 onMouseLeave={() => setHover(null)}
@@ -439,12 +472,14 @@ export default function Graph({
                 }}
               >
                 <circle r={r + 13} fill="transparent" />
-                <circle
-                  r={r * 2.2}
-                  fill={color(n)}
-                  opacity={isSelected ? 0.35 : 0.14}
-                  filter={`url(#${landing ? "hero-glow" : "node-glow"})`}
-                />
+                {(nodes.length <= 160 || isSelected || prominent) && (
+                  <circle
+                    r={r * 2.2}
+                    fill={color(n)}
+                    opacity={isSelected ? 0.35 : 0.14}
+                    filter={`url(#${landing ? "hero-glow" : "node-glow"})`}
+                  />
+                )}
                 {(prominent || isSelected) && (
                   <circle
                     r={r + 7}
@@ -472,33 +507,29 @@ export default function Graph({
                   strokeWidth={isSelected ? 1.8 : 1}
                 />
                 <circle r={r * 0.42} fill={color(n)} />
-                {(settings.labels || focus === n.id || isSelected) &&
-                  (!landing ||
-                    prominent ||
-                    n.id === "n17" ||
-                    n.id === "n33") && (
-                    <text
-                      x={radialLabel ? (leftLabel ? -1 : 1) * (r + 12) : 0}
-                      y={radialLabel ? 5 : r + 19}
-                      transform={
-                        radialLabel ? "rotate(" + labelAngle + ")" : undefined
-                      }
-                      textAnchor={
-                        radialLabel ? (leftLabel ? "end" : "start") : "middle"
-                      }
-                      fontSize={prominent ? 18 : 15}
-                      fill={prominent ? "#eee0d0" : "#b9adaf"}
-                      fontFamily="Inter, Microsoft YaHei, sans-serif"
-                      style={{
-                        paintOrder: "stroke",
-                        stroke: palettes[settings.palette].bg,
-                        strokeWidth: 3,
-                      }}
-                    >
-                      {n.name}
-                    </text>
-                  )}
-                {landing && prominent && (
+                {showLabel && (
+                  <text
+                    x={radialLabel ? (leftLabel ? -1 : 1) * (r + 12) : 0}
+                    y={radialLabel ? 5 : r + 7 + 12 * settings.labelSize}
+                    transform={
+                      radialLabel ? "rotate(" + labelAngle + ")" : undefined
+                    }
+                    textAnchor={
+                      radialLabel ? (leftLabel ? "end" : "start") : "middle"
+                    }
+                    fontSize={(prominent ? 18 : 15) * settings.labelSize}
+                    fill={prominent ? "#eee0d0" : "#b9adaf"}
+                    fontFamily="Inter, Microsoft YaHei, sans-serif"
+                    style={{
+                      paintOrder: "stroke",
+                      stroke: palettes[settings.palette].bg,
+                      strokeWidth: 3,
+                    }}
+                  >
+                    {n.name}
+                  </text>
+                )}
+                {landing && prominent && n.en && (
                   <text
                     y={r + 33}
                     textAnchor="middle"
@@ -518,7 +549,7 @@ export default function Graph({
         <>
           <div className="graph-corner">
             <span className="status-dot" />
-            {settings.animate ? "FIELD IN MOTION" : "FIELD AT REST"}
+            {settings.animate ? "动效开启" : "动效已暂停"}
             <span className="corner-sep">/</span>
             {Math.round(zoom * 100)}%
           </div>
@@ -537,9 +568,10 @@ export default function Graph({
             </button>
             <i />
             <button
-              aria-label="适应画布"
+              aria-label="缩放到显示全图"
+              title="显示全图"
               onClick={() => {
-                setZoom(1);
+                setZoom(fitZoom());
                 setPan({ x: 0, y: 0 });
               }}
             >

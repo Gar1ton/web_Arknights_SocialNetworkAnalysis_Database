@@ -2,9 +2,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowUpRight, ArrowDown, ArrowRight, Pause, Play } from "lucide-react";
 import Brand from "./Brand";
 import Graph from "./Graph";
-import { nodes, edges } from "./data";
-import { archives } from "./archives";
-import { type Settings } from "./settings";
+import { useArchive, useManifest } from "./archives";
+import { type Settings, showcaseFlow } from "./settings";
+import { createScreenScroller, scrollsInside } from "./screenScroll";
+const fmt = (n?: number) => (n == null ? "—" : n.toLocaleString("zh-CN"));
 export default function Landing({
   settings,
   onAnimate,
@@ -13,6 +14,34 @@ export default function Landing({
   onAnimate: () => void;
 }) {
   const root = useRef<HTMLElement>(null);
+  const animate = useRef(settings.animate);
+  animate.current = settings.animate;
+  /** Moves to screen 0 (hero) or 1 (introduction); set by the effect below. */
+  const goTo = useRef<(screen: 0 | 1) => void>(() => {});
+  const manifest = useManifest().data;
+  // Preview the story with the most relations (merged tables are hidden).
+  const featured = manifest?.archives.reduce<
+    (typeof manifest.archives)[number] | null
+  >((best, a) => (!best || a.pairs > best.pairs ? a : best), null);
+  const overview = useArchive(featured?.id || null).data;
+  const preview = useMemo(() => {
+    if (!overview) return { nodes: [], edges: [] };
+    const nodes = [...overview.nodes]
+      .sort((a, b) => b.degree - a.degree || b.messages - a.messages)
+      .slice(0, 48);
+    const ids = new Set(nodes.map((n) => n.id));
+    return {
+      nodes,
+      edges: overview.edges.filter(
+        (e) => ids.has(e.source) && ids.has(e.target),
+      ),
+    };
+  }, [overview]);
+  // Counted from the stories shown, not the full build.
+  const shownRelations = manifest?.archives.reduce(
+    (s, a) => s + a.relations,
+    0,
+  );
   const [flowTarget, setFlowTarget] = useState<HTMLDivElement | null>(null);
   const artSettings = useMemo(
     () => ({
@@ -22,23 +51,68 @@ export default function Landing({
       labels: true,
       locked: false,
       opacity: 0.42,
+      labelSize: 1,
+      flowOpacity: showcaseFlow,
     }),
     [settings],
   );
   useEffect(() => {
     document.documentElement.classList.add("landing-snap");
+    const about = () => document.getElementById("about");
+    const introTop = () =>
+      Math.round((about()?.getBoundingClientRect().top ?? 0) + scrollY);
     let raf = 0;
     const update = () => {
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(() => {
         root.current?.style.setProperty(
           "--journey",
-          String(Math.min(1, scrollY / (innerHeight * 0.85))),
+          String(Math.min(1, scrollY / Math.max(1, introTop()))),
         );
       });
     };
     update();
     addEventListener("scroll", update, { passive: true });
+    // Desktop: the page follows the wheel between two stops (hero and
+    // introduction); touch layouts (≤760px) keep CSS scroll snap.
+    const desktop = matchMedia("(min-width: 761px)");
+    const reduced = matchMedia("(prefers-reduced-motion: reduce)");
+    const scroller = createScreenScroller(
+      introTop,
+      () => !animate.current || reduced.matches,
+    );
+    goTo.current = (screen) => {
+      if (desktop.matches) scroller.go(screen);
+      else if (screen) about()?.scrollIntoView({ behavior: "smooth" });
+      else scrollTo({ top: 0, behavior: "smooth" });
+    };
+    const wheel = (e: WheelEvent) => {
+      if (!desktop.matches || e.ctrlKey || !e.deltaY) return;
+      const dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;
+      if (scroller.wheel(dy, scrollsInside(e.target, dy))) e.preventDefault();
+    };
+    const keys: Record<string, 0 | 1> = {
+      ArrowDown: 1,
+      PageDown: 1,
+      End: 1,
+      ArrowUp: 0,
+      PageUp: 0,
+      Home: 0,
+    };
+    const key = (e: KeyboardEvent) => {
+      const screen = keys[e.key];
+      if (screen === undefined || !desktop.matches) return;
+      if ((e.target as HTMLElement).closest("input,textarea,select")) return;
+      if (scrollsInside(e.target, screen ? 1 : -1)) return;
+      e.preventDefault();
+      scroller.go(screen);
+    };
+    const settle = () => {
+      if (desktop.matches) scroller.release();
+    };
+    addEventListener("wheel", wheel, { passive: false });
+    addEventListener("keydown", key);
+    addEventListener("scrollend", settle);
     const io = new IntersectionObserver(
       (entries) =>
         entries.forEach((e) => {
@@ -49,6 +123,10 @@ export default function Landing({
     root.current?.querySelectorAll(".reveal").forEach((e) => io.observe(e));
     return () => {
       document.documentElement.classList.remove("landing-snap");
+      scroller.stop();
+      removeEventListener("wheel", wheel);
+      removeEventListener("keydown", key);
+      removeEventListener("scrollend", settle);
       removeEventListener("scroll", update);
       cancelAnimationFrame(raf);
       io.disconnect();
@@ -71,34 +149,32 @@ export default function Landing({
         </div>
         <div className="hero-copy">
           <span className="eyebrow">
-            <i /> ARKNIGHTS · SOCIAL NETWORK ANALYSIS
+            <i /> 明日方舟 · 剧情人物关系分析
           </span>
           <h1>
-            Every connection
+            角色之间的
             <br />
-            leaves a <em>trace.</em>
+            <em>关系图谱</em>
           </h1>
           <div className="hero-divider" />
           <p className="hero-chinese">
-            于万千轨迹中，
+            {fmt(manifest?.archives.length)} 段剧情
             <br />
-            看见彼此的引力。
+            {fmt(shownRelations)} 条人物关系
           </p>
           <p className="hero-description">
-            从一段故事出发，走进关系的宇宙。
+            按主线、活动和干员密录整理，
             <br />
-            关于角色、社群，以及将彼此连接的无形之线。
+            看谁和谁有交集、彼此态度如何，以及每个角色的性格画像。
           </p>
           <a href="#archives" className="primary-cta">
-            选择一段故事 <ArrowUpRight size={20} />
+            选择一段剧情 <ArrowUpRight size={20} />
           </a>
           <a
             href="#about"
             onClick={(e) => {
               e.preventDefault();
-              document.getElementById("about")?.scrollIntoView({
-                behavior: settings.animate ? "smooth" : "auto",
-              });
+              goTo.current(1);
             }}
             className="secondary-cta"
           >
@@ -106,7 +182,7 @@ export default function Landing({
           </a>
         </div>
         <div className="landing-rail">
-          <span>AN ATLAS OF INVISIBLE THREADS</span>
+          <span>明日方舟剧情人物关系</span>
           <button
             onClick={onAnimate}
             aria-label={settings.animate ? "暂停背景动效" : "播放背景动效"}
@@ -116,15 +192,16 @@ export default function Landing({
         </div>
       </div>
       <div className="landing-scenes">
-        <section className="scene-hero" aria-label="泰拉关系星图预览">
+        <section className="scene-hero" aria-label="剧情关系预览">
           <div className="scene-number">
-            <span>FIELD NOTES / 001</span>
-            <i /> TERRA
+            <span>{featured?.code}</span>
+            <i /> 预览
           </div>
           <div className="hero-constellation">
             <Graph
-              nodes={nodes}
-              edges={edges}
+              nodes={preview.nodes}
+              edges={preview.edges}
+              communities={overview?.communities || []}
               settings={artSettings}
               selected={null}
               onSelect={() => {
@@ -138,13 +215,16 @@ export default function Landing({
             />
           </div>
           <div className="scene-caption">
-            <span>Constellation, No. 001</span>
+            <span>
+              {featured?.title} · 关系最多的 {preview.nodes.length} 名角色
+            </span>
             <small>
-              {nodes.length} NODES · {edges.length} THREADS · ENDLESS STORIES
+              {preview.nodes.length} 名角色 · {preview.edges.length} 组关系 ·
+              点击进入剧情目录
             </small>
           </div>
           <div className="scroll-cue">
-            <span>SCROLL TO DISCOVER</span>
+            <span>向下了解更多</span>
             <i />
             <ArrowDown size={12} />
           </div>
@@ -155,72 +235,92 @@ export default function Landing({
           aria-labelledby="about-heading"
         >
           <div className="reveal">
-            <span className="eyebrow">01 / A SHORT INTRODUCTION</span>
+            <span className="eyebrow">关于这个项目</span>
             <h2 id="about-heading">
-              Stories are made
+              这里能
               <br />
-              of <em>connections.</em>
+              <em>看到什么</em>
             </h2>
             <p className="intro-lead">
-              不只是谁与谁相遇，
+              把全部剧情台词整理成对话，
               <br />
-              更是每一次相遇，如何改变故事。
+              再由大模型推断人物之间的关系和性格。
             </p>
             <p className="intro-prose">
-              Terra Relation Atlas
-              将《明日方舟》的叙事转化为可以漫游的关系网络。以角色为节点，以互动为轨迹，让故事中不易察觉的联系，拥有可见的形状。
+              目前收录主线第 0–17
+              章、全部活动和干员密录，每段剧情一张关系图。图中既有具名角色，也有剧情里的无名角色。
+            </p>
+            <p className="intro-team">
+              <span>
+                制作
+                <a
+                  href="https://github.com/Gar1ton"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  @Gar1ton
+                </a>
+                <a
+                  href="https://github.com/MKiyoaki"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  @MKiyoaki
+                </a>
+              </span>
+              <span>
+                联系
+                <a href="mailto:zefeng.1.wu@kcl.ac.uk">zefeng.1.wu@kcl.ac.uk</a>
+              </span>
             </p>
           </div>
           <div className="intro-chapters">
             <article className="reveal">
               <span>01</span>
               <div>
-                <h3>一段剧情，一片星空。</h3>
+                <h3>人际态度（IPC）</h3>
                 <p>
-                  从活动或主线章节进入独立图谱，也可以在总览中，寻找跨越故事的联系。
+                  每组关系分两个方向：A 对 B、B 对
+                  A。用「友善—敌对」和「主导—顺从」两个维度描述态度，并归为友好、主导、冷淡、顺从等八类。
                 </p>
               </div>
             </article>
             <article className="reveal">
               <span>02</span>
               <div>
-                <h3>顺着关系，读懂角色。</h3>
+                <h3>关系网络（SNA）</h3>
                 <p>
-                  选中一个节点，观察它的邻域、互动方向与关系强度，发现社群之间的关键连接。
+                  统计每个角色的关系数、发言数和中介中心性，并自动划分社群，方便找出核心人物和各自的圈子。
                 </p>
               </div>
             </article>
             <article className="reveal">
               <span>03</span>
               <div>
-                <h3>把观看的方式，交给你。</h3>
-                <p>在同一侧栏里调整布局与视觉，让每次探索都保有自己的节奏。</p>
+                <h3>大五人格</h3>
+                <p>
+                  开放性、尽责性、外向性、宜人性、神经质五项，按 0–100
+                  显示，并附上每项的评分依据。
+                </p>
               </div>
             </article>
           </div>
           <div className="intro-signoff reveal">
             <span className="intro-star">✳</span>
             <p>
-              {archives.length - 1} 段示例故事，一张全景总表。
-              <small>目前使用演示图谱，不代表正式分析结果。</small>
+              {fmt(manifest?.archives.length)} 段剧情，每段一张关系图。
+              <small>
+                所有数值都是大模型对台词的解读，可能有误，不是官方设定。非官方项目，与鹰角网络无关联。
+              </small>
             </p>
-            <a href="#archives" aria-label="浏览活动档案">
+            <a href="#archives" aria-label="浏览剧情目录">
               <ArrowUpRight size={23} />
             </a>
           </div>
           <div className="intro-footer">
-            <button
-              onClick={() =>
-                window.scrollTo({
-                  top: 0,
-                  behavior: settings.animate ? "smooth" : "instant",
-                })
-              }
-            >
-              ↑ 回到序章
-            </button>
+            <button onClick={() => goTo.current(0)}>↑ 回到顶部</button>
             <a href="#archives">
-              ENTER THE ARCHIVE <ArrowRight size={11} />
+              进入剧情目录 <ArrowRight size={11} />
             </a>
           </div>
         </section>

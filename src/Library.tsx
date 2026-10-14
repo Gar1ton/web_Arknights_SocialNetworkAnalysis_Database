@@ -3,12 +3,13 @@ import { ArrowUpRight, ArrowLeft, Search, X, Orbit } from "lucide-react";
 import Brand from "./Brand";
 import FlowField from "./FlowField";
 import {
-  archives,
-  archiveGraph,
+  categories,
   searchArchives,
+  useManifest,
   type Archive,
 } from "./archives";
-import { type Settings } from "./settings";
+const PAGE = 24;
+import { type Settings, showcaseFlow } from "./settings";
 function Cover({ archive, index }: { archive: Archive; index: number }) {
   return (
     <div className={"archive-cover cover-" + index} aria-hidden="true">
@@ -73,7 +74,7 @@ function Cover({ archive, index }: { archive: Archive; index: number }) {
         </svg>
       )}
       <span className="cover-index">
-        {index === 0 ? "∞" : String(index).padStart(2, "0")}
+        {String(archive.order).padStart(2, "0")}
       </span>
     </div>
   );
@@ -93,14 +94,18 @@ export default function Library({ settings }: { settings: Settings }) {
     addEventListener("keydown", shortcut);
     return () => removeEventListener("keydown", shortcut);
   }, []);
+  const manifest = useManifest();
+  const archives = manifest.data?.archives || [];
   const [query, setQuery] = useState(""),
-    [category, setCategory] = useState("全部");
+    [category, setCategory] = useState("全部"),
+    [shown, setShown] = useState(PAGE);
   const matches = useMemo(
-    () => searchArchives(query, category),
-    [query, category],
+    () => searchArchives(archives, query, category),
+    [archives, query, category],
   );
+  useEffect(() => setShown(PAGE), [query, category]);
   const artSettings = useMemo(
-    () => ({ ...settings, particles: 480 }),
+    () => ({ ...settings, particles: 480, flowOpacity: showcaseFlow }),
     [settings],
   );
   return (
@@ -116,41 +121,47 @@ export default function Library({ settings }: { settings: Settings }) {
         <div className="library-brand-row">
           <Brand />
           <a href="#" className="quiet-link">
-            <ArrowLeft size={13} /> 返回序章
+            <ArrowLeft size={13} /> 返回首页
           </a>
         </div>
         <section className="library-intro">
           <div>
             <span className="eyebrow">
-              <i /> THE NARRATIVE INDEX
+              <i /> 剧情目录
             </span>
             <h1>
-              Every story,
-              <br />a <em>constellation.</em>
+              选择一段
+              <br />
+              <em>剧情</em>
             </h1>
-            <p>选择一段故事，沿着关系进入它的世界。</p>
+            <p>每段剧情一张关系图，按剧情顺序排列。</p>
           </div>
           <div className="library-edition">
-            <span>THE ARCHIVE</span>
-            <strong>00—06</strong>
+            <span>收录</span>
+            <strong>{archives.length || "—"}</strong>
             <p>
-              一张全景总表
+              段剧情
               <br />
-              六段故事的关系切片
+              {categories
+                .map(
+                  (c) =>
+                    `${c} ${archives.filter((a) => a.category === c).length}`,
+                )
+                .join(" · ")}
             </p>
-            <small>DEMO COLLECTION / VOL. 01</small>
+            <small>数据版本：{manifest.data?.info.version || "载入中"}</small>
           </div>
         </section>
         <div className="archive-toolbar">
-          <div className="archive-tabs" role="group" aria-label="档案分类">
-            {["全部", "主线", "Side Story", "Intermezzi"].map((c) => (
+          <div className="archive-tabs" role="group" aria-label="剧情分类">
+            {["全部", ...categories].map((c) => (
               <button
                 key={c}
                 className={c === category ? "active" : ""}
                 aria-pressed={c === category}
                 onClick={() => setCategory(c)}
               >
-                {c === "全部" ? "全部档案" : c}
+                {c === "全部" ? "全部" : c}
               </button>
             ))}
           </div>
@@ -158,13 +169,13 @@ export default function Library({ settings }: { settings: Settings }) {
             <Search size={16} />
             <input
               ref={searchInput}
-              aria-label="搜索活动或章节"
-              placeholder="搜索活动、章节或英文名…"
+              aria-label="搜索剧情"
+              placeholder="搜索剧情名、章节或角色名…"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
             {query ? (
-              <button onClick={() => setQuery("")} aria-label="清空档案搜索">
+              <button onClick={() => setQuery("")} aria-label="清空搜索">
                 <X size={14} />
               </button>
             ) : (
@@ -173,29 +184,25 @@ export default function Library({ settings }: { settings: Settings }) {
           </label>
         </div>
         <div className="archive-result-count" role="status">
-          <span>{matches.length.toString().padStart(2, "0")} ARCHIVES</span>
-          <span>演示图谱 · 章节美术待补充</span>
+          <span>共 {matches.length} 项</span>
+          <span>按剧情顺序排列</span>
         </div>
         <div className="archive-grid">
-          {matches.map((archive) => {
-            const index = archives.indexOf(archive),
-              graph = archiveGraph(archive.id);
+          {matches.slice(0, shown).map((archive, index) => {
             return (
               <a
                 key={archive.id}
                 href={"#graph/" + archive.id}
-                className={
-                  "archive-card " + (index === 0 ? "archive-total" : "")
-                }
+                className="archive-card"
                 style={
                   {
                     "--archive-color": archive.color,
-                    "--card-order": index,
+                    "--card-order": index % PAGE,
                   } as React.CSSProperties
                 }
-                aria-label={"查看" + archive.title + "图谱"}
+                aria-label={"查看" + archive.title + "关系图"}
               >
-                <Cover archive={archive} index={index} />
+                <Cover archive={archive} index={archive.order % 7} />
                 <div className="archive-card-content">
                   <div className="archive-card-top">
                     <span>{archive.code}</span>
@@ -203,13 +210,13 @@ export default function Library({ settings }: { settings: Settings }) {
                   </div>
                   <div className="archive-card-title">
                     <h2>{archive.title}</h2>
-                    <p>{archive.en}</p>
+                    <p>关系最多：{archive.top.join("、")}</p>
                   </div>
                   <p className="archive-description">{archive.description}</p>
                   <div className="archive-card-bottom">
                     <span>
-                      {graph.nodes.length} <small>NODES</small>
-                      <i /> {graph.edges.length} <small>EDGES</small>
+                      {archive.nodes} <small>名角色</small>
+                      <i /> {archive.pairs} <small>组关系</small>
                     </span>
                     <span className="card-open">
                       <ArrowUpRight size={19} />
@@ -220,11 +227,27 @@ export default function Library({ settings }: { settings: Settings }) {
             );
           })}
         </div>
-        {!matches.length && (
+        {matches.length > shown && (
+          <button
+            className="wide-button library-more"
+            onClick={() => setShown((n) => n + PAGE * 2)}
+          >
+            再显示 {Math.min(PAGE * 2, matches.length - shown)} 项（还有{" "}
+            {matches.length - shown} 项）
+          </button>
+        )}
+        {manifest.error && (
           <div className="archive-empty">
             <Orbit size={32} />
-            <h2>还没有找到这段故事。</h2>
-            <p>试试章节名称，或换一个关键词。</p>
+            <h2>目录载入失败</h2>
+            <p>请刷新页面重试。</p>
+          </div>
+        )}
+        {manifest.data && !matches.length && (
+          <div className="archive-empty">
+            <Orbit size={32} />
+            <h2>没有找到这段剧情</h2>
+            <p>试试剧情名、章节号或角色名。</p>
             <button
               className="wide-button"
               onClick={() => {
@@ -232,13 +255,13 @@ export default function Library({ settings }: { settings: Settings }) {
                 setCategory("全部");
               }}
             >
-              查看全部档案
+              查看全部
             </button>
           </div>
         )}
         <footer className="library-footer">
-          <span>每一条线，都曾是一段故事。</span>
-          <small>ILLUSTRATIVE DATA · INDEPENDENT ARKNIGHTS SNA SHOWCASE</small>
+          <span>数值由大模型根据剧情台词推断，仅供参考。</span>
+          <small>非官方项目，与鹰角网络无关联</small>
         </footer>
       </div>
     </main>

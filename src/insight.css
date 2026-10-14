@@ -1,0 +1,282 @@
+/* Real-data panels (IPC, network, Big Five) and Chinese-label readability. */
+:root {
+  --serif:
+    "Cormorant Garamond", Georgia, "Songti SC", "Noto Serif CJK SC",
+    "Source Han Serif SC", "SimSun", serif;
+}
+
+/* Chinese replaces the English display lines: open up tight Latin tracking. */
+.hero-copy h1,
+.landing-sticky .hero-copy h1,
+.scene-introduction h2,
+.library-intro h1 {
+  letter-spacing: 4px;
+  line-height: 1.18;
+}
+.panel-heading h2,
+.workbench .canvas-heading h1 {
+  letter-spacing: 2px;
+}
+.hero-chinese {
+  letter-spacing: 3px;
+}
+.eyebrow,
+.landing-rail,
+.scene-number,
+.scroll-cue,
+.library-edition > span,
+.library-edition small,
+.scene-caption small {
+  font-family: var(--sans);
+  font-size: 12px;
+  letter-spacing: 2px;
+}
+.scene-caption {
+  font-style: normal;
+  letter-spacing: 2px;
+}
+.brand small {
+  font: 11px var(--sans);
+  letter-spacing: 2px;
+}
+.workspace .brand small {
+  font-size: 10px;
+}
+.archive-card-title p {
+  font: 13px var(--sans);
+  letter-spacing: 0.5px;
+}
+.archive-card-bottom small {
+  font: 11px var(--sans);
+  letter-spacing: 0;
+}
+.archive-card-top {
+  font-size: 12px;
+}
+.intro-footer {
+  font-size: 12px;
+}
+.row-degree small {
+  font: 11px var(--sans);
+}
+.workspace-footer,
+.graph-corner {
+  font-size: 12px;
+}
+.canvas-help kbd {
+  font-size: 10px;
+}
+.library-more {
+  max-width: 340px;
+  margin: 34px auto 0;
+  justify-content: center;
+}
+
+/* Network overview in the sidebar */
+.network-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  padding: 18px 25px 4px;
+}
+.network-stats > div > strong {
+  display: block;
+  font: 21px var(--serif);
+  color: #e3cfc4;
+}
+.network-stats > div > span {
+  font-size: 11px;
+  color: #9d8d99;
+}
+.network-stats .network-octants {
+  grid-column: 1 / -1;
+  margin-top: 10px;
+}
+.network-octants > span,
+.breakdown > span {
+  font-size: 12px;
+  color: #b9a3af;
+}
+.breakdown-bar {
+  display: flex;
+  height: 4px;
+  gap: 1px;
+  margin: 8px 0 7px;
+  border-radius: 2px;
+  overflow: hidden;
+  background: #82637930;
+}
+.breakdown-bar i {
+  display: block;
+  min-width: 2px;
+}
+.network-octants small,
+.breakdown small {
+  display: block;
+  font-size: 11px;
+  color: #9d8d99;
+}
+.breakdown {
+  margin-top: 16px;
+}
+
+/* Legend for edge colour scales */
+.legend-item {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  padding: 4px 0;
+  font-size: 11px;
+  color: #a798a2;
+}
+
+/* IPC chart */
+.ipc-chart {
+  display: block;
+  width: 100%;
+  max-width: 310px;
+  margin: 14px auto 4px;
+  overflow: visible;
+}
+.ipc-chart text {
+  font: 11px var(--sans);
+}
+.ipc-ring {
+  fill: #cda4aa06;
+  stroke: #d6bca535;
+}
+.ipc-ring.faint {
+  fill: none;
+  stroke: #d6bca518;
+  stroke-dasharray: 2 4;
+}
+.ipc-spoke {
+  stroke: #d6bca514;
+}
+.ipc-axis {
+  stroke: #d6bca52e;
+}
+.ipc-point-label {
+  font-size: 12px !important;
+  paint-order: stroke;
+  stroke: var(--bg);
+  stroke-width: 3px;
+}
+.ipc-legend {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  font-size: 12px;
+  color: #a08f9a;
+}
+.ipc-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 0 10px;
+  border-color: currentColor;
+  font-size: 12px;
+}
+.ipc-tag i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+}
+.direction-block {
+  margin-top: 26px;
+}
+.direction-block .mini-heading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.direction-facts {
+  font-size: 12px;
+  color: #a08f9a;
+  line-height: 1.9;
+  margin-top: 14px;
+}
+.direction-facts b {
+  font: 12px var(--mono);
+  color: #dccabc;
+  margin: 0 2px;
+}
+.direction-facts span {
+  margin: 0 7px;
+  opacity: 0.5;
+}
+
+/* Big Five */
+.traits b {
+  width: 58px;
+  text-align: right;
+  font-family: var(--sans);
+}
+.traits > .unscored {
+  opacity: 0.45;
+}
+.trait-evidence {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #b09ca8;
+}
+.trait-evidence summary {
+  cursor: pointer;
+  color: var(--gold);
+  padding: 6px 0;
+}
+.trait-evidence p {
+  line-height: 1.8;
+  margin: 8px 0;
+}
+.trait-evidence p b {
+  color: #dccabc;
+  font-weight: 500;
+  margin-right: 8px;
+}
+.profile-emblem > span {
+  letter-spacing: 1px;
+}
+.load-state h2 {
+  letter-spacing: 2px;
+}
+
+/* Team and contact line in the introduction */
+.intro-team {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 28px;
+  margin-top: 22px;
+  font-size: 13px;
+  color: #a08f9a;
+}
+.intro-team span {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 12px;
+}
+.intro-team a {
+  color: var(--gold);
+  border-bottom: 1px solid #d8b18b40;
+  pointer-events: auto;
+}
+.intro-team a:hover {
+  border-color: var(--gold);
+}
+
+/* Centre the introduction when the page rests on its stop. Auto margins
+   collapse to zero when the content is taller than the screen, so it still
+   starts at the top and scrolls. The footer stays at the bottom. */
+@media (min-width: 761px) {
+  .scene-introduction {
+    display: flex;
+    flex-direction: column;
+  }
+  .scene-introduction > :first-child {
+    margin-top: auto;
+  }
+  .scene-introduction > .intro-signoff {
+    margin-bottom: auto;
+  }
+}

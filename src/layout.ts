@@ -7,28 +7,72 @@ import {
   forceCollide,
   type SimulationNodeDatum,
 } from "d3-force";
-import { type AtlasNode, type AtlasEdge, degree, neighborhood } from "./data";
+import {
+  type AtlasNode,
+  type AtlasEdge,
+  degreeMap,
+  neighborhood,
+} from "./data";
 import { type Settings } from "./settings";
 export type Point = { x: number; y: number };
+/** Circle order: community first, then most connected first. */
+export function ringOrder(nodes: AtlasNode[], degrees: Map<string, number>) {
+  return [...nodes].sort(
+    (a, b) =>
+      a.community - b.community ||
+      (degrees.get(b.id) || 0) - (degrees.get(a.id) || 0) ||
+      a.id.localeCompare(b.id),
+  );
+}
+/** Radius that leaves `gap` units of arc between neighbours on a ring. */
+const ringRadius = (count: number, min: number, gap: number) =>
+  Math.max(min, (count * gap) / (Math.PI * 2));
+function medianNearest(points: Point[]) {
+  if (points.length < 2) return 0;
+  const nearest = points.map((p, i) => {
+    let best = Infinity;
+    points.forEach((q, j) => {
+      if (i !== j) best = Math.min(best, Math.hypot(p.x - q.x, p.y - q.y));
+    });
+    return best;
+  });
+  return nearest.sort((a, b) => a - b)[nearest.length >> 1];
+}
+/**
+ * Positions in the 1000×760 scene, centred on (500, 380). Unless `compact`,
+ * the network layout keeps a median neighbour spacing of about
+ * 0.8 × s.distance, so larger graphs extend beyond the view and are panned or
+ * zoomed instead of being squeezed into it.
+ */
 export function makeLayout(
   nodes: AtlasNode[],
   edges: AtlasEdge[],
   s: Settings,
   selected: string | null,
+  compact = false,
 ): Map<string, Point> {
   const positions = new Map<string, Point>();
   if (!nodes.length) return positions;
+  const degrees = degreeMap(edges);
   if (s.mode === "ego" && selected) {
     const distances = neighborhood(selected, edges, 1);
     const rings = [
-      nodes.filter((n) => n.id !== selected && distances.has(n.id)),
-      nodes.filter((n) => !distances.has(n.id)),
+      ringOrder(
+        nodes.filter((n) => n.id !== selected && distances.has(n.id)),
+        degrees,
+      ),
+      ringOrder(
+        nodes.filter((n) => !distances.has(n.id)),
+        degrees,
+      ),
     ];
     positions.set(selected, { x: 500, y: 380 });
+    const inner = ringRadius(rings[0].length, s.hops === 2 ? 170 : 240, 30);
+    const outer = ringRadius(rings[1].length, inner + 90, 30);
     rings.forEach((ring, r) =>
       ring.forEach((n, i) => {
         const a = (i / ring.length) * Math.PI * 2 - Math.PI / 2;
-        const radius = r === 0 ? (s.hops === 2 ? 170 : 240) : 300;
+        const radius = r === 0 ? inner : outer;
         positions.set(n.id, {
           x: 500 + Math.cos(a) * radius,
           y: 380 + Math.sin(a) * radius,
@@ -38,26 +82,35 @@ export function makeLayout(
     return positions;
   }
   if (s.layout === "circular" || s.mode === "chord") {
-    nodes.forEach((n, i) => {
-      const a = (i / nodes.length) * Math.PI * 2 - Math.PI / 2;
+    const ordered = ringOrder(nodes, degrees);
+    const radius = compact ? 300 : ringRadius(ordered.length, 300, 24);
+    ordered.forEach((n, i) => {
+      const a = (i / ordered.length) * Math.PI * 2 - Math.PI / 2;
       positions.set(n.id, {
-        x: 500 + Math.cos(a) * 300,
-        y: 380 + Math.sin(a) * 300,
+        x: 500 + Math.cos(a) * radius,
+        y: 380 + Math.sin(a) * radius,
       });
     });
     return positions;
   }
-  const groupCenter = (f: number) => ({
-    x: 500 + Math.cos((f / 6) * Math.PI * 2 - 1.9) * 240,
-    y: 380 + Math.sin((f / 6) * Math.PI * 2 - 1.9) * 235,
-  });
-  const points: (SimulationNodeDatum & { id: string; faction: number })[] =
+  const groups = Math.max(1, ...nodes.map((n) => n.community + 1));
+  const groupCenter = (f: number) =>
+    groups === 1
+      ? { x: 500, y: 380 }
+      : {
+          x: 500 + Math.cos((f / groups) * Math.PI * 2 - 1.9) * 240,
+          y: 380 + Math.sin((f / groups) * Math.PI * 2 - 1.9) * 235,
+        };
+  const crowd = Math.min(1, 60 / nodes.length);
+  // Landing keeps the original tight clustering; the workbench spreads out.
+  const pull = (s.layout === "organic" ? 0.22 : 0.08) * (compact ? 1 : 0.45);
+  const points: (SimulationNodeDatum & { id: string; community: number })[] =
     nodes.map((n, i) => {
-      const c = groupCenter(n.faction),
+      const c = groupCenter(n.community),
         angle = i * 2.399;
       return {
         id: n.id,
-        faction: n.faction,
+        community: n.community,
         x: c.x + Math.cos(angle) * 60,
         y: c.y + Math.sin(angle) * 60,
       };
@@ -69,7 +122,7 @@ export function makeLayout(
       s.weight === "affinity"
         ? e.weight
         : s.weight === "messages"
-          ? e.messages / 350
+          ? Math.min(1, Math.sqrt(e.events) / 6)
           : 0.5,
   }));
   const sim = forceSimulation(points)
@@ -85,19 +138,22 @@ export function makeLayout(
     .force(
       "x",
       forceX<(typeof points)[number]>((n) =>
-        s.layout === "organic" ? groupCenter(n.faction).x : 500,
-      ).strength(s.gravity * (s.layout === "organic" ? 0.22 : 0.08)),
+        s.layout === "organic" ? groupCenter(n.community).x : 500,
+      ).strength(s.gravity * pull),
     )
     .force(
       "y",
       forceY<(typeof points)[number]>((n) =>
-        s.layout === "organic" ? groupCenter(n.faction).y : 380,
-      ).strength(s.gravity * (s.layout === "organic" ? 0.22 : 0.08)),
+        s.layout === "organic" ? groupCenter(n.community).y : 380,
+      ).strength(s.gravity * pull),
     )
     .force(
       "collide",
       forceCollide<(typeof points)[number]>().radius((n) =>
-        s.overlap ? 22 + degree(n.id, edges) * 0.35 : 1,
+        s.overlap
+          ? (12 + 10 * crowd + Math.sqrt(degrees.get(n.id) || 0) * 2.2) *
+            (0.6 + 0.4 * crowd)
+          : 1,
       ),
     )
     .stop();
@@ -108,11 +164,18 @@ export function makeLayout(
     maxX = Math.max(...xs),
     minY = Math.min(...ys),
     maxY = Math.max(...ys);
-  const scale = Math.min(
+  const fit = Math.min(
     720 / Math.max(1, maxX - minX),
     560 / Math.max(1, maxY - minY),
     1.8,
   );
+  const spread = compact
+    ? 0
+    : Math.min(
+        6,
+        (s.distance * 0.8) / Math.max(1, medianNearest(points as Point[])),
+      );
+  const scale = Math.max(fit, spread);
   points.forEach((p) =>
     positions.set(p.id, {
       x: 500 + (p.x! - (minX + maxX) / 2) * scale,

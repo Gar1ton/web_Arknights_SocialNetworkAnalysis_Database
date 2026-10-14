@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { archives, archiveGraph, searchArchives } from "../src/archives";
+import { categories, searchArchives, visibleArchives } from "../src/archives";
 import { resolveRoute } from "../src/routes";
 import {
   createThreadField,
@@ -8,37 +8,48 @@ import {
   particleBudget,
   TRAIL_LENGTH,
 } from "../src/particles";
+import { manifest } from "./fixture";
 
-test("archive slices contain only in-scope endpoints and have distinct memberships", () => {
-  const memberships = new Set<string>();
-  for (const archive of archives) {
-    const graph = archiveGraph(archive.id),
-      ids = new Set(graph.nodes.map((n) => n.id));
-    assert.ok(graph.nodes.length > 0);
-    assert.ok(graph.nodes.every((n) => archive.factions.includes(n.faction)));
-    assert.ok(graph.edges.every((e) => ids.has(e.source) && ids.has(e.target)));
-    memberships.add([...ids].join(","));
-  }
-  assert.equal(memberships.size, archives.length);
-  assert.equal(archiveGraph("missing").archive.id, "all");
+const archives = visibleArchives(manifest.archives);
+test("merged tables are hidden and stories follow category and story order", () => {
+  assert.ok(manifest.archives.some((a) => a.category === "总览"));
+  assert.ok(archives.every((a) => a.category !== "总览"));
+  assert.equal(archives[0].id, "main-00");
+  assert.equal(new Set(archives.map((a) => a.id)).size, archives.length);
+  const order = archives.map((a) => categories.indexOf(a.category));
+  assert.ok(order.every((v, i) => v >= 0 && (i === 0 || v >= order[i - 1])));
+  const main = archives.filter((a) => a.category === "主线");
+  assert.deepEqual(
+    main.map((a) => a.order),
+    main.map((_, i) => i),
+  );
+  assert.ok(archives.every((a) => a.category !== "集成战略"));
+  assert.deepEqual(categories, ["主线", "活动", "密录"]);
+  assert.equal(
+    manifest.info.totals.stories,
+    manifest.archives.filter((a) => a.category !== "总览").length,
+  );
 });
 test("archive search combines normalized text with category and handles empty results", () => {
-  assert.equal(searchArchives("  LONE TRAIL  ")[0]?.id, "lone-trail");
-  assert.equal(searchArchives("孤星")[0]?.id, "lone-trail");
-  assert.equal(searchArchives("孤星", "主线").length, 0);
-  assert.equal(searchArchives("不存在的活动").length, 0);
-  assert.equal(searchArchives("").length, archives.length);
-  assert.ok(searchArchives("", "主线").every((a) => a.category === "主线"));
+  assert.equal(searchArchives(archives, "  孤星  ")[0]?.title, "孤星");
+  assert.equal(searchArchives(archives, "第8章")[0]?.id, "main-08");
+  assert.equal(searchArchives(archives, "孤星", "主线").length, 0);
+  assert.ok(searchArchives(archives, "阿米娅").length > 10);
+  assert.equal(searchArchives(archives, "不存在的活动").length, 0);
+  assert.equal(searchArchives(archives, "").length, archives.length);
+  assert.ok(
+    searchArchives(archives, "", "主线").every((a) => a.category === "主线"),
+  );
 });
-test("routes preserve archive deep links and recover unknown archives", () => {
-  assert.deepEqual(resolveRoute("#graph/lone-trail"), {
+test("routes preserve archive deep links and reject malformed ids", () => {
+  assert.deepEqual(resolveRoute("#graph/event-012"), {
     page: "graph",
-    archiveId: "lone-trail",
+    archiveId: "event-012",
   });
-  assert.equal(resolveRoute("#graph/missing").page, "archives");
+  assert.equal(resolveRoute("#graph/<script>").page, "archives");
   assert.equal(resolveRoute("#archives").page, "archives");
   assert.equal(resolveRoute("#atlas").page, "graph");
-  assert.equal(resolveRoute("#studio").archiveId, "all");
+  assert.equal(resolveRoute("#studio").archiveId, "main-08");
   assert.equal(resolveRoute("#").page, "home");
 });
 test("particle budget scales by area and never exceeds fixed caps", () => {

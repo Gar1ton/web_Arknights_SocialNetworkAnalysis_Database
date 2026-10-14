@@ -1,7 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { gravityLeaders } from "../src/gravity";
-import { nodes, edges, type AtlasEdge } from "../src/data";
+import { type AtlasEdge } from "../src/data";
+import { archive } from "./fixture";
+const { nodes, edges } = archive("main-08");
 import {
   createThreadField,
   stepThreadField,

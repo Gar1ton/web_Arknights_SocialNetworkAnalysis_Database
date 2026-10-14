@@ -1,4 +1,3 @@
-import { type AtlasNode, type AtlasEdge } from "./data";
 import { type Settings, palettes } from "./settings";
 export function download(name: string, content: string, type: string) {
   const url = URL.createObjectURL(new Blob([content], { type }));
@@ -8,100 +7,55 @@ export function download(name: string, content: string, type: string) {
   a.click();
   setTimeout(() => URL.revokeObjectURL(url), 1500);
 }
+const note =
+  "Arknights SNA v2 · IPC 与大五人格数值由大模型根据剧情对话推断，非官方设定";
+/** Exports the visible network as an SVG image (the only export format). */
 export function exportGraph(
-  type: "svg" | "json" | "csv",
-  nodes: AtlasNode[],
-  edges: AtlasEdge[],
   settings: Settings,
-  archive?: { id: string; title: string },
+  archive: { id: string; title: string },
 ) {
-  if (type === "json") {
-    download(
-      "terra-demo-network.json",
-      JSON.stringify(
-        {
-          schemaVersion: 1,
-          archive,
-          source: "illustrative-demo-not-analysis",
-          nodes,
-          edges,
-          settings,
-        },
-        null,
-        2,
-      ),
-      "application/json",
-    );
-    return;
-  }
-  if (type === "csv") {
-    const cell = (s: unknown) => '"' + String(s).replaceAll('"', '""') + '"';
-    download(
-      "terra-demo-relationships.csv",
-      "\ufeff" +
-        [
-          [
-            "source",
-            "target",
-            "type",
-            "strength",
-            "messages",
-            "affect",
-            "power",
-            "mutual",
-            "provenance",
-            "archive",
-          ],
-          ...edges.map((e) => [
-            e.source,
-            e.target,
-            e.label,
-            e.weight,
-            e.messages,
-            e.affect,
-            e.power,
-            e.mutual,
-            "illustrative-demo",
-            archive?.id || "all",
-          ]),
-        ]
-          .map((r) => r.map(cell).join(","))
-          .join("\r\n"),
-      "text/csv;charset=utf-8",
-    );
-    return;
-  }
+  const stem = "arknights-sna-" + (archive.id || "graph");
   const original = document.getElementById("network-svg");
-  if (!original) throw Error("未找到星图");
+  const scene = original?.querySelector<SVGGElement>(":scope > g");
+  if (!original || !scene) throw Error("未找到关系图");
+  // Frame every visible node, not just the part currently on screen.
+  const box = scene.getBBox();
+  const pad = 40;
+  const x = box.x - pad,
+    y = box.y - pad,
+    w = box.width + pad * 2,
+    h = box.height + pad * 2 + 30;
   const copy = original.cloneNode(true) as SVGSVGElement;
+  copy.querySelector(":scope > g")!.removeAttribute("transform");
   copy.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-  copy.setAttribute("width", "1600");
-  copy.setAttribute("height", "1216");
-  copy.style.background = palettes[settings.palette].bg;
-  const background = document.createElementNS(
-    "http://www.w3.org/2000/svg",
-    "rect",
+  copy.setAttribute("viewBox", `${x} ${y} ${w} ${h}`);
+  copy.setAttribute("width", String(Math.round(Math.max(1600, w * 1.6))));
+  copy.setAttribute(
+    "height",
+    String(Math.round(Math.max(1600, w * 1.6) * (h / w))),
   );
-  background.setAttribute("width", "1000");
-  background.setAttribute("height", "760");
+  copy.style.background = palettes[settings.palette].bg;
+  const svg = "http://www.w3.org/2000/svg";
+  const background = document.createElementNS(svg, "rect");
+  background.setAttribute("x", String(x));
+  background.setAttribute("y", String(y));
+  background.setAttribute("width", String(w));
+  background.setAttribute("height", String(h));
   background.setAttribute("fill", palettes[settings.palette].bg);
   copy.prepend(background);
   copy.querySelectorAll("animateMotion,.edge-hit").forEach((el) => el.remove());
   copy
     .querySelectorAll("[tabindex]")
     .forEach((el) => el.removeAttribute("tabindex"));
-  const title = document.createElementNS("http://www.w3.org/2000/svg", "text");
-  title.setAttribute("x", "30");
-  title.setAttribute("y", "735");
+  const title = document.createElementNS(svg, "text");
+  title.setAttribute("x", String(x + 30));
+  title.setAttribute("y", String(y + h - 20));
   title.setAttribute("fill", "#dcb99b");
-  title.setAttribute("font-size", "11");
-  title.textContent =
-    "TERRA / " +
-    (archive?.title || "RELATION ATLAS") +
-    " · ILLUSTRATIVE DEMO DATA";
+  title.setAttribute("font-size", "12");
+  title.textContent = (archive.title || "关系图谱") + " · " + note;
   copy.append(title);
   download(
-    "terra-demo-atlas.svg",
+    stem + ".svg",
     new XMLSerializer().serializeToString(copy),
     "image/svg+xml",
   );

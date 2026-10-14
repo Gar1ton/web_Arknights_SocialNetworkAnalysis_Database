@@ -362,8 +362,13 @@
   inset: 0;
 }
 html.landing-snap {
-  scroll-snap-type: y mandatory;
   overscroll-behavior-y: none;
+}
+/* Desktop screen switches are driven by screenScroll.ts; touch keeps snap. */
+@media (max-width: 760px) {
+  html.landing-snap {
+    scroll-snap-type: y mandatory;
+  }
 }
 .landing-experience .scene-hero,
 .landing-experience .scene-introduction {

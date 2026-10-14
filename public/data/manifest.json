@@ -1,0 +1,7731 @@
+{
+ "info": {
+  "version": "v2 候选（stage3），2026-10-14",
+  "sources": {
+   "database": {
+    "sha256": "b93d414be1b9e5092d7896e503216bca7da69a3bf511ef76b200670583855b72"
+   },
+   "groups": {
+    "sha256": "99a02e44a852c07ae743d46b2d55b611fcd8b90dc6c082093bab94605662c621"
+   },
+   "fullgraph": {
+    "sha256": "ad8237d4f51d9be3ab31f94f054ea96d79db05a4b47ea817fd161efa29612cba",
+    "runId": "fg-20261014-aeecf5e2"
+   },
+   "characters": {
+    "sha256": "e523c7c83c36e2d76697121079e17d0282da1a94d59a55e1cc55616edf0b41c4",
+    "fields": [
+     "appellation"
+    ]
+   }
+  },
+  "totals": {
+   "stories": 423,
+   "people": 8110,
+   "namedPeople": 385,
+   "relations": 17742
+  }
+ },
+ "archives": [
+  {
+   "id": "all",
+   "title": "全剧情总表",
+   "category": "总览",
+   "code": "总览 · 全部剧情",
+   "order": 0,
+   "description": "全部剧情合并计算，只含具名角色与博士。",
+   "color": "#d3a6a0",
+   "source": "【合成】全剧情 · 具名角色",
+   "nodes": 354,
+   "pairs": 1259,
+   "relations": 2261,
+   "top": [
+    "博士",
+    "阿米娅",
+    "凯尔希"
+   ]
+  },
+  {
+   "id": "all-main",
+   "title": "主线合并",
+   "category": "总览",
+   "code": "总览 · 主线",
+   "order": 1,
+   "description": "第 0–17 章合并计算，只含具名角色。",
+   "color": "#b49baa",
+   "source": "【合成】主线 · 具名角色",
+   "nodes": 86,
+   "pairs": 264,
+   "relations": 463,
+   "top": [
+    "博士",
+    "阿米娅",
+    "凯尔希"
+   ]
+  },
+  {
+   "id": "all-event",
+   "title": "活动合并",
+   "category": "总览",
+   "code": "总览 · 活动",
+   "order": 2,
+   "description": "全部活动剧情合并计算，只含具名角色。",
+   "color": "#d2997e",
+   "source": "【合成】活动 · 具名角色",
+   "nodes": 308,
+   "pairs": 774,
+   "relations": 1390,
+   "top": [
+    "博士",
+    "凯尔希",
+    "阿米娅"
+   ]
+  },
+  {
+   "id": "all-record",
+   "title": "密录合并",
+   "category": "总览",
+   "code": "总览 · 密录",
+   "order": 3,
+   "description": "全部干员密录合并计算，只含具名角色。",
+   "color": "#a0bfbc",
+   "source": "【合成】密录 · 具名角色",
+   "nodes": 257,
+   "pairs": 486,
+   "relations": 866,
+   "top": [
+    "博士",
+    "可露希尔",
+    "芙蓉"
+   ]
+  },
+  {
+   "id": "all-rogue",
+   "title": "集成战略合并",
+   "category": "总览",
+   "code": "总览 · 集成战略",
+   "order": 4,
+   "description": "六季集成战略合并计算，只含具名角色。",
+   "color": "#a8b7d2",
+   "source": "【合成】集成战略 · 具名角色",
+   "nodes": 20,
+   "pairs": 16,
+   "relations": 27,
+   "top": [
+    "凯尔希",
+    "妮芙",
+    "谬因"
+   ]
+  },
+  {
+   "id": "main-00",
+   "title": "黑暗时代·上",
+   "category": "主线",
+   "code": "主线 · 第0章",
+   "order": 0,
+   "description": "19 名角色，32 组关系。关系最多的是 阿米娅、杜宾、梅菲斯特。",
+   "color": "#c9a98c",
+   "source": "主线 · 第0章 · 黑暗时代·上",
+   "nodes": 19,
+   "pairs": 32,
+   "relations": 53,
+   "top": [
+    "阿米娅",
+    "杜宾",
+    "梅菲斯特"
+   ]
+  },
+  {
+   "id": "main-01",
+   "title": "黑暗时代·下",
+   "category": "主线",
+   "code": "主线 · 第1章",
+   "order": 1,
+   "description": "11 名角色，22 组关系。关系最多的是 阿米娅、杜宾、临光。",
+   "color": "#d2997e",
+   "source": "主线 · 第1章 · 黑暗时代·下",
+   "nodes": 11,
+   "pairs": 22,
+   "relations": 32,
+   "top": [
+    "阿米娅",
+    "杜宾",
+    "临光"
+   ]
+  },
+  {
+   "id": "main-02",
+   "title": "异卵同生",
+   "category": "主线",
+   "code": "主线 · 第2章",
+   "order": 2,
+   "description": "21 名角色，38 组关系。关系最多的是 阿米娅、芙兰卡、米莎。",
+   "color": "#c69abd",
+   "source": "主线 · 第2章 · 异卵同生",
+   "nodes": 21,
+   "pairs": 38,
+   "relations": 66,
+   "top": [
+    "阿米娅",
+    "芙兰卡",
+    "米莎"
+   ]
+  },
+  {
+   "id": "main-03",
+   "title": "二次呼吸",
+   "category": "主线",
+   "code": "主线 · 第3章",
+   "order": 3,
+   "description": "14 名角色，30 组关系。关系最多的是 阿米娅、整合运动成员、星熊。",
+   "color": "#d3a6a0",
+   "source": "主线 · 第3章 · 二次呼吸",
+   "nodes": 14,
+   "pairs": 30,
+   "relations": 47,
+   "top": [
+    "阿米娅",
+    "整合运动成员",
+    "星熊"
+   ]
+  },
+  {
+   "id": "main-04",
+   "title": "急性衰竭",
+   "category": "主线",
+   "code": "主线 · 第4章",
+   "order": 4,
+   "description": "21 名角色，38 组关系。关系最多的是 阿米娅、霜叶、梅菲斯特。",
+   "color": "#a0bfbc",
+   "source": "主线 · 第4章 · 急性衰竭",
+   "nodes": 21,
+   "pairs": 38,
+   "relations": 61,
+   "top": [
+    "阿米娅",
+    "霜叶",
+    "梅菲斯特"
+   ]
+  },
+  {
+   "id": "main-05",
+   "title": "靶向药物",
+   "category": "主线",
+   "code": "主线 · 第5章",
+   "order": 5,
+   "description": "18 名角色，36 组关系。关系最多的是 陈、梅菲斯特、阿米娅。",
+   "color": "#b5a788",
+   "source": "主线 · 第5章 · 靶向药物",
+   "nodes": 18,
+   "pairs": 36,
+   "relations": 59,
+   "top": [
+    "陈",
+    "梅菲斯特",
+    "阿米娅"
+   ]
+  },
+  {
+   "id": "main-06",
+   "title": "局部坏死",
+   "category": "主线",
+   "code": "主线 · 第6章",
+   "order": 6,
+   "description": "50 名角色，97 组关系。关系最多的是 煌、阿米娅、霜星。",
+   "color": "#b49baa",
+   "source": "主线 · 第6章 · 局部坏死",
+   "nodes": 50,
+   "pairs": 97,
+   "relations": 158,
+   "top": [
+    "煌",
+    "阿米娅",
+    "霜星"
+   ]
+  },
+  {
+   "id": "main-07",
+   "title": "苦难摇篮",
+   "category": "主线",
+   "code": "主线 · 第7章",
+   "order": 7,
+   "description": "45 名角色，77 组关系。关系最多的是 凯尔希、爱国者、迷迭香。",
+   "color": "#a8b7d2",
+   "source": "主线 · 第7章 · 苦难摇篮",
+   "nodes": 45,
+   "pairs": 77,
+   "relations": 134,
+   "top": [
+    "凯尔希",
+    "爱国者",
+    "迷迭香"
+   ]
+  },
+  {
+   "id": "main-08",
+   "title": "怒号光明",
+   "category": "主线",
+   "code": "主线 · 第8章",
+   "order": 8,
+   "description": "68 名角色，104 组关系。关系最多的是 塔露拉、阿米娅、盾卫。",
+   "color": "#c9a98c",
+   "source": "主线 · 第8章 · 怒号光明",
+   "nodes": 68,
+   "pairs": 104,
+   "relations": 177,
+   "top": [
+    "塔露拉",
+    "阿米娅",
+    "盾卫"
+   ]
+  },
+  {
+   "id": "main-09",
+   "title": "风暴瞭望",
+   "category": "主线",
+   "code": "主线 · 第9章",
+   "order": 9,
+   "description": "71 名角色，120 组关系。关系最多的是 风笛、号角、琴柳。",
+   "color": "#d2997e",
+   "source": "主线 · 第9章 · 风暴瞭望",
+   "nodes": 71,
+   "pairs": 120,
+   "relations": 197,
+   "top": [
+    "风笛",
+    "号角",
+    "琴柳"
+   ]
+  },
+  {
+   "id": "main-10",
+   "title": "破碎日冕",
+   "category": "主线",
+   "code": "主线 · 第10章",
+   "order": 10,
+   "description": "64 名角色，153 组关系。关系最多的是 阿米娅、白铁、曼弗雷德。",
+   "color": "#c69abd",
+   "source": "主线 · 第10章 · 破碎日冕",
+   "nodes": 64,
+   "pairs": 153,
+   "relations": 249,
+   "top": [
+    "阿米娅",
+    "白铁",
+    "曼弗雷德"
+   ]
+  },
+  {
+   "id": "main-11",
+   "title": "淬火尘霾",
+   "category": "主线",
+   "code": "主线 · 第11章",
+   "order": 11,
+   "description": "62 名角色，119 组关系。关系最多的是 博士、阿勒黛、莱托中校。",
+   "color": "#d3a6a0",
+   "source": "主线 · 第11章 · 淬火尘霾",
+   "nodes": 62,
+   "pairs": 119,
+   "relations": 198,
+   "top": [
+    "博士",
+    "阿勒黛",
+    "莱托中校"
+   ]
+  },
+  {
+   "id": "main-12",
+   "title": "惊霆无声",
+   "category": "主线",
+   "code": "主线 · 第12章",
+   "order": 12,
+   "description": "78 名角色，133 组关系。关系最多的是 推进之王、阿米娅、博士。",
+   "color": "#a0bfbc",
+   "source": "主线 · 第12章 · 惊霆无声",
+   "nodes": 78,
+   "pairs": 133,
+   "relations": 230,
+   "top": [
+    "推进之王",
+    "阿米娅",
+    "博士"
+   ]
+  },
+  {
+   "id": "main-13",
+   "title": "恶兆湍流",
+   "category": "主线",
+   "code": "主线 · 第13章",
+   "order": 13,
+   "description": "101 名角色，162 组关系。关系最多的是 Guard、赫德雷、戴菲恩。",
+   "color": "#b5a788",
+   "source": "主线 · 第13章 · 恶兆湍流",
+   "nodes": 101,
+   "pairs": 162,
+   "relations": 267,
+   "top": [
+    "Guard",
+    "赫德雷",
+    "戴菲恩"
+   ]
+  },
+  {
+   "id": "main-14",
+   "title": "慈悲灯塔",
+   "category": "主线",
+   "code": "主线 · 第14章",
+   "order": 14,
+   "description": "126 名角色，189 组关系。关系最多的是 W、推进之王、博士。",
+   "color": "#b49baa",
+   "source": "主线 · 第14章 · 慈悲灯塔",
+   "nodes": 126,
+   "pairs": 189,
+   "relations": 310,
+   "top": [
+    "W",
+    "推进之王",
+    "博士"
+   ]
+  },
+  {
+   "id": "main-15",
+   "title": "离解复合",
+   "category": "主线",
+   "code": "主线 · 第15章",
+   "order": 15,
+   "description": "78 名角色，119 组关系。关系最多的是 博士、可露希尔、凯尔希。",
+   "color": "#a8b7d2",
+   "source": "主线 · 第15章 · 离解复合",
+   "nodes": 78,
+   "pairs": 119,
+   "relations": 186,
+   "top": [
+    "博士",
+    "可露希尔",
+    "凯尔希"
+   ]
+  },
+  {
+   "id": "main-16",
+   "title": "反常光谱",
+   "category": "主线",
+   "code": "主线 · 第16章",
+   "order": 16,
+   "description": "91 名角色，118 组关系。关系最多的是 雷尔金、真言、博士。",
+   "color": "#c9a98c",
+   "source": "主线 · 第16章 · 反常光谱",
+   "nodes": 91,
+   "pairs": 118,
+   "relations": 193,
+   "top": [
+    "雷尔金",
+    "真言",
+    "博士"
+   ]
+  },
+  {
+   "id": "main-17",
+   "title": "相变临界",
+   "category": "主线",
+   "code": "主线 · 第17章",
+   "order": 17,
+   "description": "189 名角色，249 组关系。关系最多的是 阿米娅、阿纳托利、裂响。",
+   "color": "#d2997e",
+   "source": "主线 · 第17章 · 相变临界",
+   "nodes": 189,
+   "pairs": 249,
+   "relations": 402,
+   "top": [
+    "阿米娅",
+    "阿纳托利",
+    "裂响"
+   ]
+  },
+  {
+   "id": "event-001",
+   "title": "遗尘漫步",
+   "category": "活动",
+   "code": "活动",
+   "order": 0,
+   "description": "39 名角色，58 组关系。关系最多的是 凯尔希、艾利奥特、莉莉娅。",
+   "color": "#c69abd",
+   "source": "活动 · 遗尘漫步",
+   "nodes": 39,
+   "pairs": 58,
+   "relations": 96,
+   "top": [
+    "凯尔希",
+    "艾利奥特",
+    "莉莉娅"
+   ]
+  },
+  {
+   "id": "event-002",
+   "title": "巴别塔",
+   "category": "活动",
+   "code": "活动",
+   "order": 1,
+   "description": "78 名角色，112 组关系。关系最多的是 特蕾西娅、博士、特雷西斯。",
+   "color": "#d3a6a0",
+   "source": "活动 · 巴别塔",
+   "nodes": 78,
+   "pairs": 112,
+   "relations": 177,
+   "top": [
+    "特蕾西娅",
+    "博士",
+    "特雷西斯"
+   ]
+  },
+  {
+   "id": "event-003",
+   "title": "生于黑夜",
+   "category": "活动",
+   "code": "活动",
+   "order": 2,
+   "description": "19 名角色，24 组关系。关系最多的是 W、赫德雷、特蕾西娅。",
+   "color": "#a0bfbc",
+   "source": "活动 · 生于黑夜",
+   "nodes": 19,
+   "pairs": 24,
+   "relations": 42,
+   "top": [
+    "W",
+    "赫德雷",
+    "特蕾西娅"
+   ]
+  },
+  {
+   "id": "event-004",
+   "title": "去咧嘴谷",
+   "category": "活动",
+   "code": "活动",
+   "order": 12,
+   "description": "26 名角色，36 组关系。关系最多的是 阿兰娜、莱伊、温米。",
+   "color": "#b5a788",
+   "source": "活动 · 去咧嘴谷",
+   "nodes": 26,
+   "pairs": 36,
+   "relations": 64,
+   "top": [
+    "阿兰娜",
+    "莱伊",
+    "温米"
+   ]
+  },
+  {
+   "id": "event-005",
+   "title": "灯火序曲",
+   "category": "活动",
+   "code": "活动",
+   "order": 13,
+   "description": "27 名角色，28 组关系。关系最多的是 卡涅利安、崖心、萨卡兹佣兵。",
+   "color": "#b49baa",
+   "source": "活动 · 灯火序曲",
+   "nodes": 27,
+   "pairs": 28,
+   "relations": 52,
+   "top": [
+    "卡涅利安",
+    "崖心",
+    "萨卡兹佣兵"
+   ]
+  },
+  {
+   "id": "event-006",
+   "title": "如我所见",
+   "category": "活动",
+   "code": "活动",
+   "order": 14,
+   "description": "27 名角色，45 组关系。关系最多的是 博士、阿米娅、凯尔希。",
+   "color": "#a8b7d2",
+   "source": "活动 · 如我所见",
+   "nodes": 27,
+   "pairs": 45,
+   "relations": 72,
+   "top": [
+    "博士",
+    "阿米娅",
+    "凯尔希"
+   ]
+  },
+  {
+   "id": "event-007",
+   "title": "孤岛风云",
+   "category": "活动",
+   "code": "活动",
+   "order": 15,
+   "description": "27 名角色，49 组关系。关系最多的是 卡夫卡、山、罗宾。",
+   "color": "#c9a98c",
+   "source": "活动 · 孤岛风云",
+   "nodes": 27,
+   "pairs": 49,
+   "relations": 78,
+   "top": [
+    "卡夫卡",
+    "山",
+    "罗宾"
+   ]
+  },
+  {
+   "id": "event-008",
+   "title": "此地之外",
+   "category": "活动",
+   "code": "活动",
+   "order": 16,
+   "description": "48 名角色，44 组关系。关系最多的是 星熊、陈、爱丽丝。",
+   "color": "#d2997e",
+   "source": "活动 · 此地之外",
+   "nodes": 48,
+   "pairs": 44,
+   "relations": 78,
+   "top": [
+    "星熊",
+    "陈",
+    "爱丽丝"
+   ]
+  },
+  {
+   "id": "event-009",
+   "title": "骑兵与猎人",
+   "category": "活动",
+   "code": "活动",
+   "order": 17,
+   "description": "10 名角色，22 组关系。关系最多的是 赏金猎人、格拉尼、斯卡蒂。",
+   "color": "#c69abd",
+   "source": "活动 · 骑兵与猎人",
+   "nodes": 10,
+   "pairs": 22,
+   "relations": 36,
+   "top": [
+    "赏金猎人",
+    "格拉尼",
+    "斯卡蒂"
+   ]
+  },
+  {
+   "id": "event-010",
+   "title": "火蓝之心",
+   "category": "活动",
+   "code": "活动",
+   "order": 18,
+   "description": "44 名角色，71 组关系。关系最多的是 锡兰、博士、棘刺。",
+   "color": "#d3a6a0",
+   "source": "活动 · 火蓝之心",
+   "nodes": 44,
+   "pairs": 71,
+   "relations": 112,
+   "top": [
+    "锡兰",
+    "博士",
+    "棘刺"
+   ]
+  },
+  {
+   "id": "event-011",
+   "title": "战地秘闻",
+   "category": "活动",
+   "code": "活动",
+   "order": 19,
+   "description": "26 名角色，21 组关系。关系最多的是 伊芙利特、W、炎客。",
+   "color": "#a0bfbc",
+   "source": "活动 · 战地秘闻",
+   "nodes": 26,
+   "pairs": 21,
+   "relations": 39,
+   "top": [
+    "伊芙利特",
+    "W",
+    "炎客"
+   ]
+  },
+  {
+   "id": "event-012",
+   "title": "多索雷斯假日",
+   "category": "活动",
+   "code": "活动",
+   "order": 20,
+   "description": "36 名角色，56 组关系。关系最多的是 林、陈、龙舌兰。",
+   "color": "#b5a788",
+   "source": "活动 · 多索雷斯假日",
+   "nodes": 36,
+   "pairs": 56,
+   "relations": 88,
+   "top": [
+    "林",
+    "陈",
+    "龙舌兰"
+   ]
+  },
+  {
+   "id": "event-013",
+   "title": "玛莉娅·临光",
+   "category": "活动",
+   "code": "活动",
+   "order": 21,
+   "description": "39 名角色，68 组关系。关系最多的是 瑕光、白金、临光。",
+   "color": "#b49baa",
+   "source": "活动 · 玛莉娅·临光",
+   "nodes": 39,
+   "pairs": 68,
+   "relations": 109,
+   "top": [
+    "瑕光",
+    "白金",
+    "临光"
+   ]
+  },
+  {
+   "id": "event-014",
+   "title": "沃伦姆德的薄暮",
+   "category": "活动",
+   "code": "活动",
+   "order": 23,
+   "description": "26 名角色，49 组关系。关系最多的是 铃兰、塞弗林、亚叶。",
+   "color": "#a8b7d2",
+   "source": "活动 · 沃伦姆德的薄暮",
+   "nodes": 26,
+   "pairs": 49,
+   "relations": 88,
+   "top": [
+    "铃兰",
+    "塞弗林",
+    "亚叶"
+   ]
+  },
+  {
+   "id": "event-015",
+   "title": "踏寻往昔之风",
+   "category": "活动",
+   "code": "活动",
+   "order": 24,
+   "description": "35 名角色，37 组关系。关系最多的是 傀影、博士、铃兰。",
+   "color": "#c9a98c",
+   "source": "活动 · 踏寻往昔之风",
+   "nodes": 35,
+   "pairs": 37,
+   "relations": 68,
+   "top": [
+    "傀影",
+    "博士",
+    "铃兰"
+   ]
+  },
+  {
+   "id": "event-016",
+   "title": "源石尘行动",
+   "category": "活动",
+   "code": "活动",
+   "order": 25,
+   "description": "26 名角色，60 组关系。关系最多的是 灰烬、米亚罗、巡林者。",
+   "color": "#d2997e",
+   "source": "活动 · 源石尘行动",
+   "nodes": 26,
+   "pairs": 60,
+   "relations": 106,
+   "top": [
+    "灰烬",
+    "米亚罗",
+    "巡林者"
+   ]
+  },
+  {
+   "id": "event-017",
+   "title": "红松林",
+   "category": "活动",
+   "code": "活动",
+   "order": 26,
+   "description": "38 名角色，37 组关系。关系最多的是 焰尾、野鬃、临光。",
+   "color": "#c69abd",
+   "source": "活动 · 红松林",
+   "nodes": 38,
+   "pairs": 37,
+   "relations": 60,
+   "top": [
+    "焰尾",
+    "野鬃",
+    "临光"
+   ]
+  },
+  {
+   "id": "event-018",
+   "title": "长夜临光",
+   "category": "活动",
+   "code": "活动",
+   "order": 27,
+   "description": "73 名角色，191 组关系。关系最多的是 临光、白金、血骑士。",
+   "color": "#d3a6a0",
+   "source": "活动 · 长夜临光",
+   "nodes": 73,
+   "pairs": 191,
+   "relations": 293,
+   "top": [
+    "临光",
+    "白金",
+    "血骑士"
+   ]
+  },
+  {
+   "id": "event-019",
+   "title": "喧闹法则",
+   "category": "活动",
+   "code": "活动",
+   "order": 28,
+   "description": "37 名角色，95 组关系。关系最多的是 拜松、大帝、鼠王。",
+   "color": "#a0bfbc",
+   "source": "活动 · 喧闹法则",
+   "nodes": 37,
+   "pairs": 95,
+   "relations": 156,
+   "top": [
+    "拜松",
+    "大帝",
+    "鼠王"
+   ]
+  },
+  {
+   "id": "event-020",
+   "title": "风雪过境",
+   "category": "活动",
+   "code": "活动",
+   "order": 29,
+   "description": "68 名角色，144 组关系。关系最多的是 银灰、阿克托斯、博士。",
+   "color": "#b5a788",
+   "source": "活动 · 风雪过境",
+   "nodes": 68,
+   "pairs": 144,
+   "relations": 235,
+   "top": [
+    "银灰",
+    "阿克托斯",
+    "博士"
+   ]
+  },
+  {
+   "id": "event-021",
+   "title": "密林悍将归来",
+   "category": "活动",
+   "code": "活动",
+   "order": 30,
+   "description": "30 名角色，65 组关系。关系最多的是 嘉维尔、森蚺、博士。",
+   "color": "#b49baa",
+   "source": "活动 · 密林悍将归来",
+   "nodes": 30,
+   "pairs": 65,
+   "relations": 101,
+   "top": [
+    "嘉维尔",
+    "森蚺",
+    "博士"
+   ]
+  },
+  {
+   "id": "event-022",
+   "title": "水晶箭行动",
+   "category": "活动",
+   "code": "活动",
+   "order": 31,
+   "description": "79 名角色，135 组关系。关系最多的是 特克诺、雷内尔、迪亚兹。",
+   "color": "#a8b7d2",
+   "source": "活动 · 水晶箭行动",
+   "nodes": 79,
+   "pairs": 135,
+   "relations": 208,
+   "top": [
+    "特克诺",
+    "雷内尔",
+    "迪亚兹"
+   ]
+  },
+  {
+   "id": "event-023",
+   "title": "午间逸话",
+   "category": "活动",
+   "code": "活动",
+   "order": 33,
+   "description": "48 名角色，63 组关系。关系最多的是 白面鸮、角峰、火神。",
+   "color": "#c9a98c",
+   "source": "活动 · 午间逸话",
+   "nodes": 48,
+   "pairs": 63,
+   "relations": 101,
+   "top": [
+    "白面鸮",
+    "角峰",
+    "火神"
+   ]
+  },
+  {
+   "id": "event-024",
+   "title": "乌萨斯的孩子们",
+   "category": "活动",
+   "code": "活动",
+   "order": 34,
+   "description": "50 名角色，67 组关系。关系最多的是 凛冬、早露、烈夏。",
+   "color": "#d2997e",
+   "source": "活动 · 乌萨斯的孩子们",
+   "nodes": 50,
+   "pairs": 67,
+   "relations": 112,
+   "top": [
+    "凛冬",
+    "早露",
+    "烈夏"
+   ]
+  },
+  {
+   "id": "event-025",
+   "title": "照我以火",
+   "category": "活动",
+   "code": "活动",
+   "order": 35,
+   "description": "41 名角色，73 组关系。关系最多的是 苇草、塞尔蒙、维恩。",
+   "color": "#c69abd",
+   "source": "活动 · 照我以火",
+   "nodes": 41,
+   "pairs": 73,
+   "relations": 125,
+   "top": [
+    "苇草",
+    "塞尔蒙",
+    "维恩"
+   ]
+  },
+  {
+   "id": "event-026",
+   "title": "我们明日见",
+   "category": "活动",
+   "code": "活动",
+   "order": 40,
+   "description": "77 名角色，75 组关系。关系最多的是 诺威尔、W、博士。",
+   "color": "#d3a6a0",
+   "source": "活动 · 我们明日见",
+   "nodes": 77,
+   "pairs": 75,
+   "relations": 129,
+   "top": [
+    "诺威尔",
+    "W",
+    "博士"
+   ]
+  },
+  {
+   "id": "event-027",
+   "title": "覆潮之下",
+   "category": "活动",
+   "code": "活动",
+   "order": 41,
+   "description": "23 名角色，44 组关系。关系最多的是 斯卡蒂、安妮塔、审判官。",
+   "color": "#a0bfbc",
+   "source": "活动 · 覆潮之下",
+   "nodes": 23,
+   "pairs": 44,
+   "relations": 74,
+   "top": [
+    "斯卡蒂",
+    "安妮塔",
+    "审判官"
+   ]
+  },
+  {
+   "id": "event-028",
+   "title": "挽歌燃烧殆尽",
+   "category": "活动",
+   "code": "活动",
+   "order": 42,
+   "description": "54 名角色，86 组关系。关系最多的是 涅梅丝、苇草、死芒。",
+   "color": "#b5a788",
+   "source": "活动 · 挽歌燃烧殆尽",
+   "nodes": 54,
+   "pairs": 86,
+   "relations": 133,
+   "top": [
+    "涅梅丝",
+    "苇草",
+    "死芒"
+   ]
+  },
+  {
+   "id": "event-029",
+   "title": "日暮寻路",
+   "category": "活动",
+   "code": "活动",
+   "order": 43,
+   "description": "36 名角色，44 组关系。关系最多的是 玛恩纳、托兰、瑟奇亚克。",
+   "color": "#b49baa",
+   "source": "活动 · 日暮寻路",
+   "nodes": 36,
+   "pairs": 44,
+   "relations": 73,
+   "top": [
+    "玛恩纳",
+    "托兰",
+    "瑟奇亚克"
+   ]
+  },
+  {
+   "id": "event-030",
+   "title": "阴云火花",
+   "category": "活动",
+   "code": "活动",
+   "order": 44,
+   "description": "42 名角色，74 组关系。关系最多的是 澄闪、夏栎、天火。",
+   "color": "#a8b7d2",
+   "source": "活动 · 阴云火花",
+   "nodes": 42,
+   "pairs": 74,
+   "relations": 117,
+   "top": [
+    "澄闪",
+    "夏栎",
+    "天火"
+   ]
+  },
+  {
+   "id": "event-031",
+   "title": "未尽篇章",
+   "category": "活动",
+   "code": "活动",
+   "order": 45,
+   "description": "46 名角色，43 组关系。关系最多的是 杰斯顿、卡彭、罗伊。",
+   "color": "#c9a98c",
+   "source": "活动 · 未尽篇章",
+   "nodes": 46,
+   "pairs": 43,
+   "relations": 74,
+   "top": [
+    "杰斯顿",
+    "卡彭",
+    "罗伊"
+   ]
+  },
+  {
+   "id": "event-032",
+   "title": "追迹日落以西",
+   "category": "活动",
+   "code": "活动",
+   "order": 46,
+   "description": "98 名角色，134 组关系。关系最多的是 推进之王、戴菲恩、摩根。",
+   "color": "#d2997e",
+   "source": "活动 · 追迹日落以西",
+   "nodes": 98,
+   "pairs": 134,
+   "relations": 211,
+   "top": [
+    "推进之王",
+    "戴菲恩",
+    "摩根"
+   ]
+  },
+  {
+   "id": "event-033",
+   "title": "尘影余音",
+   "category": "活动",
+   "code": "活动",
+   "order": 47,
+   "description": "47 名角色，70 组关系。关系最多的是 芙蓉、白垩、黑键。",
+   "color": "#c69abd",
+   "source": "活动 · 尘影余音",
+   "nodes": 47,
+   "pairs": 70,
+   "relations": 116,
+   "top": [
+    "芙蓉",
+    "白垩",
+    "黑键"
+   ]
+  },
+  {
+   "id": "event-034",
+   "title": "好久不见",
+   "category": "活动",
+   "code": "活动",
+   "order": 48,
+   "description": "48 名角色，80 组关系。关系最多的是 罗小黑、阿根、小白。",
+   "color": "#d3a6a0",
+   "source": "活动 · 好久不见",
+   "nodes": 48,
+   "pairs": 80,
+   "relations": 122,
+   "top": [
+    "罗小黑",
+    "阿根",
+    "小白"
+   ]
+  },
+  {
+   "id": "event-035",
+   "title": "眠于树影之中",
+   "category": "活动",
+   "code": "活动",
+   "order": 49,
+   "description": "28 名角色，38 组关系。关系最多的是 寒檀、麦哲伦、提丰。",
+   "color": "#a0bfbc",
+   "source": "活动 · 眠于树影之中",
+   "nodes": 28,
+   "pairs": 38,
+   "relations": 68,
+   "top": [
+    "寒檀",
+    "麦哲伦",
+    "提丰"
+   ]
+  },
+  {
+   "id": "event-036",
+   "title": "吾导先路",
+   "category": "活动",
+   "code": "活动",
+   "order": 50,
+   "description": "50 名角色，92 组关系。关系最多的是 见行者、塞茜莉亚、奥伦。",
+   "color": "#b5a788",
+   "source": "活动 · 吾导先路",
+   "nodes": 50,
+   "pairs": 92,
+   "relations": 156,
+   "top": [
+    "见行者",
+    "塞茜莉亚",
+    "奥伦"
+   ]
+  },
+  {
+   "id": "event-037",
+   "title": "理想城：长夏狂欢季",
+   "category": "活动",
+   "code": "活动",
+   "order": 51,
+   "description": "34 名角色，79 组关系。关系最多的是 极境、嘉维尔、至简。",
+   "color": "#b49baa",
+   "source": "活动 · 理想城：长夏狂欢季",
+   "nodes": 34,
+   "pairs": 79,
+   "relations": 127,
+   "top": [
+    "极境",
+    "嘉维尔",
+    "至简"
+   ]
+  },
+  {
+   "id": "event-038",
+   "title": "火山旅梦",
+   "category": "活动",
+   "code": "活动",
+   "order": 52,
+   "description": "84 名角色，118 组关系。关系最多的是 艾雅法拉、苍苔、诗怀雅。",
+   "color": "#a8b7d2",
+   "source": "活动 · 火山旅梦",
+   "nodes": 84,
+   "pairs": 118,
+   "relations": 185,
+   "top": [
+    "艾雅法拉",
+    "苍苔",
+    "诗怀雅"
+   ]
+  },
+  {
+   "id": "event-039",
+   "title": "墟",
+   "category": "活动",
+   "code": "活动",
+   "order": 53,
+   "description": "71 名角色，96 组关系。关系最多的是 星熊、萌萌香、三船。",
+   "color": "#c9a98c",
+   "source": "活动 · 墟",
+   "nodes": 71,
+   "pairs": 96,
+   "relations": 153,
+   "top": [
+    "星熊",
+    "萌萌香",
+    "三船"
+   ]
+  },
+  {
+   "id": "event-040",
+   "title": "无忧梦呓",
+   "category": "活动",
+   "code": "活动",
+   "order": 54,
+   "description": "53 名角色，66 组关系。关系最多的是 丰川祥子、祐天寺若麦、八幡海铃。",
+   "color": "#d2997e",
+   "source": "活动 · 无忧梦呓",
+   "nodes": 53,
+   "pairs": 66,
+   "relations": 98,
+   "top": [
+    "丰川祥子",
+    "祐天寺若麦",
+    "八幡海铃"
+   ]
+  },
+  {
+   "id": "event-041",
+   "title": "绿野幻梦",
+   "category": "活动",
+   "code": "活动",
+   "order": 55,
+   "description": "25 名角色，66 组关系。关系最多的是 星源、多萝西、赫默。",
+   "color": "#c69abd",
+   "source": "活动 · 绿野幻梦",
+   "nodes": 25,
+   "pairs": 66,
+   "relations": 120,
+   "top": [
+    "星源",
+    "多萝西",
+    "赫默"
+   ]
+  },
+  {
+   "id": "event-042",
+   "title": "叙拉古人",
+   "category": "活动",
+   "code": "活动",
+   "order": 56,
+   "description": "93 名角色，182 组关系。关系最多的是 斥罪、德克萨斯、拉普兰德。",
+   "color": "#d3a6a0",
+   "source": "活动 · 叙拉古人",
+   "nodes": 93,
+   "pairs": 182,
+   "relations": 301,
+   "top": [
+    "斥罪",
+    "德克萨斯",
+    "拉普兰德"
+   ]
+  },
+  {
+   "id": "event-043",
+   "title": "空想花庭",
+   "category": "活动",
+   "code": "活动",
+   "order": 57,
+   "description": "43 名角色，78 组关系。关系最多的是 送葬人、里凯莱、杰拉尔德。",
+   "color": "#a0bfbc",
+   "source": "活动 · 空想花庭",
+   "nodes": 43,
+   "pairs": 78,
+   "relations": 130,
+   "top": [
+    "送葬人",
+    "里凯莱",
+    "杰拉尔德"
+   ]
+  },
+  {
+   "id": "event-044",
+   "title": "孤星",
+   "category": "活动",
+   "code": "活动",
+   "order": 58,
+   "description": "64 名角色，106 组关系。关系最多的是 博士、塞雷娅、霍尔海雅。",
+   "color": "#b5a788",
+   "source": "活动 · 孤星",
+   "nodes": 64,
+   "pairs": 106,
+   "relations": 181,
+   "top": [
+    "博士",
+    "塞雷娅",
+    "霍尔海雅"
+   ]
+  },
+  {
+   "id": "event-045",
+   "title": "愚人号",
+   "category": "活动",
+   "code": "活动",
+   "order": 59,
+   "description": "46 名角色，100 组关系。关系最多的是 卡门、歌蕾蒂娅、艾丽妮。",
+   "color": "#b49baa",
+   "source": "活动 · 愚人号",
+   "nodes": 46,
+   "pairs": 100,
+   "relations": 164,
+   "top": [
+    "卡门",
+    "歌蕾蒂娅",
+    "艾丽妮"
+   ]
+  },
+  {
+   "id": "event-046",
+   "title": "不义之财",
+   "category": "活动",
+   "code": "活动",
+   "order": 60,
+   "description": "62 名角色，118 组关系。关系最多的是 杰西卡、伍德洛、冰酿。",
+   "color": "#a8b7d2",
+   "source": "活动 · 不义之财",
+   "nodes": 62,
+   "pairs": 118,
+   "relations": 191,
+   "top": [
+    "杰西卡",
+    "伍德洛",
+    "冰酿"
+   ]
+  },
+  {
+   "id": "event-047",
+   "title": "红丝绒",
+   "category": "活动",
+   "code": "活动",
+   "order": 61,
+   "description": "34 名角色，69 组关系。关系最多的是 格蕾塔、傀影、米兰妮。",
+   "color": "#c9a98c",
+   "source": "活动 · 红丝绒",
+   "nodes": 34,
+   "pairs": 69,
+   "relations": 112,
+   "top": [
+    "格蕾塔",
+    "傀影",
+    "米兰妮"
+   ]
+  },
+  {
+   "id": "event-048",
+   "title": "太阳甩在身后",
+   "category": "活动",
+   "code": "活动",
+   "order": 62,
+   "description": "78 名角色，95 组关系。关系最多的是 佩佩、娜仁图亚、梅捷缇克缇。",
+   "color": "#d2997e",
+   "source": "活动 · 太阳甩在身后",
+   "nodes": 78,
+   "pairs": 95,
+   "relations": 155,
+   "top": [
+    "佩佩",
+    "娜仁图亚",
+    "梅捷缇克缇"
+   ]
+  },
+  {
+   "id": "event-049",
+   "title": "泰拉饭",
+   "category": "活动",
+   "code": "活动",
+   "order": 63,
+   "description": "48 名角色，73 组关系。关系最多的是 莱欧斯、齐尔查克、玛露西尔。",
+   "color": "#c69abd",
+   "source": "活动 · 泰拉饭",
+   "nodes": 48,
+   "pairs": 73,
+   "relations": 111,
+   "top": [
+    "莱欧斯",
+    "齐尔查克",
+    "玛露西尔"
+   ]
+  },
+  {
+   "id": "event-050",
+   "title": "崔林特尔梅之金",
+   "category": "活动",
+   "code": "活动",
+   "order": 64,
+   "description": "83 名角色，141 组关系。关系最多的是 薇薇安娜、黑键、送葬人。",
+   "color": "#d3a6a0",
+   "source": "活动 · 崔林特尔梅之金",
+   "nodes": 83,
+   "pairs": 141,
+   "relations": 231,
+   "top": [
+    "薇薇安娜",
+    "黑键",
+    "送葬人"
+   ]
+  },
+  {
+   "id": "event-051",
+   "title": "熔炉“还魂”记",
+   "category": "活动",
+   "code": "活动",
+   "order": 65,
+   "description": "43 名角色，69 组关系。关系最多的是 妮芙、渡桥、埃芒加德。",
+   "color": "#a0bfbc",
+   "source": "活动 · 熔炉“还魂”记",
+   "nodes": 43,
+   "pairs": 69,
+   "relations": 113,
+   "top": [
+    "妮芙",
+    "渡桥",
+    "埃芒加德"
+   ]
+  },
+  {
+   "id": "event-052",
+   "title": "雅赛努斯复仇记",
+   "category": "活动",
+   "code": "活动",
+   "order": 66,
+   "description": "49 名角色，73 组关系。关系最多的是 缇缇、摆渡人、卡珊卓拉。",
+   "color": "#b5a788",
+   "source": "活动 · 雅赛努斯复仇记",
+   "nodes": 49,
+   "pairs": 73,
+   "relations": 120,
+   "top": [
+    "缇缇",
+    "摆渡人",
+    "卡珊卓拉"
+   ]
+  },
+  {
+   "id": "event-053",
+   "title": "揭幕者们",
+   "category": "活动",
+   "code": "活动",
+   "order": 67,
+   "description": "69 名角色，121 组关系。关系最多的是 斥罪、伊雷妮、安东尼奥。",
+   "color": "#b49baa",
+   "source": "活动 · 揭幕者们",
+   "nodes": 69,
+   "pairs": 121,
+   "relations": 201,
+   "top": [
+    "斥罪",
+    "伊雷妮",
+    "安东尼奥"
+   ]
+  },
+  {
+   "id": "event-054",
+   "title": "银心湖列车",
+   "category": "活动",
+   "code": "活动",
+   "order": 68,
+   "description": "70 名角色，115 组关系。关系最多的是 锏、哈洛德、烈夏。",
+   "color": "#a8b7d2",
+   "source": "活动 · 银心湖列车",
+   "nodes": 70,
+   "pairs": 115,
+   "relations": 184,
+   "top": [
+    "锏",
+    "哈洛德",
+    "烈夏"
+   ]
+  },
+  {
+   "id": "event-055",
+   "title": "出苍白海",
+   "category": "活动",
+   "code": "活动",
+   "order": 69,
+   "description": "75 名角色，118 组关系。关系最多的是 棘刺、哈维尔、胡安娜。",
+   "color": "#c9a98c",
+   "source": "活动 · 出苍白海",
+   "nodes": 75,
+   "pairs": 118,
+   "relations": 188,
+   "top": [
+    "棘刺",
+    "哈维尔",
+    "胡安娜"
+   ]
+  },
+  {
+   "id": "event-056",
+   "title": "丛林症结",
+   "category": "活动",
+   "code": "活动",
+   "order": 70,
+   "description": "59 名角色，74 组关系。关系最多的是 谬因、米格鲁、佩德洛。",
+   "color": "#d2997e",
+   "source": "活动 · 丛林症结",
+   "nodes": 59,
+   "pairs": 74,
+   "relations": 119,
+   "top": [
+    "谬因",
+    "米格鲁",
+    "佩德洛"
+   ]
+  },
+  {
+   "id": "event-057",
+   "title": "洪炉示岁",
+   "category": "活动",
+   "code": "活动",
+   "order": 71,
+   "description": "25 名角色，35 组关系。关系最多的是 陈、魏文月、阿米娅。",
+   "color": "#c69abd",
+   "source": "活动 · 洪炉示岁",
+   "nodes": 25,
+   "pairs": 35,
+   "relations": 61,
+   "top": [
+    "陈",
+    "魏文月",
+    "阿米娅"
+   ]
+  },
+  {
+   "id": "event-058",
+   "title": "生路",
+   "category": "活动",
+   "code": "活动",
+   "order": 72,
+   "description": "44 名角色，69 组关系。关系最多的是 深巡、布兰都斯、歌蕾蒂娅。",
+   "color": "#d3a6a0",
+   "source": "活动 · 生路",
+   "nodes": 44,
+   "pairs": 69,
+   "relations": 124,
+   "top": [
+    "深巡",
+    "布兰都斯",
+    "歌蕾蒂娅"
+   ]
+  },
+  {
+   "id": "event-059",
+   "title": "昨日海",
+   "category": "活动",
+   "code": "活动",
+   "order": 73,
+   "description": "55 名角色，87 组关系。关系最多的是 克莱门莎、德·托莱多、斐戴拉。",
+   "color": "#a0bfbc",
+   "source": "活动 · 昨日海",
+   "nodes": 55,
+   "pairs": 87,
+   "relations": 149,
+   "top": [
+    "克莱门莎",
+    "德·托莱多",
+    "斐戴拉"
+   ]
+  },
+  {
+   "id": "event-060",
+   "title": "众生行记",
+   "category": "活动",
+   "code": "活动",
+   "order": 74,
+   "description": "88 名角色，130 组关系。关系最多的是 安多恩、蕾缪安、送葬人。",
+   "color": "#b5a788",
+   "source": "活动 · 众生行记",
+   "nodes": 88,
+   "pairs": 130,
+   "relations": 209,
+   "top": [
+    "安多恩",
+    "蕾缪安",
+    "送葬人"
+   ]
+  },
+  {
+   "id": "event-061",
+   "title": "画中人",
+   "category": "活动",
+   "code": "活动",
+   "order": 76,
+   "description": "17 名角色，35 组关系。关系最多的是 乌有、嵯峨、克洛丝。",
+   "color": "#b49baa",
+   "source": "活动 · 画中人",
+   "nodes": 17,
+   "pairs": 35,
+   "relations": 57,
+   "top": [
+    "乌有",
+    "嵯峨",
+    "克洛丝"
+   ]
+  },
+  {
+   "id": "event-062",
+   "title": "未许之地",
+   "category": "活动",
+   "code": "活动",
+   "order": 78,
+   "description": "61 名角色，94 组关系。关系最多的是 娜斯提、高登、斯凯。",
+   "color": "#a8b7d2",
+   "source": "活动 · 未许之地",
+   "nodes": 61,
+   "pairs": 94,
+   "relations": 152,
+   "top": [
+    "娜斯提",
+    "高登",
+    "斯凯"
+   ]
+  },
+  {
+   "id": "event-063",
+   "title": "雪山降临1101",
+   "category": "活动",
+   "code": "活动",
+   "order": 79,
+   "description": "116 名角色，154 组关系。关系最多的是 银灰、初雪、灵知。",
+   "color": "#c9a98c",
+   "source": "活动 · 雪山降临1101",
+   "nodes": 116,
+   "pairs": 154,
+   "relations": 252,
+   "top": [
+    "银灰",
+    "初雪",
+    "灵知"
+   ]
+  },
+  {
+   "id": "event-064",
+   "title": "十字路口",
+   "category": "活动",
+   "code": "活动",
+   "order": 80,
+   "description": "38 名角色，47 组关系。关系最多的是 沙雷、复奏、斥罪。",
+   "color": "#d2997e",
+   "source": "活动 · 十字路口",
+   "nodes": 38,
+   "pairs": 47,
+   "relations": 80,
+   "top": [
+    "沙雷",
+    "复奏",
+    "斥罪"
+   ]
+  },
+  {
+   "id": "event-065",
+   "title": "人们，我们",
+   "category": "活动",
+   "code": "活动",
+   "order": 81,
+   "description": "113 名角色，171 组关系。关系最多的是 凛冬、烈夏、真理。",
+   "color": "#c69abd",
+   "source": "活动 · 人们，我们",
+   "nodes": 113,
+   "pairs": 171,
+   "relations": 275,
+   "top": [
+    "凛冬",
+    "烈夏",
+    "真理"
+   ]
+  },
+  {
+   "id": "event-066",
+   "title": "泡影苍霆",
+   "category": "活动",
+   "code": "活动",
+   "order": 82,
+   "description": "25 名角色，38 组关系。关系最多的是 月见夜、宝巫迦、梓兰。",
+   "color": "#d3a6a0",
+   "source": "活动 · 泡影苍霆",
+   "nodes": 25,
+   "pairs": 38,
+   "relations": 62,
+   "top": [
+    "月见夜",
+    "宝巫迦",
+    "梓兰"
+   ]
+  },
+  {
+   "id": "event-067",
+   "title": "将进酒",
+   "category": "活动",
+   "code": "活动",
+   "order": 84,
+   "description": "32 名角色，86 组关系。关系最多的是 左乐、老鲤、乌有。",
+   "color": "#a0bfbc",
+   "source": "活动 · 将进酒",
+   "nodes": 32,
+   "pairs": 86,
+   "relations": 139,
+   "top": [
+    "左乐",
+    "老鲤",
+    "乌有"
+   ]
+  },
+  {
+   "id": "event-068",
+   "title": "登临意",
+   "category": "活动",
+   "code": "活动",
+   "order": 85,
+   "description": "69 名角色，126 组关系。关系最多的是 左乐、林、孟铁衣。",
+   "color": "#b5a788",
+   "source": "活动 · 登临意",
+   "nodes": 69,
+   "pairs": 126,
+   "relations": 213,
+   "top": [
+    "左乐",
+    "林",
+    "孟铁衣"
+   ]
+  },
+  {
+   "id": "event-069",
+   "title": "春分",
+   "category": "活动",
+   "code": "活动",
+   "order": 86,
+   "description": "35 名角色，42 组关系。关系最多的是 老族长、方小石、仇白。",
+   "color": "#b49baa",
+   "source": "活动 · 春分",
+   "nodes": 35,
+   "pairs": 42,
+   "relations": 72,
+   "top": [
+    "老族长",
+    "方小石",
+    "仇白"
+   ]
+  },
+  {
+   "id": "event-070",
+   "title": "落叶逐火",
+   "category": "活动",
+   "code": "活动",
+   "order": 87,
+   "description": "38 名角色，56 组关系。关系最多的是 夜刀、黑角、泷居应。",
+   "color": "#a8b7d2",
+   "source": "活动 · 落叶逐火",
+   "nodes": 38,
+   "pairs": 56,
+   "relations": 93,
+   "top": [
+    "夜刀",
+    "黑角",
+    "泷居应"
+   ]
+  },
+  {
+   "id": "event-071",
+   "title": "月行水上",
+   "category": "活动",
+   "code": "活动",
+   "order": 88,
+   "description": "31 名角色，59 组关系。关系最多的是 结城理、岳羽由加莉、裘里奥。",
+   "color": "#c9a98c",
+   "source": "活动 · 月行水上",
+   "nodes": 31,
+   "pairs": 59,
+   "relations": 99,
+   "top": [
+    "结城理",
+    "岳羽由加莉",
+    "裘里奥"
+   ]
+  },
+  {
+   "id": "event-072",
+   "title": "怀黍离",
+   "category": "活动",
+   "code": "活动",
+   "order": 89,
+   "description": "63 名角色，81 组关系。关系最多的是 黍、左乐、绩。",
+   "color": "#d2997e",
+   "source": "活动 · 怀黍离",
+   "nodes": 63,
+   "pairs": 81,
+   "relations": 137,
+   "top": [
+    "黍",
+    "左乐",
+    "绩"
+   ]
+  },
+  {
+   "id": "event-073",
+   "title": "相见欢",
+   "category": "活动",
+   "code": "活动",
+   "order": 90,
+   "description": "80 名角色，91 组关系。关系最多的是 煌、惊蛰、行箸。",
+   "color": "#c69abd",
+   "source": "活动 · 相见欢",
+   "nodes": 80,
+   "pairs": 91,
+   "relations": 151,
+   "top": [
+    "煌",
+    "惊蛰",
+    "行箸"
+   ]
+  },
+  {
+   "id": "event-074",
+   "title": "镜中集",
+   "category": "活动",
+   "code": "活动",
+   "order": 91,
+   "description": "57 名角色，65 组关系。关系最多的是 惊蛰、梁、录武官。",
+   "color": "#d3a6a0",
+   "source": "活动 · 镜中集",
+   "nodes": 57,
+   "pairs": 65,
+   "relations": 105,
+   "top": [
+    "惊蛰",
+    "梁",
+    "录武官"
+   ]
+  },
+  {
+   "id": "event-075",
+   "title": "辞岁行",
+   "category": "活动",
+   "code": "活动",
+   "order": 92,
+   "description": "77 名角色，109 组关系。关系最多的是 陈、左乐、望。",
+   "color": "#a0bfbc",
+   "source": "活动 · 辞岁行",
+   "nodes": 77,
+   "pairs": 109,
+   "relations": 180,
+   "top": [
+    "陈",
+    "左乐",
+    "望"
+   ]
+  },
+  {
+   "id": "event-076",
+   "title": "直到大地变成一颗酸橙",
+   "category": "活动",
+   "code": "活动",
+   "order": 93,
+   "description": "63 名角色，90 组关系。关系最多的是 珊比、安洁莉娜、嘉辛塔。",
+   "color": "#b5a788",
+   "source": "活动 · 直到大地变成一颗酸橙",
+   "nodes": 63,
+   "pairs": 90,
+   "relations": 141,
+   "top": [
+    "珊比",
+    "安洁莉娜",
+    "嘉辛塔"
+   ]
+  },
+  {
+   "id": "record-001",
+   "title": "凯尔希",
+   "category": "密录",
+   "code": "密录",
+   "order": 100,
+   "description": "6 名角色，5 组关系。关系最多的是 凯尔希、阿米娅、可露希尔。",
+   "color": "#b49baa",
+   "source": "密录 · 凯尔希",
+   "nodes": 6,
+   "pairs": 5,
+   "relations": 10,
+   "top": [
+    "凯尔希",
+    "阿米娅",
+    "可露希尔"
+   ]
+  },
+  {
+   "id": "record-002",
+   "title": "12F",
+   "category": "密录",
+   "code": "密录",
+   "order": 101,
+   "description": "5 名角色，3 组关系。关系最多的是 46A、萨卡兹佣兵、巨枭。",
+   "color": "#a8b7d2",
+   "source": "密录 · 12F",
+   "nodes": 5,
+   "pairs": 3,
+   "relations": 6,
+   "top": [
+    "46A",
+    "萨卡兹佣兵",
+    "巨枭"
+   ]
+  },
+  {
+   "id": "record-003",
+   "title": "陈",
+   "category": "密录",
+   "code": "密录",
+   "order": 102,
+   "description": "26 名角色，36 组关系。关系最多的是 陈、林、星熊。",
+   "color": "#c9a98c",
+   "source": "密录 · 陈",
+   "nodes": 26,
+   "pairs": 36,
+   "relations": 56,
+   "top": [
+    "陈",
+    "林",
+    "星熊"
+   ]
+  },
+  {
+   "id": "record-004",
+   "title": "煌",
+   "category": "密录",
+   "code": "密录",
+   "order": 103,
+   "description": "9 名角色，10 组关系。关系最多的是 煌、温蒂、Ace。",
+   "color": "#d2997e",
+   "source": "密录 · 煌",
+   "nodes": 9,
+   "pairs": 10,
+   "relations": 15,
+   "top": [
+    "煌",
+    "温蒂",
+    "Ace"
+   ]
+  },
+  {
+   "id": "record-005",
+   "title": "炎熔",
+   "category": "密录",
+   "code": "密录",
+   "order": 104,
+   "description": "10 名角色，12 组关系。关系最多的是 炎熔、伊尔莎、芙蓉。",
+   "color": "#c69abd",
+   "source": "密录 · 炎熔",
+   "nodes": 10,
+   "pairs": 12,
+   "relations": 16,
+   "top": [
+    "炎熔",
+    "伊尔莎",
+    "芙蓉"
+   ]
+  },
+  {
+   "id": "record-006",
+   "title": "临光",
+   "category": "密录",
+   "code": "密录",
+   "order": 105,
+   "description": "5 名角色，6 组关系。关系最多的是 临光、“银枪的天马”、感染者骑士。",
+   "color": "#d3a6a0",
+   "source": "密录 · 临光",
+   "nodes": 5,
+   "pairs": 6,
+   "relations": 10,
+   "top": [
+    "临光",
+    "“银枪的天马”",
+    "感染者骑士"
+   ]
+  },
+  {
+   "id": "record-007",
+   "title": "艾雅法拉",
+   "category": "密录",
+   "code": "密录",
+   "order": 106,
+   "description": "9 名角色，11 组关系。关系最多的是 艾雅法拉、巴蒂、向导。",
+   "color": "#a0bfbc",
+   "source": "密录 · 艾雅法拉",
+   "nodes": 9,
+   "pairs": 11,
+   "relations": 19,
+   "top": [
+    "艾雅法拉",
+    "巴蒂",
+    "向导"
+   ]
+  },
+  {
+   "id": "record-008",
+   "title": "空",
+   "category": "密录",
+   "code": "密录",
+   "order": 107,
+   "description": "14 名角色，20 组关系。关系最多的是 空、德克萨斯、能天使。",
+   "color": "#b5a788",
+   "source": "密录 · 空",
+   "nodes": 14,
+   "pairs": 20,
+   "relations": 29,
+   "top": [
+    "空",
+    "德克萨斯",
+    "能天使"
+   ]
+  },
+  {
+   "id": "record-009",
+   "title": "克洛丝",
+   "category": "密录",
+   "code": "密录",
+   "order": 108,
+   "description": "14 名角色，16 组关系。关系最多的是 克洛丝、阿尹、镜头。",
+   "color": "#b49baa",
+   "source": "密录 · 克洛丝",
+   "nodes": 14,
+   "pairs": 16,
+   "relations": 25,
+   "top": [
+    "克洛丝",
+    "阿尹",
+    "镜头"
+   ]
+  },
+  {
+   "id": "record-010",
+   "title": "幽灵鲨",
+   "category": "密录",
+   "code": "密录",
+   "order": 109,
+   "description": "14 名角色，16 组关系。关系最多的是 幽灵鲨、铃兰、斯卡蒂。",
+   "color": "#a8b7d2",
+   "source": "密录 · 幽灵鲨",
+   "nodes": 14,
+   "pairs": 16,
+   "relations": 28,
+   "top": [
+    "幽灵鲨",
+    "铃兰",
+    "斯卡蒂"
+   ]
+  },
+  {
+   "id": "record-011",
+   "title": "芙蓉",
+   "category": "密录",
+   "code": "密录",
+   "order": 110,
+   "description": "18 名角色，20 组关系。关系最多的是 芙蓉、沃廉、加利。",
+   "color": "#c9a98c",
+   "source": "密录 · 芙蓉",
+   "nodes": 18,
+   "pairs": 20,
+   "relations": 32,
+   "top": [
+    "芙蓉",
+    "沃廉",
+    "加利"
+   ]
+  },
+  {
+   "id": "record-012",
+   "title": "嘉维尔",
+   "category": "密录",
+   "code": "密录",
+   "order": 111,
+   "description": "17 名角色，23 组关系。关系最多的是 嘉维尔、依娜姆、清醒的杜林人。",
+   "color": "#d2997e",
+   "source": "密录 · 嘉维尔",
+   "nodes": 17,
+   "pairs": 23,
+   "relations": 39,
+   "top": [
+    "嘉维尔",
+    "依娜姆",
+    "清醒的杜林人"
+   ]
+  },
+  {
+   "id": "record-013",
+   "title": "格雷伊",
+   "category": "密录",
+   "code": "密录",
+   "order": 112,
+   "description": "8 名角色，12 组关系。关系最多的是 格雷伊、医疗干员、办事处干员A。",
+   "color": "#c69abd",
+   "source": "密录 · 格雷伊",
+   "nodes": 8,
+   "pairs": 12,
+   "relations": 24,
+   "top": [
+    "格雷伊",
+    "医疗干员",
+    "办事处干员A"
+   ]
+  },
+  {
+   "id": "record-014",
+   "title": "德克萨斯",
+   "category": "密录",
+   "code": "密录",
+   "order": 113,
+   "description": "9 名角色，10 组关系。关系最多的是 德克萨斯、黑帮A、能天使。",
+   "color": "#d3a6a0",
+   "source": "密录 · 德克萨斯",
+   "nodes": 9,
+   "pairs": 10,
+   "relations": 16,
+   "top": [
+    "德克萨斯",
+    "黑帮A",
+    "能天使"
+   ]
+  },
+  {
+   "id": "record-015",
+   "title": "送葬人",
+   "category": "密录",
+   "code": "密录",
+   "order": 114,
+   "description": "14 名角色，17 组关系。关系最多的是 送葬人、博士、教宗骑士。",
+   "color": "#a0bfbc",
+   "source": "密录 · 送葬人",
+   "nodes": 14,
+   "pairs": 17,
+   "relations": 28,
+   "top": [
+    "送葬人",
+    "博士",
+    "教宗骑士"
+   ]
+  },
+  {
+   "id": "record-016",
+   "title": "杰西卡",
+   "category": "密录",
+   "code": "密录",
+   "order": 115,
+   "description": "14 名角色，20 组关系。关系最多的是 杰西卡、伍德洛、愤怒的男人。",
+   "color": "#b5a788",
+   "source": "密录 · 杰西卡",
+   "nodes": 14,
+   "pairs": 20,
+   "relations": 28,
+   "top": [
+    "杰西卡",
+    "伍德洛",
+    "愤怒的男人"
+   ]
+  },
+  {
+   "id": "record-017",
+   "title": "拉普兰德",
+   "category": "密录",
+   "code": "密录",
+   "order": 116,
+   "description": "5 名角色，5 组关系。关系最多的是 拉普兰德、恺撒、红。",
+   "color": "#b49baa",
+   "source": "密录 · 拉普兰德",
+   "nodes": 5,
+   "pairs": 5,
+   "relations": 10,
+   "top": [
+    "拉普兰德",
+    "恺撒",
+    "红"
+   ]
+  },
+  {
+   "id": "record-018",
+   "title": "能天使",
+   "category": "密录",
+   "code": "密录",
+   "order": 117,
+   "description": "11 名角色，17 组关系。关系最多的是 能天使、可颂、德克萨斯。",
+   "color": "#a8b7d2",
+   "source": "密录 · 能天使",
+   "nodes": 11,
+   "pairs": 17,
+   "relations": 31,
+   "top": [
+    "能天使",
+    "可颂",
+    "德克萨斯"
+   ]
+  },
+  {
+   "id": "record-019",
+   "title": "星源",
+   "category": "密录",
+   "code": "密录",
+   "order": 118,
+   "description": "12 名角色，13 组关系。关系最多的是 星源、谢拉格女性、雪猎。",
+   "color": "#c9a98c",
+   "source": "密录 · 星源",
+   "nodes": 12,
+   "pairs": 13,
+   "relations": 20,
+   "top": [
+    "星源",
+    "谢拉格女性",
+    "雪猎"
+   ]
+  },
+  {
+   "id": "record-020",
+   "title": "凛冬",
+   "category": "密录",
+   "code": "密录",
+   "order": 119,
+   "description": "28 名角色，28 组关系。关系最多的是 凛冬、盲眼的老人、逃窜的学生。",
+   "color": "#d2997e",
+   "source": "密录 · 凛冬",
+   "nodes": 28,
+   "pairs": 28,
+   "relations": 47,
+   "top": [
+    "凛冬",
+    "盲眼的老人",
+    "逃窜的学生"
+   ]
+  },
+  {
+   "id": "record-021",
+   "title": "芙兰卡",
+   "category": "密录",
+   "code": "密录",
+   "order": 120,
+   "description": "7 名角色，8 组关系。关系最多的是 芙兰卡、杏仁、雷蛇。",
+   "color": "#c69abd",
+   "source": "密录 · 芙兰卡",
+   "nodes": 7,
+   "pairs": 8,
+   "relations": 14,
+   "top": [
+    "芙兰卡",
+    "杏仁",
+    "雷蛇"
+   ]
+  },
+  {
+   "id": "record-022",
+   "title": "雷蛇",
+   "category": "密录",
+   "code": "密录",
+   "order": 121,
+   "description": "7 名角色，13 组关系。关系最多的是 雷蛇、香草、桃金娘。",
+   "color": "#d3a6a0",
+   "source": "密录 · 雷蛇",
+   "nodes": 7,
+   "pairs": 13,
+   "relations": 19,
+   "top": [
+    "雷蛇",
+    "香草",
+    "桃金娘"
+   ]
+  },
+  {
+   "id": "record-023",
+   "title": "赫默",
+   "category": "密录",
+   "code": "密录",
+   "order": 122,
+   "description": "8 名角色，9 组关系。关系最多的是 赫默、白面鸮、研究员C。",
+   "color": "#a0bfbc",
+   "source": "密录 · 赫默",
+   "nodes": 8,
+   "pairs": 9,
+   "relations": 14,
+   "top": [
+    "赫默",
+    "白面鸮",
+    "研究员C"
+   ]
+  },
+  {
+   "id": "record-024",
+   "title": "远山",
+   "category": "密录",
+   "code": "密录",
+   "order": 123,
+   "description": "3 名角色，3 组关系。关系最多的是 远山、可颂、上课的小干员。",
+   "color": "#b5a788",
+   "source": "密录 · 远山",
+   "nodes": 3,
+   "pairs": 3,
+   "relations": 5,
+   "top": [
+    "远山",
+    "可颂",
+    "上课的小干员"
+   ]
+  },
+  {
+   "id": "record-025",
+   "title": "深海色",
+   "category": "密录",
+   "code": "密录",
+   "order": 124,
+   "description": "11 名角色，8 组关系。关系最多的是 深海色、画店店主、大胆的镇民。",
+   "color": "#b49baa",
+   "source": "密录 · 深海色",
+   "nodes": 11,
+   "pairs": 8,
+   "relations": 14,
+   "top": [
+    "深海色",
+    "画店店主",
+    "大胆的镇民"
+   ]
+  },
+  {
+   "id": "record-026",
+   "title": "推进之王",
+   "category": "密录",
+   "code": "密录",
+   "order": 125,
+   "description": "4 名角色，3 组关系。关系最多的是 推进之王、戴菲恩、达格达。",
+   "color": "#a8b7d2",
+   "source": "密录 · 推进之王",
+   "nodes": 4,
+   "pairs": 3,
+   "relations": 6,
+   "top": [
+    "推进之王",
+    "戴菲恩",
+    "达格达"
+   ]
+  },
+  {
+   "id": "record-027",
+   "title": "末药",
+   "category": "密录",
+   "code": "密录",
+   "order": 126,
+   "description": "6 名角色，8 组关系。关系最多的是 末药、苏苏洛、芙蓉。",
+   "color": "#c9a98c",
+   "source": "密录 · 末药",
+   "nodes": 6,
+   "pairs": 8,
+   "relations": 12,
+   "top": [
+    "末药",
+    "苏苏洛",
+    "芙蓉"
+   ]
+  },
+  {
+   "id": "record-028",
+   "title": "白雪",
+   "category": "密录",
+   "code": "密录",
+   "order": 127,
+   "description": "7 名角色，4 组关系。关系最多的是 白雪、可露希尔、文月。",
+   "color": "#d2997e",
+   "source": "密录 · 白雪",
+   "nodes": 7,
+   "pairs": 4,
+   "relations": 7,
+   "top": [
+    "白雪",
+    "可露希尔",
+    "文月"
+   ]
+  },
+  {
+   "id": "record-029",
+   "title": "米格鲁",
+   "category": "密录",
+   "code": "密录",
+   "order": 128,
+   "description": "13 名角色，24 组关系。关系最多的是 米格鲁、芬、克洛丝。",
+   "color": "#c69abd",
+   "source": "密录 · 米格鲁",
+   "nodes": 13,
+   "pairs": 24,
+   "relations": 42,
+   "top": [
+    "米格鲁",
+    "芬",
+    "克洛丝"
+   ]
+  },
+  {
+   "id": "record-030",
+   "title": "芬",
+   "category": "密录",
+   "code": "密录",
+   "order": 129,
+   "description": "9 名角色，10 组关系。关系最多的是 芬、酸糖、镜头。",
+   "color": "#d3a6a0",
+   "source": "密录 · 芬",
+   "nodes": 9,
+   "pairs": 10,
+   "relations": 15,
+   "top": [
+    "芬",
+    "酸糖",
+    "镜头"
+   ]
+  },
+  {
+   "id": "record-031",
+   "title": "流星",
+   "category": "密录",
+   "code": "密录",
+   "order": 130,
+   "description": "12 名角色，15 组关系。关系最多的是 流星、吉安娜、医疗干员。",
+   "color": "#a0bfbc",
+   "source": "密录 · 流星",
+   "nodes": 12,
+   "pairs": 15,
+   "relations": 28,
+   "top": [
+    "流星",
+    "吉安娜",
+    "医疗干员"
+   ]
+  },
+  {
+   "id": "record-032",
+   "title": "艾丝黛尔",
+   "category": "密录",
+   "code": "密录",
+   "order": 131,
+   "description": "9 名角色，9 组关系。关系最多的是 艾丝黛尔、嘉维尔、特米米。",
+   "color": "#b5a788",
+   "source": "密录 · 艾丝黛尔",
+   "nodes": 9,
+   "pairs": 9,
+   "relations": 14,
+   "top": [
+    "艾丝黛尔",
+    "嘉维尔",
+    "特米米"
+   ]
+  },
+  {
+   "id": "record-033",
+   "title": "白面鸮",
+   "category": "密录",
+   "code": "密录",
+   "order": 132,
+   "description": "6 名角色，6 组关系。关系最多的是 白面鸮、梅尔、巡林者。",
+   "color": "#b49baa",
+   "source": "密录 · 白面鸮",
+   "nodes": 6,
+   "pairs": 6,
+   "relations": 10,
+   "top": [
+    "白面鸮",
+    "梅尔",
+    "巡林者"
+   ]
+  },
+  {
+   "id": "record-034",
+   "title": "蓝毒",
+   "category": "密录",
+   "code": "密录",
+   "order": 133,
+   "description": "4 名角色，4 组关系。关系最多的是 蓝毒、格劳克斯、安比尔。",
+   "color": "#a8b7d2",
+   "source": "密录 · 蓝毒",
+   "nodes": 4,
+   "pairs": 4,
+   "relations": 8,
+   "top": [
+    "蓝毒",
+    "格劳克斯",
+    "安比尔"
+   ]
+  },
+  {
+   "id": "record-035",
+   "title": "杜宾",
+   "category": "密录",
+   "code": "密录",
+   "order": 134,
+   "description": "2 名角色，1 组关系。关系最多的是 守院人、杜宾。",
+   "color": "#c9a98c",
+   "source": "密录 · 杜宾",
+   "nodes": 2,
+   "pairs": 1,
+   "relations": 2,
+   "top": [
+    "守院人",
+    "杜宾"
+   ]
+  },
+  {
+   "id": "record-036",
+   "title": "梅",
+   "category": "密录",
+   "code": "密录",
+   "order": 135,
+   "description": "8 名角色，10 组关系。关系最多的是 梅、海蒂、肥胖的商人。",
+   "color": "#d2997e",
+   "source": "密录 · 梅",
+   "nodes": 8,
+   "pairs": 10,
+   "relations": 14,
+   "top": [
+    "梅",
+    "海蒂",
+    "肥胖的商人"
+   ]
+  },
+  {
+   "id": "record-037",
+   "title": "伊芙利特",
+   "category": "密录",
+   "code": "密录",
+   "order": 136,
+   "description": "7 名角色，7 组关系。关系最多的是 伊芙利特、艾雅法拉、薄绿。",
+   "color": "#c69abd",
+   "source": "密录 · 伊芙利特",
+   "nodes": 7,
+   "pairs": 7,
+   "relations": 12,
+   "top": [
+    "伊芙利特",
+    "艾雅法拉",
+    "薄绿"
+   ]
+  },
+  {
+   "id": "record-038",
+   "title": "星熊",
+   "category": "密录",
+   "code": "密录",
+   "order": 137,
+   "description": "11 名角色，15 组关系。关系最多的是 星熊、大头、阿祥。",
+   "color": "#d3a6a0",
+   "source": "密录 · 星熊",
+   "nodes": 11,
+   "pairs": 15,
+   "relations": 23,
+   "top": [
+    "星熊",
+    "大头",
+    "阿祥"
+   ]
+  },
+  {
+   "id": "record-039",
+   "title": "猎蜂",
+   "category": "密录",
+   "code": "密录",
+   "order": 138,
+   "description": "3 名角色，3 组关系。关系最多的是 猎蜂、罗德岛外勤干员、强壮的男人。",
+   "color": "#a0bfbc",
+   "source": "密录 · 猎蜂",
+   "nodes": 3,
+   "pairs": 3,
+   "relations": 6,
+   "top": [
+    "猎蜂",
+    "罗德岛外勤干员",
+    "强壮的男人"
+   ]
+  },
+  {
+   "id": "record-040",
+   "title": "夜烟",
+   "category": "密录",
+   "code": "密录",
+   "order": 139,
+   "description": "7 名角色，6 组关系。关系最多的是 夜烟、小柏莎、班杰明议员。",
+   "color": "#b5a788",
+   "source": "密录 · 夜烟",
+   "nodes": 7,
+   "pairs": 6,
+   "relations": 11,
+   "top": [
+    "夜烟",
+    "小柏莎",
+    "班杰明议员"
+   ]
+  },
+  {
+   "id": "record-041",
+   "title": "普罗旺斯",
+   "category": "密录",
+   "code": "密录",
+   "order": 140,
+   "description": "13 名角色，13 组关系。关系最多的是 普罗旺斯、罗德岛外勤干员、月禾。",
+   "color": "#b49baa",
+   "source": "密录 · 普罗旺斯",
+   "nodes": 13,
+   "pairs": 13,
+   "relations": 20,
+   "top": [
+    "普罗旺斯",
+    "罗德岛外勤干员",
+    "月禾"
+   ]
+  },
+  {
+   "id": "record-042",
+   "title": "闪灵",
+   "category": "密录",
+   "code": "密录",
+   "order": 141,
+   "description": "6 名角色，7 组关系。关系最多的是 闪灵、村民的孩子、感染者村民。",
+   "color": "#a8b7d2",
+   "source": "密录 · 闪灵",
+   "nodes": 6,
+   "pairs": 7,
+   "relations": 12,
+   "top": [
+    "闪灵",
+    "村民的孩子",
+    "感染者村民"
+   ]
+  },
+  {
+   "id": "record-043",
+   "title": "清道夫",
+   "category": "密录",
+   "code": "密录",
+   "order": 142,
+   "description": "3 名角色，2 组关系。关系最多的是 清道夫、图利奥、工厂守卫。",
+   "color": "#c9a98c",
+   "source": "密录 · 清道夫",
+   "nodes": 3,
+   "pairs": 2,
+   "relations": 3,
+   "top": [
+    "清道夫",
+    "图利奥",
+    "工厂守卫"
+   ]
+  },
+  {
+   "id": "record-044",
+   "title": "弑君者",
+   "category": "密录",
+   "code": "密录",
+   "order": 143,
+   "description": "8 名角色，8 组关系。关系最多的是 弑君者、伊雷妮、卡车司机B。",
+   "color": "#d2997e",
+   "source": "密录 · 弑君者",
+   "nodes": 8,
+   "pairs": 8,
+   "relations": 13,
+   "top": [
+    "弑君者",
+    "伊雷妮",
+    "卡车司机B"
+   ]
+  },
+  {
+   "id": "record-045",
+   "title": "蛇屠箱",
+   "category": "密录",
+   "code": "密录",
+   "order": 144,
+   "description": "5 名角色，5 组关系。关系最多的是 蛇屠箱、精明的青年、冒失的青年。",
+   "color": "#c69abd",
+   "source": "密录 · 蛇屠箱",
+   "nodes": 5,
+   "pairs": 5,
+   "relations": 10,
+   "top": [
+    "蛇屠箱",
+    "精明的青年",
+    "冒失的青年"
+   ]
+  },
+  {
+   "id": "record-046",
+   "title": "桃金娘",
+   "category": "密录",
+   "code": "密录",
+   "order": 145,
+   "description": "4 名角色，4 组关系。关系最多的是 干员霍格、桃金娘、干员苏珊。",
+   "color": "#d3a6a0",
+   "source": "密录 · 桃金娘",
+   "nodes": 4,
+   "pairs": 4,
+   "relations": 7,
+   "top": [
+    "干员霍格",
+    "桃金娘",
+    "干员苏珊"
+   ]
+  },
+  {
+   "id": "record-047",
+   "title": "摩根",
+   "category": "密录",
+   "code": "密录",
+   "order": 146,
+   "description": "9 名角色，10 组关系。关系最多的是 摩根、因陀罗、推进之王。",
+   "color": "#a0bfbc",
+   "source": "密录 · 摩根",
+   "nodes": 9,
+   "pairs": 10,
+   "relations": 16,
+   "top": [
+    "摩根",
+    "因陀罗",
+    "推进之王"
+   ]
+  },
+  {
+   "id": "record-048",
+   "title": "因陀罗",
+   "category": "密录",
+   "code": "密录",
+   "order": 147,
+   "description": "5 名角色，5 组关系。关系最多的是 因陀罗、杰克、杜宾。",
+   "color": "#b5a788",
+   "source": "密录 · 因陀罗",
+   "nodes": 5,
+   "pairs": 5,
+   "relations": 10,
+   "top": [
+    "因陀罗",
+    "杰克",
+    "杜宾"
+   ]
+  },
+  {
+   "id": "record-049",
+   "title": "达格达",
+   "category": "密录",
+   "code": "密录",
+   "order": 148,
+   "description": "9 名角色，11 组关系。关系最多的是 达格达、因陀罗、贝尔德。",
+   "color": "#b49baa",
+   "source": "密录 · 达格达",
+   "nodes": 9,
+   "pairs": 11,
+   "relations": 17,
+   "top": [
+    "达格达",
+    "因陀罗",
+    "贝尔德"
+   ]
+  },
+  {
+   "id": "record-050",
+   "title": "守林人",
+   "category": "密录",
+   "code": "密录",
+   "order": 149,
+   "description": "4 名角色，3 组关系。关系最多的是 守林人、外勤干员、卡西米尔村民。",
+   "color": "#a8b7d2",
+   "source": "密录 · 守林人",
+   "nodes": 4,
+   "pairs": 3,
+   "relations": 6,
+   "top": [
+    "守林人",
+    "外勤干员",
+    "卡西米尔村民"
+   ]
+  },
+  {
+   "id": "record-051",
+   "title": "火神",
+   "category": "密录",
+   "code": "密录",
+   "order": 150,
+   "description": "9 名角色，10 组关系。关系最多的是 火神、工程部干员B、工程部干员A。",
+   "color": "#c9a98c",
+   "source": "密录 · 火神",
+   "nodes": 9,
+   "pairs": 10,
+   "relations": 17,
+   "top": [
+    "火神",
+    "工程部干员B",
+    "工程部干员A"
+   ]
+  },
+  {
+   "id": "record-052",
+   "title": "天火",
+   "category": "密录",
+   "code": "密录",
+   "order": 151,
+   "description": "6 名角色，5 组关系。关系最多的是 天火、拉拢客户的商人同学、线人。",
+   "color": "#d2997e",
+   "source": "密录 · 天火",
+   "nodes": 6,
+   "pairs": 5,
+   "relations": 9,
+   "top": [
+    "天火",
+    "拉拢客户的商人同学",
+    "线人"
+   ]
+  },
+  {
+   "id": "record-053",
+   "title": "华法琳",
+   "category": "密录",
+   "code": "密录",
+   "order": 152,
+   "description": "8 名角色，8 组关系。关系最多的是 华法琳、勇敢的孩子、近卫干员。",
+   "color": "#c69abd",
+   "source": "密录 · 华法琳",
+   "nodes": 8,
+   "pairs": 8,
+   "relations": 12,
+   "top": [
+    "华法琳",
+    "勇敢的孩子",
+    "近卫干员"
+   ]
+  },
+  {
+   "id": "record-054",
+   "title": "银灰",
+   "category": "密录",
+   "code": "密录",
+   "order": 153,
+   "description": "17 名角色，26 组关系。关系最多的是 银灰、博士、感染者哥哥。",
+   "color": "#d3a6a0",
+   "source": "密录 · 银灰",
+   "nodes": 17,
+   "pairs": 26,
+   "relations": 47,
+   "top": [
+    "银灰",
+    "博士",
+    "感染者哥哥"
+   ]
+  },
+  {
+   "id": "record-055",
+   "title": "崖心",
+   "category": "密录",
+   "code": "密录",
+   "order": 154,
+   "description": "9 名角色，8 组关系。关系最多的是 恩希亚、崖心、萨卡兹猎人。",
+   "color": "#a0bfbc",
+   "source": "密录 · 崖心",
+   "nodes": 9,
+   "pairs": 8,
+   "relations": 15,
+   "top": [
+    "恩希亚",
+    "崖心",
+    "萨卡兹猎人"
+   ]
+  },
+  {
+   "id": "record-056",
+   "title": "初雪",
+   "category": "密录",
+   "code": "密录",
+   "order": 155,
+   "description": "7 名角色，7 组关系。关系最多的是 初雪、罗德岛干员、严肃的长老。",
+   "color": "#b5a788",
+   "source": "密录 · 初雪",
+   "nodes": 7,
+   "pairs": 7,
+   "relations": 14,
+   "top": [
+    "初雪",
+    "罗德岛干员",
+    "严肃的长老"
+   ]
+  },
+  {
+   "id": "record-057",
+   "title": "夜莺",
+   "category": "密录",
+   "code": "密录",
+   "order": 156,
+   "description": "10 名角色，12 组关系。关系最多的是 无奈的父亲、临光、莱塔尼亚宪兵。",
+   "color": "#b49baa",
+   "source": "密录 · 夜莺",
+   "nodes": 10,
+   "pairs": 12,
+   "relations": 20,
+   "top": [
+    "无奈的父亲",
+    "临光",
+    "莱塔尼亚宪兵"
+   ]
+  },
+  {
+   "id": "record-058",
+   "title": "调香师",
+   "category": "密录",
+   "code": "密录",
+   "order": 157,
+   "description": "6 名角色，6 组关系。关系最多的是 调香师、帕拉斯、威廉。",
+   "color": "#a8b7d2",
+   "source": "密录 · 调香师",
+   "nodes": 6,
+   "pairs": 6,
+   "relations": 11,
+   "top": [
+    "调香师",
+    "帕拉斯",
+    "威廉"
+   ]
+  },
+  {
+   "id": "record-059",
+   "title": "地灵",
+   "category": "密录",
+   "code": "密录",
+   "order": 158,
+   "description": "9 名角色，13 组关系。关系最多的是 地灵、雇佣兵队长、路易斯。",
+   "color": "#c9a98c",
+   "source": "密录 · 地灵",
+   "nodes": 9,
+   "pairs": 13,
+   "relations": 20,
+   "top": [
+    "地灵",
+    "雇佣兵队长",
+    "路易斯"
+   ]
+  },
+  {
+   "id": "record-060",
+   "title": "慕斯",
+   "category": "密录",
+   "code": "密录",
+   "order": 159,
+   "description": "10 名角色，10 组关系。关系最多的是 慕斯、瑟丽斯夫人、柏喙。",
+   "color": "#d2997e",
+   "source": "密录 · 慕斯",
+   "nodes": 10,
+   "pairs": 10,
+   "relations": 14,
+   "top": [
+    "慕斯",
+    "瑟丽斯夫人",
+    "柏喙"
+   ]
+  },
+  {
+   "id": "record-061",
+   "title": "赫拉格",
+   "category": "密录",
+   "code": "密录",
+   "order": 160,
+   "description": "8 名角色，6 组关系。关系最多的是 罗德岛干员、赫拉格、临光。",
+   "color": "#c69abd",
+   "source": "密录 · 赫拉格",
+   "nodes": 8,
+   "pairs": 6,
+   "relations": 9,
+   "top": [
+    "罗德岛干员",
+    "赫拉格",
+    "临光"
+   ]
+  },
+  {
+   "id": "record-062",
+   "title": "红云",
+   "category": "密录",
+   "code": "密录",
+   "order": 161,
+   "description": "7 名角色，6 组关系。关系最多的是 红云、医疗干员、芙蓉。",
+   "color": "#d3a6a0",
+   "source": "密录 · 红云",
+   "nodes": 7,
+   "pairs": 6,
+   "relations": 8,
+   "top": [
+    "红云",
+    "医疗干员",
+    "芙蓉"
+   ]
+  },
+  {
+   "id": "record-063",
+   "title": "翎羽",
+   "category": "密录",
+   "code": "密录",
+   "order": 162,
+   "description": "6 名角色，5 组关系。关系最多的是 翎羽、人事干员、博士。",
+   "color": "#a0bfbc",
+   "source": "密录 · 翎羽",
+   "nodes": 6,
+   "pairs": 5,
+   "relations": 9,
+   "top": [
+    "翎羽",
+    "人事干员",
+    "博士"
+   ]
+  },
+  {
+   "id": "record-064",
+   "title": "霜叶",
+   "category": "密录",
+   "code": "密录",
+   "order": 163,
+   "description": "11 名角色，11 组关系。关系最多的是 霜叶、快乐的声音、医疗干员。",
+   "color": "#b5a788",
+   "source": "密录 · 霜叶",
+   "nodes": 11,
+   "pairs": 11,
+   "relations": 17,
+   "top": [
+    "霜叶",
+    "快乐的声音",
+    "医疗干员"
+   ]
+  },
+  {
+   "id": "record-065",
+   "title": "烈夏",
+   "category": "密录",
+   "code": "密录",
+   "order": 164,
+   "description": "8 名角色，9 组关系。关系最多的是 烈夏、塔季扬娜、早露。",
+   "color": "#b49baa",
+   "source": "密录 · 烈夏",
+   "nodes": 8,
+   "pairs": 9,
+   "relations": 14,
+   "top": [
+    "烈夏",
+    "塔季扬娜",
+    "早露"
+   ]
+  },
+  {
+   "id": "record-066",
+   "title": "真理",
+   "category": "密录",
+   "code": "密录",
+   "order": 165,
+   "description": "19 名角色，14 组关系。关系最多的是 真理、凛冬、早露。",
+   "color": "#a8b7d2",
+   "source": "密录 · 真理",
+   "nodes": 19,
+   "pairs": 14,
+   "relations": 21,
+   "top": [
+    "真理",
+    "凛冬",
+    "早露"
+   ]
+  },
+  {
+   "id": "record-067",
+   "title": "古米",
+   "category": "密录",
+   "code": "密录",
+   "order": 166,
+   "description": "14 名角色，18 组关系。关系最多的是 古米、阴沉的赏金猎人、真理。",
+   "color": "#c9a98c",
+   "source": "密录 · 古米",
+   "nodes": 14,
+   "pairs": 18,
+   "relations": 28,
+   "top": [
+    "古米",
+    "阴沉的赏金猎人",
+    "真理"
+   ]
+  },
+  {
+   "id": "record-068",
+   "title": "早露",
+   "category": "密录",
+   "code": "密录",
+   "order": 167,
+   "description": "9 名角色，12 组关系。关系最多的是 早露、前女佣索菲娅、凛冬。",
+   "color": "#d2997e",
+   "source": "密录 · 早露",
+   "nodes": 9,
+   "pairs": 12,
+   "relations": 20,
+   "top": [
+    "早露",
+    "前女佣索菲娅",
+    "凛冬"
+   ]
+  },
+  {
+   "id": "record-069",
+   "title": "讯使",
+   "category": "密录",
+   "code": "密录",
+   "order": 168,
+   "description": "10 名角色，12 组关系。关系最多的是 讯使、银灰、锏。",
+   "color": "#c69abd",
+   "source": "密录 · 讯使",
+   "nodes": 10,
+   "pairs": 12,
+   "relations": 21,
+   "top": [
+    "讯使",
+    "银灰",
+    "锏"
+   ]
+  },
+  {
+   "id": "record-070",
+   "title": "角峰",
+   "category": "密录",
+   "code": "密录",
+   "order": 169,
+   "description": "4 名角色，4 组关系。关系最多的是 角峰、崖心、讯使。",
+   "color": "#d3a6a0",
+   "source": "密录 · 角峰",
+   "nodes": 4,
+   "pairs": 4,
+   "relations": 8,
+   "top": [
+    "角峰",
+    "崖心",
+    "讯使"
+   ]
+  },
+  {
+   "id": "record-071",
+   "title": "刻俄柏",
+   "category": "密录",
+   "code": "密录",
+   "order": 170,
+   "description": "6 名角色，5 组关系。关系最多的是 刻俄柏、远山、讯使。",
+   "color": "#a0bfbc",
+   "source": "密录 · 刻俄柏",
+   "nodes": 6,
+   "pairs": 5,
+   "relations": 10,
+   "top": [
+    "刻俄柏",
+    "远山",
+    "讯使"
+   ]
+  },
+  {
+   "id": "record-072",
+   "title": "年",
+   "category": "密录",
+   "code": "密录",
+   "order": 171,
+   "description": "9 名角色，8 组关系。关系最多的是 年、燚、柯露夕。",
+   "color": "#b5a788",
+   "source": "密录 · 年",
+   "nodes": 9,
+   "pairs": 8,
+   "relations": 12,
+   "top": [
+    "年",
+    "燚",
+    "柯露夕"
+   ]
+  },
+  {
+   "id": "record-073",
+   "title": "夕",
+   "category": "密录",
+   "code": "密录",
+   "order": 172,
+   "description": "9 名角色，7 组关系。关系最多的是 说书人、阮先生、投机商。",
+   "color": "#b49baa",
+   "source": "密录 · 夕",
+   "nodes": 9,
+   "pairs": 7,
+   "relations": 12,
+   "top": [
+    "说书人",
+    "阮先生",
+    "投机商"
+   ]
+  },
+  {
+   "id": "record-074",
+   "title": "可颂",
+   "category": "密录",
+   "code": "密录",
+   "order": 173,
+   "description": "4 名角色，4 组关系。关系最多的是 可颂、能天使、空。",
+   "color": "#a8b7d2",
+   "source": "密录 · 可颂",
+   "nodes": 4,
+   "pairs": 4,
+   "relations": 7,
+   "top": [
+    "可颂",
+    "能天使",
+    "空"
+   ]
+  },
+  {
+   "id": "record-075",
+   "title": "令",
+   "category": "密录",
+   "code": "密录",
+   "order": 174,
+   "description": "6 名角色，6 组关系。关系最多的是 令、墨魉、器伥。",
+   "color": "#c9a98c",
+   "source": "密录 · 令",
+   "nodes": 6,
+   "pairs": 6,
+   "relations": 8,
+   "top": [
+    "令",
+    "墨魉",
+    "器伥"
+   ]
+  },
+  {
+   "id": "record-076",
+   "title": "重岳",
+   "category": "密录",
+   "code": "密录",
+   "order": 175,
+   "description": "10 名角色，11 组关系。关系最多的是 重岳、左宣辽、女侠。",
+   "color": "#d2997e",
+   "source": "密录 · 重岳",
+   "nodes": 10,
+   "pairs": 11,
+   "relations": 17,
+   "top": [
+    "重岳",
+    "左宣辽",
+    "女侠"
+   ]
+  },
+  {
+   "id": "record-077",
+   "title": "黍",
+   "category": "密录",
+   "code": "密录",
+   "order": 176,
+   "description": "5 名角色，3 组关系。关系最多的是 黍、质朴的农人、年迈的女性。",
+   "color": "#c69abd",
+   "source": "密录 · 黍",
+   "nodes": 5,
+   "pairs": 3,
+   "relations": 6,
+   "top": [
+    "黍",
+    "质朴的农人",
+    "年迈的女性"
+   ]
+  },
+  {
+   "id": "record-078",
+   "title": "余",
+   "category": "密录",
+   "code": "密录",
+   "order": 177,
+   "description": "7 名角色，9 组关系。关系最多的是 余、忧心的食客、锦袍人。",
+   "color": "#d3a6a0",
+   "source": "密录 · 余",
+   "nodes": 7,
+   "pairs": 9,
+   "relations": 15,
+   "top": [
+    "余",
+    "忧心的食客",
+    "锦袍人"
+   ]
+  },
+  {
+   "id": "record-079",
+   "title": "望",
+   "category": "密录",
+   "code": "密录",
+   "order": 178,
+   "description": "8 名角色，7 组关系。关系最多的是 望、当铺老板、朴实的樵夫。",
+   "color": "#a0bfbc",
+   "source": "密录 · 望",
+   "nodes": 8,
+   "pairs": 7,
+   "relations": 11,
+   "top": [
+    "望",
+    "当铺老板",
+    "朴实的樵夫"
+   ]
+  },
+  {
+   "id": "record-080",
+   "title": "塞雷娅",
+   "category": "密录",
+   "code": "密录",
+   "order": 179,
+   "description": "10 名角色，10 组关系。关系最多的是 塞雷娅、秘书海伦、多萝西。",
+   "color": "#b5a788",
+   "source": "密录 · 塞雷娅",
+   "nodes": 10,
+   "pairs": 10,
+   "relations": 16,
+   "top": [
+    "塞雷娅",
+    "秘书海伦",
+    "多萝西"
+   ]
+  },
+  {
+   "id": "record-081",
+   "title": "白金",
+   "category": "密录",
+   "code": "密录",
+   "order": 180,
+   "description": "5 名角色，4 组关系。关系最多的是 白金、博士、恰尔内。",
+   "color": "#b49baa",
+   "source": "密录 · 白金",
+   "nodes": 5,
+   "pairs": 4,
+   "relations": 5,
+   "top": [
+    "白金",
+    "博士",
+    "恰尔内"
+   ]
+  },
+  {
+   "id": "record-082",
+   "title": "灵知",
+   "category": "密录",
+   "code": "密录",
+   "order": 181,
+   "description": "4 名角色，5 组关系。关系最多的是 灵知、老师、银灰。",
+   "color": "#a8b7d2",
+   "source": "密录 · 灵知",
+   "nodes": 4,
+   "pairs": 5,
+   "relations": 9,
+   "top": [
+    "灵知",
+    "老师",
+    "银灰"
+   ]
+  },
+  {
+   "id": "record-083",
+   "title": "玫兰莎",
+   "category": "密录",
+   "code": "密录",
+   "order": 182,
+   "description": "7 名角色，6 组关系。关系最多的是 杜宾、玫兰莎、卡缇。",
+   "color": "#c9a98c",
+   "source": "密录 · 玫兰莎",
+   "nodes": 7,
+   "pairs": 6,
+   "relations": 10,
+   "top": [
+    "杜宾",
+    "玫兰莎",
+    "卡缇"
+   ]
+  },
+  {
+   "id": "record-084",
+   "title": "卡缇",
+   "category": "密录",
+   "code": "密录",
+   "order": 183,
+   "description": "7 名角色，6 组关系。关系最多的是 卡缇、医疗干员、载具出租商人。",
+   "color": "#d2997e",
+   "source": "密录 · 卡缇",
+   "nodes": 7,
+   "pairs": 6,
+   "relations": 10,
+   "top": [
+    "卡缇",
+    "医疗干员",
+    "载具出租商人"
+   ]
+  },
+  {
+   "id": "record-085",
+   "title": "安德切尔",
+   "category": "密录",
+   "code": "密录",
+   "order": 184,
+   "description": "18 名角色，20 组关系。关系最多的是 安德切尔、亢奋的青年、郡警。",
+   "color": "#c69abd",
+   "source": "密录 · 安德切尔",
+   "nodes": 18,
+   "pairs": 20,
+   "relations": 27,
+   "top": [
+    "安德切尔",
+    "亢奋的青年",
+    "郡警"
+   ]
+  },
+  {
+   "id": "record-086",
+   "title": "安赛尔",
+   "category": "密录",
+   "code": "密录",
+   "order": 185,
+   "description": "12 名角色，15 组关系。关系最多的是 安赛尔、玫兰莎、卡缇。",
+   "color": "#d3a6a0",
+   "source": "密录 · 安赛尔",
+   "nodes": 12,
+   "pairs": 15,
+   "relations": 21,
+   "top": [
+    "安赛尔",
+    "玫兰莎",
+    "卡缇"
+   ]
+  },
+  {
+   "id": "record-087",
+   "title": "莫斯提马",
+   "category": "密录",
+   "code": "密录",
+   "order": 186,
+   "description": "8 名角色，9 组关系。关系最多的是 莫斯提马、稳重的女性、朴实的镇长。",
+   "color": "#a0bfbc",
+   "source": "密录 · 莫斯提马",
+   "nodes": 8,
+   "pairs": 9,
+   "relations": 15,
+   "top": [
+    "莫斯提马",
+    "稳重的女性",
+    "朴实的镇长"
+   ]
+  },
+  {
+   "id": "record-088",
+   "title": "卡夫卡",
+   "category": "密录",
+   "code": "密录",
+   "order": 187,
+   "description": "4 名角色，3 组关系。关系最多的是 赫默、卡夫卡、焦虑的莱茵实验员。",
+   "color": "#b5a788",
+   "source": "密录 · 卡夫卡",
+   "nodes": 4,
+   "pairs": 3,
+   "relations": 6,
+   "top": [
+    "赫默",
+    "卡夫卡",
+    "焦虑的莱茵实验员"
+   ]
+  },
+  {
+   "id": "record-089",
+   "title": "狮蝎",
+   "category": "密录",
+   "code": "密录",
+   "order": 188,
+   "description": "9 名角色，10 组关系。关系最多的是 惊慌的曼提柯女孩、博士、安赛尔。",
+   "color": "#b49baa",
+   "source": "密录 · 狮蝎",
+   "nodes": 9,
+   "pairs": 10,
+   "relations": 14,
+   "top": [
+    "惊慌的曼提柯女孩",
+    "博士",
+    "安赛尔"
+   ]
+  },
+  {
+   "id": "record-090",
+   "title": "陨星",
+   "category": "密录",
+   "code": "密录",
+   "order": 189,
+   "description": "7 名角色，6 组关系。关系最多的是 陨星、萨卡兹过路人、萨卡兹雇佣兵A。",
+   "color": "#a8b7d2",
+   "source": "密录 · 陨星",
+   "nodes": 7,
+   "pairs": 6,
+   "relations": 12,
+   "top": [
+    "陨星",
+    "萨卡兹过路人",
+    "萨卡兹雇佣兵A"
+   ]
+  },
+  {
+   "id": "record-091",
+   "title": "格拉尼",
+   "category": "密录",
+   "code": "密录",
+   "order": 190,
+   "description": "9 名角色，9 组关系。关系最多的是 格拉尼、老科特、受雇律师。",
+   "color": "#c9a98c",
+   "source": "密录 · 格拉尼",
+   "nodes": 9,
+   "pairs": 9,
+   "relations": 14,
+   "top": [
+    "格拉尼",
+    "老科特",
+    "受雇律师"
+   ]
+  },
+  {
+   "id": "record-092",
+   "title": "风笛",
+   "category": "密录",
+   "code": "密录",
+   "order": 191,
+   "description": "3 名角色，2 组关系。关系最多的是 星熊、风笛、近卫局成员。",
+   "color": "#d2997e",
+   "source": "密录 · 风笛",
+   "nodes": 3,
+   "pairs": 2,
+   "relations": 4,
+   "top": [
+    "星熊",
+    "风笛",
+    "近卫局成员"
+   ]
+  },
+  {
+   "id": "record-093",
+   "title": "阿",
+   "category": "密录",
+   "code": "密录",
+   "order": 192,
+   "description": "9 名角色，13 组关系。关系最多的是 医生、魁梧的男人、强壮的男人。",
+   "color": "#c69abd",
+   "source": "密录 · 阿",
+   "nodes": 9,
+   "pairs": 13,
+   "relations": 23,
+   "top": [
+    "医生",
+    "魁梧的男人",
+    "强壮的男人"
+   ]
+  },
+  {
+   "id": "record-094",
+   "title": "吽",
+   "category": "密录",
+   "code": "密录",
+   "order": 193,
+   "description": "12 名角色，15 组关系。关系最多的是 吽、阿、刘先生。",
+   "color": "#d3a6a0",
+   "source": "密录 · 吽",
+   "nodes": 12,
+   "pairs": 15,
+   "relations": 25,
+   "top": [
+    "吽",
+    "阿",
+    "刘先生"
+   ]
+  },
+  {
+   "id": "record-095",
+   "title": "暴行",
+   "category": "密录",
+   "code": "密录",
+   "order": 194,
+   "description": "10 名角色，13 组关系。关系最多的是 暴行、雷姆必拓工人、莱恩哈特。",
+   "color": "#a0bfbc",
+   "source": "密录 · 暴行",
+   "nodes": 10,
+   "pairs": 13,
+   "relations": 24,
+   "top": [
+    "暴行",
+    "雷姆必拓工人",
+    "莱恩哈特"
+   ]
+  },
+  {
+   "id": "record-096",
+   "title": "暗索",
+   "category": "密录",
+   "code": "密录",
+   "order": 195,
+   "description": "3 名角色，2 组关系。关系最多的是 暗索、调香师、博士。",
+   "color": "#b5a788",
+   "source": "密录 · 暗索",
+   "nodes": 3,
+   "pairs": 2,
+   "relations": 3,
+   "top": [
+    "暗索",
+    "调香师",
+    "博士"
+   ]
+  },
+  {
+   "id": "record-097",
+   "title": "砾",
+   "category": "密录",
+   "code": "密录",
+   "order": 196,
+   "description": "7 名角色，10 组关系。关系最多的是 砾、逃跑的女孩、光头马丁。",
+   "color": "#b49baa",
+   "source": "密录 · 砾",
+   "nodes": 7,
+   "pairs": 10,
+   "relations": 17,
+   "top": [
+    "砾",
+    "逃跑的女孩",
+    "光头马丁"
+   ]
+  },
+  {
+   "id": "record-098",
+   "title": "香草",
+   "category": "密录",
+   "code": "密录",
+   "order": 197,
+   "description": "8 名角色，13 组关系。关系最多的是 香草、干员查德、愤怒的村民。",
+   "color": "#a8b7d2",
+   "source": "密录 · 香草",
+   "nodes": 8,
+   "pairs": 13,
+   "relations": 23,
+   "top": [
+    "香草",
+    "干员查德",
+    "愤怒的村民"
+   ]
+  },
+  {
+   "id": "record-099",
+   "title": "食铁兽",
+   "category": "密录",
+   "code": "密录",
+   "order": 198,
+   "description": "6 名角色，5 组关系。关系最多的是 食铁兽、潦倒的男人、近卫局成员A。",
+   "color": "#c9a98c",
+   "source": "密录 · 食铁兽",
+   "nodes": 6,
+   "pairs": 5,
+   "relations": 10,
+   "top": [
+    "食铁兽",
+    "潦倒的男人",
+    "近卫局成员A"
+   ]
+  },
+  {
+   "id": "record-100",
+   "title": "梅尔",
+   "category": "密录",
+   "code": "密录",
+   "order": 199,
+   "description": "5 名角色，5 组关系。关系最多的是 梅尔、可露希尔、咪波SUPER。",
+   "color": "#d2997e",
+   "source": "密录 · 梅尔",
+   "nodes": 5,
+   "pairs": 5,
+   "relations": 8,
+   "top": [
+    "梅尔",
+    "可露希尔",
+    "咪波SUPER"
+   ]
+  },
+  {
+   "id": "record-101",
+   "title": "槐琥",
+   "category": "密录",
+   "code": "密录",
+   "order": 200,
+   "description": "9 名角色，10 组关系。关系最多的是 槐琥、大师兄、郑掌柜。",
+   "color": "#c69abd",
+   "source": "密录 · 槐琥",
+   "nodes": 9,
+   "pairs": 10,
+   "relations": 17,
+   "top": [
+    "槐琥",
+    "大师兄",
+    "郑掌柜"
+   ]
+  },
+  {
+   "id": "record-102",
+   "title": "塑心",
+   "category": "密录",
+   "code": "密录",
+   "order": 201,
+   "description": "5 名角色，4 组关系。关系最多的是 塑心、阿米娅、伊万杰利斯塔十一世。",
+   "color": "#d3a6a0",
+   "source": "密录 · 塑心",
+   "nodes": 5,
+   "pairs": 4,
+   "relations": 7,
+   "top": [
+    "塑心",
+    "阿米娅",
+    "伊万杰利斯塔十一世"
+   ]
+  },
+  {
+   "id": "record-103",
+   "title": "麦哲伦",
+   "category": "密录",
+   "code": "密录",
+   "order": 202,
+   "description": "10 名角色，8 组关系。关系最多的是 麦哲伦、石棉、办事处干员。",
+   "color": "#a0bfbc",
+   "source": "密录 · 麦哲伦",
+   "nodes": 10,
+   "pairs": 8,
+   "relations": 12,
+   "top": [
+    "麦哲伦",
+    "石棉",
+    "办事处干员"
+   ]
+  },
+  {
+   "id": "record-104",
+   "title": "缪尔赛思",
+   "category": "密录",
+   "code": "密录",
+   "order": 203,
+   "description": "7 名角色，9 组关系。关系最多的是 缪尔赛思、方形葵、鞘叶榉。",
+   "color": "#b5a788",
+   "source": "密录 · 缪尔赛思",
+   "nodes": 7,
+   "pairs": 9,
+   "relations": 13,
+   "top": [
+    "缪尔赛思",
+    "方形葵",
+    "鞘叶榉"
+   ]
+  },
+  {
+   "id": "record-105",
+   "title": "傀影",
+   "category": "密录",
+   "code": "密录",
+   "order": 204,
+   "description": "4 名角色，4 组关系。关系最多的是 傀影、亚叶、絮雨。",
+   "color": "#b49baa",
+   "source": "密录 · 傀影",
+   "nodes": 4,
+   "pairs": 4,
+   "relations": 7,
+   "top": [
+    "傀影",
+    "亚叶",
+    "絮雨"
+   ]
+  },
+  {
+   "id": "record-106",
+   "title": "柏喙",
+   "category": "密录",
+   "code": "密录",
+   "order": 205,
+   "description": "11 名角色，15 组关系。关系最多的是 柏喙、梓兰、村民B。",
+   "color": "#a8b7d2",
+   "source": "密录 · 柏喙",
+   "nodes": 11,
+   "pairs": 15,
+   "relations": 22,
+   "top": [
+    "柏喙",
+    "梓兰",
+    "村民B"
+   ]
+  },
+  {
+   "id": "record-107",
+   "title": "巫恋",
+   "category": "密录",
+   "code": "密录",
+   "order": 206,
+   "description": "7 名角色，7 组关系。关系最多的是 小镇法官、罗德岛干员、感染者毛罗。",
+   "color": "#c9a98c",
+   "source": "密录 · 巫恋",
+   "nodes": 7,
+   "pairs": 7,
+   "relations": 14,
+   "top": [
+    "小镇法官",
+    "罗德岛干员",
+    "感染者毛罗"
+   ]
+  },
+  {
+   "id": "record-108",
+   "title": "波登可",
+   "category": "密录",
+   "code": "密录",
+   "order": 207,
+   "description": "3 名角色，2 组关系。关系最多的是 调香师、波登可、可露希尔。",
+   "color": "#d2997e",
+   "source": "密录 · 波登可",
+   "nodes": 3,
+   "pairs": 2,
+   "relations": 3,
+   "top": [
+    "调香师",
+    "波登可",
+    "可露希尔"
+   ]
+  },
+  {
+   "id": "record-109",
+   "title": "坚雷",
+   "category": "密录",
+   "code": "密录",
+   "order": 208,
+   "description": "11 名角色，16 组关系。关系最多的是 坚雷、芬、炎熔。",
+   "color": "#c69abd",
+   "source": "密录 · 坚雷",
+   "nodes": 11,
+   "pairs": 16,
+   "relations": 26,
+   "top": [
+    "坚雷",
+    "芬",
+    "炎熔"
+   ]
+  },
+  {
+   "id": "record-110",
+   "title": "苇草",
+   "category": "密录",
+   "code": "密录",
+   "order": 209,
+   "description": "6 名角色，6 组关系。关系最多的是 苇草、安德切尔、克洛丝。",
+   "color": "#d3a6a0",
+   "source": "密录 · 苇草",
+   "nodes": 6,
+   "pairs": 6,
+   "relations": 10,
+   "top": [
+    "苇草",
+    "安德切尔",
+    "克洛丝"
+   ]
+  },
+  {
+   "id": "record-111",
+   "title": "斯卡蒂",
+   "category": "密录",
+   "code": "密录",
+   "order": 210,
+   "description": "4 名角色，5 组关系。关系最多的是 斯卡蒂、勇敢的村民、友善的村民。",
+   "color": "#a0bfbc",
+   "source": "密录 · 斯卡蒂",
+   "nodes": 4,
+   "pairs": 5,
+   "relations": 5,
+   "top": [
+    "斯卡蒂",
+    "勇敢的村民",
+    "友善的村民"
+   ]
+  },
+  {
+   "id": "record-112",
+   "title": "山",
+   "category": "密录",
+   "code": "密录",
+   "order": 211,
+   "description": "14 名角色，16 组关系。关系最多的是 山、梓兰、柏喙。",
+   "color": "#b5a788",
+   "source": "密录 · 山",
+   "nodes": 14,
+   "pairs": 16,
+   "relations": 29,
+   "top": [
+    "山",
+    "梓兰",
+    "柏喙"
+   ]
+  },
+  {
+   "id": "record-113",
+   "title": "鞭刃",
+   "category": "密录",
+   "code": "密录",
+   "order": 212,
+   "description": "5 名角色，5 组关系。关系最多的是 佐菲娅、报刊亭主、稚嫩的记者。",
+   "color": "#b49baa",
+   "source": "密录 · 鞭刃",
+   "nodes": 5,
+   "pairs": 5,
+   "relations": 8,
+   "top": [
+    "佐菲娅",
+    "报刊亭主",
+    "稚嫩的记者"
+   ]
+  },
+  {
+   "id": "record-114",
+   "title": "芳汀",
+   "category": "密录",
+   "code": "密录",
+   "order": 213,
+   "description": "5 名角色，6 组关系。关系最多的是 佩恩、芳汀、维克托。",
+   "color": "#a8b7d2",
+   "source": "密录 · 芳汀",
+   "nodes": 5,
+   "pairs": 6,
+   "relations": 10,
+   "top": [
+    "佩恩",
+    "芳汀",
+    "维克托"
+   ]
+  },
+  {
+   "id": "record-115",
+   "title": "孑",
+   "category": "密录",
+   "code": "密录",
+   "order": 214,
+   "description": "16 名角色，16 组关系。关系最多的是 孑、星熊、凶狠的叉烧帮成员。",
+   "color": "#c9a98c",
+   "source": "密录 · 孑",
+   "nodes": 16,
+   "pairs": 16,
+   "relations": 27,
+   "top": [
+    "孑",
+    "星熊",
+    "凶狠的叉烧帮成员"
+   ]
+  },
+  {
+   "id": "record-116",
+   "title": "星极",
+   "category": "密录",
+   "code": "密录",
+   "order": 215,
+   "description": "6 名角色，6 组关系。关系最多的是 星极、星源、亚叶。",
+   "color": "#d2997e",
+   "source": "密录 · 星极",
+   "nodes": 6,
+   "pairs": 6,
+   "relations": 11,
+   "top": [
+    "星极",
+    "星源",
+    "亚叶"
+   ]
+  },
+  {
+   "id": "record-117",
+   "title": "微风",
+   "category": "密录",
+   "code": "密录",
+   "order": 216,
+   "description": "12 名角色，10 组关系。关系最多的是 微风、管家、女仆。",
+   "color": "#c69abd",
+   "source": "密录 · 微风",
+   "nodes": 12,
+   "pairs": 10,
+   "relations": 18,
+   "top": [
+    "微风",
+    "管家",
+    "女仆"
+   ]
+  },
+  {
+   "id": "record-118",
+   "title": "阿消",
+   "category": "密录",
+   "code": "密录",
+   "order": 217,
+   "description": "13 名角色，14 组关系。关系最多的是 阿消、资深近卫局成员、伊芙利特。",
+   "color": "#d3a6a0",
+   "source": "密录 · 阿消",
+   "nodes": 13,
+   "pairs": 14,
+   "relations": 23,
+   "top": [
+    "阿消",
+    "资深近卫局成员",
+    "伊芙利特"
+   ]
+  },
+  {
+   "id": "record-119",
+   "title": "梓兰",
+   "category": "密录",
+   "code": "密录",
+   "order": 218,
+   "description": "12 名角色，18 组关系。关系最多的是 梓兰、月见夜、空爆。",
+   "color": "#a0bfbc",
+   "source": "密录 · 梓兰",
+   "nodes": 12,
+   "pairs": 18,
+   "relations": 33,
+   "top": [
+    "梓兰",
+    "月见夜",
+    "空爆"
+   ]
+  },
+  {
+   "id": "record-120",
+   "title": "泡普卡",
+   "category": "密录",
+   "code": "密录",
+   "order": 219,
+   "description": "6 名角色，8 组关系。关系最多的是 泡普卡、李医生、泡泡。",
+   "color": "#b5a788",
+   "source": "密录 · 泡普卡",
+   "nodes": 6,
+   "pairs": 8,
+   "relations": 14,
+   "top": [
+    "泡普卡",
+    "李医生",
+    "泡泡"
+   ]
+  },
+  {
+   "id": "record-121",
+   "title": "空爆",
+   "category": "密录",
+   "code": "密录",
+   "order": 220,
+   "description": "10 名角色，10 组关系。关系最多的是 空爆、巡逻骑士、镇民。",
+   "color": "#b49baa",
+   "source": "密录 · 空爆",
+   "nodes": 10,
+   "pairs": 10,
+   "relations": 19,
+   "top": [
+    "空爆",
+    "巡逻骑士",
+    "镇民"
+   ]
+  },
+  {
+   "id": "record-122",
+   "title": "月见夜",
+   "category": "密录",
+   "code": "密录",
+   "order": 221,
+   "description": "8 名角色，9 组关系。关系最多的是 月见夜、青年市民B、顾客A。",
+   "color": "#a8b7d2",
+   "source": "密录 · 月见夜",
+   "nodes": 8,
+   "pairs": 9,
+   "relations": 13,
+   "top": [
+    "月见夜",
+    "青年市民B",
+    "顾客A"
+   ]
+  },
+  {
+   "id": "record-123",
+   "title": "斑点",
+   "category": "密录",
+   "code": "密录",
+   "order": 222,
+   "description": "9 名角色，13 组关系。关系最多的是 斑点、泡普卡、梓兰。",
+   "color": "#c9a98c",
+   "source": "密录 · 斑点",
+   "nodes": 9,
+   "pairs": 13,
+   "relations": 19,
+   "top": [
+    "斑点",
+    "泡普卡",
+    "梓兰"
+   ]
+  },
+  {
+   "id": "record-124",
+   "title": "Lancet-2",
+   "category": "密录",
+   "code": "密录",
+   "order": 223,
+   "description": "5 名角色，5 组关系。关系最多的是 Lancet-2、博士、工程干员。",
+   "color": "#d2997e",
+   "source": "密录 · Lancet-2",
+   "nodes": 5,
+   "pairs": 5,
+   "relations": 10,
+   "top": [
+    "Lancet-2",
+    "博士",
+    "工程干员"
+   ]
+  },
+  {
+   "id": "record-125",
+   "title": "Castle-3",
+   "category": "密录",
+   "code": "密录",
+   "order": 224,
+   "description": "7 名角色，11 组关系。关系最多的是 Castle-3、博士、工程干员A。",
+   "color": "#c69abd",
+   "source": "密录 · Castle-3",
+   "nodes": 7,
+   "pairs": 11,
+   "relations": 21,
+   "top": [
+    "Castle-3",
+    "博士",
+    "工程干员A"
+   ]
+  },
+  {
+   "id": "record-126",
+   "title": "缠丸",
+   "category": "密录",
+   "code": "密录",
+   "order": 225,
+   "description": "7 名角色，10 组关系。关系最多的是 缠丸、缠丸的养父、紧张的职员。",
+   "color": "#d3a6a0",
+   "source": "密录 · 缠丸",
+   "nodes": 7,
+   "pairs": 10,
+   "relations": 15,
+   "top": [
+    "缠丸",
+    "缠丸的养父",
+    "紧张的职员"
+   ]
+  },
+  {
+   "id": "record-127",
+   "title": "红豆",
+   "category": "密录",
+   "code": "密录",
+   "order": 226,
+   "description": "7 名角色，7 组关系。关系最多的是 红豆、近卫干员A、近卫干员B。",
+   "color": "#a0bfbc",
+   "source": "密录 · 红豆",
+   "nodes": 7,
+   "pairs": 7,
+   "relations": 9,
+   "top": [
+    "红豆",
+    "近卫干员A",
+    "近卫干员B"
+   ]
+  },
+  {
+   "id": "record-128",
+   "title": "安洁莉娜",
+   "category": "密录",
+   "code": "密录",
+   "order": 227,
+   "description": "4 名角色，4 组关系。关系最多的是 安洁莉娜、可颂、快餐店店主。",
+   "color": "#b5a788",
+   "source": "密录 · 安洁莉娜",
+   "nodes": 4,
+   "pairs": 4,
+   "relations": 8,
+   "top": [
+    "安洁莉娜",
+    "可颂",
+    "快餐店店主"
+   ]
+  },
+  {
+   "id": "record-129",
+   "title": "棘刺",
+   "category": "密录",
+   "code": "密录",
+   "order": 228,
+   "description": "10 名角色，8 组关系。关系最多的是 棘刺、费利佩、警惕的顾客。",
+   "color": "#b49baa",
+   "source": "密录 · 棘刺",
+   "nodes": 10,
+   "pairs": 8,
+   "relations": 11,
+   "top": [
+    "棘刺",
+    "费利佩",
+    "警惕的顾客"
+   ]
+  },
+  {
+   "id": "record-130",
+   "title": "断崖",
+   "category": "密录",
+   "code": "密录",
+   "order": 229,
+   "description": "3 名角色，2 组关系。关系最多的是 断崖、天灾信使、塔梅卡。",
+   "color": "#a8b7d2",
+   "source": "密录 · 断崖",
+   "nodes": 3,
+   "pairs": 2,
+   "relations": 4,
+   "top": [
+    "断崖",
+    "天灾信使",
+    "塔梅卡"
+   ]
+  },
+  {
+   "id": "record-131",
+   "title": "和弦",
+   "category": "密录",
+   "code": "密录",
+   "order": 230,
+   "description": "9 名角色，7 组关系。关系最多的是 洛西莉、阿赫茉妮、温和的军官。",
+   "color": "#c9a98c",
+   "source": "密录 · 和弦",
+   "nodes": 9,
+   "pairs": 7,
+   "relations": 10,
+   "top": [
+    "洛西莉",
+    "阿赫茉妮",
+    "温和的军官"
+   ]
+  },
+  {
+   "id": "record-132",
+   "title": "苏苏洛",
+   "category": "密录",
+   "code": "密录",
+   "order": 231,
+   "description": "8 名角色，8 组关系。关系最多的是 苏苏洛、活塞、菲勒加斯。",
+   "color": "#d2997e",
+   "source": "密录 · 苏苏洛",
+   "nodes": 8,
+   "pairs": 8,
+   "relations": 16,
+   "top": [
+    "苏苏洛",
+    "活塞",
+    "菲勒加斯"
+   ]
+  },
+  {
+   "id": "record-133",
+   "title": "菲亚梅塔",
+   "category": "密录",
+   "code": "密录",
+   "order": 232,
+   "description": "14 名角色，18 组关系。关系最多的是 莫斯提马、菲亚梅塔、薇尔丽芙。",
+   "color": "#c69abd",
+   "source": "密录 · 菲亚梅塔",
+   "nodes": 14,
+   "pairs": 18,
+   "relations": 25,
+   "top": [
+    "莫斯提马",
+    "菲亚梅塔",
+    "薇尔丽芙"
+   ]
+  },
+  {
+   "id": "record-134",
+   "title": "刻刀",
+   "category": "密录",
+   "code": "密录",
+   "order": 233,
+   "description": "8 名角色，8 组关系。关系最多的是 刻刀、铸铁、雇佣兵B。",
+   "color": "#d3a6a0",
+   "source": "密录 · 刻刀",
+   "nodes": 8,
+   "pairs": 8,
+   "relations": 14,
+   "top": [
+    "刻刀",
+    "铸铁",
+    "雇佣兵B"
+   ]
+  },
+  {
+   "id": "record-135",
+   "title": "安比尔",
+   "category": "密录",
+   "code": "密录",
+   "order": 234,
+   "description": "13 名角色，10 组关系。关系最多的是 安比尔、爽朗的执行者、精神的老人。",
+   "color": "#a0bfbc",
+   "source": "密录 · 安比尔",
+   "nodes": 13,
+   "pairs": 10,
+   "relations": 18,
+   "top": [
+    "安比尔",
+    "爽朗的执行者",
+    "精神的老人"
+   ]
+  },
+  {
+   "id": "record-136",
+   "title": "暴雨",
+   "category": "密录",
+   "code": "密录",
+   "order": 235,
+   "description": "9 名角色，15 组关系。关系最多的是 阿诺、暴雨、萨尔贡老兵。",
+   "color": "#b5a788",
+   "source": "密录 · 暴雨",
+   "nodes": 9,
+   "pairs": 15,
+   "relations": 26,
+   "top": [
+    "阿诺",
+    "暴雨",
+    "萨尔贡老兵"
+   ]
+  },
+  {
+   "id": "record-137",
+   "title": "惊蛰",
+   "category": "密录",
+   "code": "密录",
+   "order": 236,
+   "description": "3 名角色，3 组关系。关系最多的是 惊蛰、解真、太合。",
+   "color": "#b49baa",
+   "source": "密录 · 惊蛰",
+   "nodes": 3,
+   "pairs": 3,
+   "relations": 6,
+   "top": [
+    "惊蛰",
+    "解真",
+    "太合"
+   ]
+  },
+  {
+   "id": "record-138",
+   "title": "诗怀雅",
+   "category": "密录",
+   "code": "密录",
+   "order": 237,
+   "description": "12 名角色，12 组关系。关系最多的是 诗怀雅、父亲、魏彦吾。",
+   "color": "#a8b7d2",
+   "source": "密录 · 诗怀雅",
+   "nodes": 12,
+   "pairs": 12,
+   "relations": 16,
+   "top": [
+    "诗怀雅",
+    "父亲",
+    "魏彦吾"
+   ]
+  },
+  {
+   "id": "record-139",
+   "title": "泥岩",
+   "category": "密录",
+   "code": "密录",
+   "order": 238,
+   "description": "12 名角色，15 组关系。关系最多的是 泥岩、乌萨斯术师、莱塔尼亚感染者。",
+   "color": "#c9a98c",
+   "source": "密录 · 泥岩",
+   "nodes": 12,
+   "pairs": 15,
+   "relations": 24,
+   "top": [
+    "泥岩",
+    "乌萨斯术师",
+    "莱塔尼亚感染者"
+   ]
+  },
+  {
+   "id": "record-140",
+   "title": "老鲤",
+   "category": "密录",
+   "code": "密录",
+   "order": 239,
+   "description": "9 名角色，11 组关系。关系最多的是 老鲤、菜贩、吽。",
+   "color": "#d2997e",
+   "source": "密录 · 老鲤",
+   "nodes": 9,
+   "pairs": 11,
+   "relations": 18,
+   "top": [
+    "老鲤",
+    "菜贩",
+    "吽"
+   ]
+  },
+  {
+   "id": "record-141",
+   "title": "拜松",
+   "category": "密录",
+   "code": "密录",
+   "order": 240,
+   "description": "11 名角色，18 组关系。关系最多的是 拜松、德克萨斯、空。",
+   "color": "#c69abd",
+   "source": "密录 · 拜松",
+   "nodes": 11,
+   "pairs": 18,
+   "relations": 27,
+   "top": [
+    "拜松",
+    "德克萨斯",
+    "空"
+   ]
+  },
+  {
+   "id": "record-142",
+   "title": "格劳克斯",
+   "category": "密录",
+   "code": "密录",
+   "order": 241,
+   "description": "6 名角色，6 组关系。关系最多的是 米莱斯、格劳克斯、戈登。",
+   "color": "#d3a6a0",
+   "source": "密录 · 格劳克斯",
+   "nodes": 6,
+   "pairs": 6,
+   "relations": 11,
+   "top": [
+    "米莱斯",
+    "格劳克斯",
+    "戈登"
+   ]
+  },
+  {
+   "id": "record-143",
+   "title": "卡达",
+   "category": "密录",
+   "code": "密录",
+   "order": 242,
+   "description": "4 名角色，4 组关系。关系最多的是 拍摄灯光师、卡达、拍摄队长。",
+   "color": "#a0bfbc",
+   "source": "密录 · 卡达",
+   "nodes": 4,
+   "pairs": 4,
+   "relations": 6,
+   "top": [
+    "拍摄灯光师",
+    "卡达",
+    "拍摄队长"
+   ]
+  },
+  {
+   "id": "record-144",
+   "title": "空弦",
+   "category": "密录",
+   "code": "密录",
+   "order": 243,
+   "description": "10 名角色，8 组关系。关系最多的是 空弦、能天使、经纪人。",
+   "color": "#b5a788",
+   "source": "密录 · 空弦",
+   "nodes": 10,
+   "pairs": 8,
+   "relations": 14,
+   "top": [
+    "空弦",
+    "能天使",
+    "经纪人"
+   ]
+  },
+  {
+   "id": "record-145",
+   "title": "铸铁",
+   "category": "密录",
+   "code": "密录",
+   "order": 244,
+   "description": "5 名角色，6 组关系。关系最多的是 铸铁、坚雷、泡泡。",
+   "color": "#b49baa",
+   "source": "密录 · 铸铁",
+   "nodes": 5,
+   "pairs": 6,
+   "relations": 9,
+   "top": [
+    "铸铁",
+    "坚雷",
+    "泡泡"
+   ]
+  },
+  {
+   "id": "record-146",
+   "title": "稀音",
+   "category": "密录",
+   "code": "密录",
+   "order": 245,
+   "description": "7 名角色，6 组关系。关系最多的是 温和的贵族、平和的拍摄人员、帕萨多。",
+   "color": "#a8b7d2",
+   "source": "密录 · 稀音",
+   "nodes": 7,
+   "pairs": 6,
+   "relations": 10,
+   "top": [
+    "温和的贵族",
+    "平和的拍摄人员",
+    "帕萨多"
+   ]
+  },
+  {
+   "id": "record-147",
+   "title": "宴",
+   "category": "密录",
+   "code": "密录",
+   "order": 246,
+   "description": "17 名角色，16 组关系。关系最多的是 宴、叶姿珍、罗德岛货物管理员。",
+   "color": "#c9a98c",
+   "source": "密录 · 宴",
+   "nodes": 17,
+   "pairs": 16,
+   "relations": 27,
+   "top": [
+    "宴",
+    "叶姿珍",
+    "罗德岛货物管理员"
+   ]
+  },
+  {
+   "id": "record-148",
+   "title": "爱丽丝",
+   "category": "密录",
+   "code": "密录",
+   "order": 247,
+   "description": "5 名角色，6 组关系。关系最多的是 雷蒙德、爱丽丝、于里安。",
+   "color": "#d2997e",
+   "source": "密录 · 爱丽丝",
+   "nodes": 5,
+   "pairs": 6,
+   "relations": 10,
+   "top": [
+    "雷蒙德",
+    "爱丽丝",
+    "于里安"
+   ]
+  },
+  {
+   "id": "record-149",
+   "title": "黑",
+   "category": "密录",
+   "code": "密录",
+   "order": 248,
+   "description": "13 名角色，18 组关系。关系最多的是 黑、赫尔曼、狡猾的男孩。",
+   "color": "#c69abd",
+   "source": "密录 · 黑",
+   "nodes": 13,
+   "pairs": 18,
+   "relations": 28,
+   "top": [
+    "黑",
+    "赫尔曼",
+    "狡猾的男孩"
+   ]
+  },
+  {
+   "id": "record-150",
+   "title": "寒檀",
+   "category": "密录",
+   "code": "密录",
+   "order": 249,
+   "description": "6 名角色，5 组关系。关系最多的是 寒檀、外勤干员、亡寒萨满。",
+   "color": "#d3a6a0",
+   "source": "密录 · 寒檀",
+   "nodes": 6,
+   "pairs": 5,
+   "relations": 10,
+   "top": [
+    "寒檀",
+    "外勤干员",
+    "亡寒萨满"
+   ]
+  },
+  {
+   "id": "record-151",
+   "title": "月禾",
+   "category": "密录",
+   "code": "密录",
+   "order": 250,
+   "description": "5 名角色，3 组关系。关系最多的是 德夫林、月禾、佩里太太。",
+   "color": "#a0bfbc",
+   "source": "密录 · 月禾",
+   "nodes": 5,
+   "pairs": 3,
+   "relations": 5,
+   "top": [
+    "德夫林",
+    "月禾",
+    "佩里太太"
+   ]
+  },
+  {
+   "id": "record-152",
+   "title": "蜜蜡",
+   "category": "密录",
+   "code": "密录",
+   "order": 251,
+   "description": "9 名角色，7 组关系。关系最多的是 蜜蜡、部族祭司、办事处干员。",
+   "color": "#b5a788",
+   "source": "密录 · 蜜蜡",
+   "nodes": 9,
+   "pairs": 7,
+   "relations": 11,
+   "top": [
+    "蜜蜡",
+    "部族祭司",
+    "办事处干员"
+   ]
+  },
+  {
+   "id": "record-153",
+   "title": "亚叶",
+   "category": "密录",
+   "code": "密录",
+   "order": 252,
+   "description": "3 名角色，2 组关系。关系最多的是 亚叶、泥岩、阿米娅。",
+   "color": "#b49baa",
+   "source": "密录 · 亚叶",
+   "nodes": 3,
+   "pairs": 2,
+   "relations": 4,
+   "top": [
+    "亚叶",
+    "泥岩",
+    "阿米娅"
+   ]
+  },
+  {
+   "id": "record-154",
+   "title": "奥斯塔",
+   "category": "密录",
+   "code": "密录",
+   "order": 253,
+   "description": "8 名角色，9 组关系。关系最多的是 奥斯塔、柏喙、梓兰。",
+   "color": "#a8b7d2",
+   "source": "密录 · 奥斯塔",
+   "nodes": 8,
+   "pairs": 9,
+   "relations": 15,
+   "top": [
+    "奥斯塔",
+    "柏喙",
+    "梓兰"
+   ]
+  },
+  {
+   "id": "record-155",
+   "title": "杰克",
+   "category": "密录",
+   "code": "密录",
+   "order": 254,
+   "description": "10 名角色，15 组关系。关系最多的是 杰克、独立记者、市长。",
+   "color": "#c9a98c",
+   "source": "密录 · 杰克",
+   "nodes": 10,
+   "pairs": 15,
+   "relations": 24,
+   "top": [
+    "杰克",
+    "独立记者",
+    "市长"
+   ]
+  },
+  {
+   "id": "record-156",
+   "title": "锡兰",
+   "category": "密录",
+   "code": "密录",
+   "order": 255,
+   "description": "8 名角色，8 组关系。关系最多的是 锡兰、黑、Medic。",
+   "color": "#d2997e",
+   "source": "密录 · 锡兰",
+   "nodes": 8,
+   "pairs": 8,
+   "relations": 12,
+   "top": [
+    "锡兰",
+    "黑",
+    "Medic"
+   ]
+  },
+  {
+   "id": "record-157",
+   "title": "贾维",
+   "category": "密录",
+   "code": "密录",
+   "order": 256,
+   "description": "6 名角色，10 组关系。关系最多的是 贾维、奥斯塔、布洛卡。",
+   "color": "#c69abd",
+   "source": "密录 · 贾维",
+   "nodes": 6,
+   "pairs": 10,
+   "relations": 16,
+   "top": [
+    "贾维",
+    "奥斯塔",
+    "布洛卡"
+   ]
+  },
+  {
+   "id": "record-158",
+   "title": "伊桑",
+   "category": "密录",
+   "code": "密录",
+   "order": 257,
+   "description": "7 名角色，7 组关系。关系最多的是 伊桑、凯文、星熊。",
+   "color": "#d3a6a0",
+   "source": "密录 · 伊桑",
+   "nodes": 7,
+   "pairs": 7,
+   "relations": 11,
+   "top": [
+    "伊桑",
+    "凯文",
+    "星熊"
+   ]
+  },
+  {
+   "id": "record-159",
+   "title": "布洛卡",
+   "category": "密录",
+   "code": "密录",
+   "order": 258,
+   "description": "4 名角色，4 组关系。关系最多的是 布洛卡、贾维、奥斯塔。",
+   "color": "#a0bfbc",
+   "source": "密录 · 布洛卡",
+   "nodes": 4,
+   "pairs": 4,
+   "relations": 7,
+   "top": [
+    "布洛卡",
+    "贾维",
+    "奥斯塔"
+   ]
+  },
+  {
+   "id": "record-160",
+   "title": "嵯峨",
+   "category": "密录",
+   "code": "密录",
+   "order": 259,
+   "description": "4 名角色，5 组关系。关系最多的是 小玉、嵯峨、天师学徒。",
+   "color": "#b5a788",
+   "source": "密录 · 嵯峨",
+   "nodes": 4,
+   "pairs": 5,
+   "relations": 9,
+   "top": [
+    "小玉",
+    "嵯峨",
+    "天师学徒"
+   ]
+  },
+  {
+   "id": "record-161",
+   "title": "熔泉",
+   "category": "密录",
+   "code": "密录",
+   "order": 260,
+   "description": "11 名角色，13 组关系。关系最多的是 熔泉、森蚺、沙蜥帮队长。",
+   "color": "#b49baa",
+   "source": "密录 · 熔泉",
+   "nodes": 11,
+   "pairs": 13,
+   "relations": 17,
+   "top": [
+    "熔泉",
+    "森蚺",
+    "沙蜥帮队长"
+   ]
+  },
+  {
+   "id": "record-162",
+   "title": "四月",
+   "category": "密录",
+   "code": "密录",
+   "order": 261,
+   "description": "8 名角色，8 组关系。关系最多的是 四月、矿井负责人、强盗头目。",
+   "color": "#a8b7d2",
+   "source": "密录 · 四月",
+   "nodes": 8,
+   "pairs": 8,
+   "relations": 11,
+   "top": [
+    "四月",
+    "矿井负责人",
+    "强盗头目"
+   ]
+  },
+  {
+   "id": "record-163",
+   "title": "酸糖",
+   "category": "密录",
+   "code": "密录",
+   "order": 262,
+   "description": "9 名角色，10 组关系。关系最多的是 酸糖、库珀议员、阿尔瓦。",
+   "color": "#c9a98c",
+   "source": "密录 · 酸糖",
+   "nodes": 9,
+   "pairs": 10,
+   "relations": 13,
+   "top": [
+    "酸糖",
+    "库珀议员",
+    "阿尔瓦"
+   ]
+  },
+  {
+   "id": "record-164",
+   "title": "灰喉",
+   "category": "密录",
+   "code": "密录",
+   "order": 263,
+   "description": "8 名角色，8 组关系。关系最多的是 灰喉、天灾信使、恐慌的孩子。",
+   "color": "#d2997e",
+   "source": "密录 · 灰喉",
+   "nodes": 8,
+   "pairs": 8,
+   "relations": 11,
+   "top": [
+    "灰喉",
+    "天灾信使",
+    "恐慌的孩子"
+   ]
+  },
+  {
+   "id": "record-165",
+   "title": "贝娜",
+   "category": "密录",
+   "code": "密录",
+   "order": 264,
+   "description": "6 名角色，5 组关系。关系最多的是 贝娜、爸爸、安妮。",
+   "color": "#c69abd",
+   "source": "密录 · 贝娜",
+   "nodes": 6,
+   "pairs": 5,
+   "relations": 8,
+   "top": [
+    "贝娜",
+    "爸爸",
+    "安妮"
+   ]
+  },
+  {
+   "id": "record-166",
+   "title": "莱恩哈特",
+   "category": "密录",
+   "code": "密录",
+   "order": 265,
+   "description": "10 名角色，13 组关系。关系最多的是 莱恩哈特、断崖、疲惫的工人。",
+   "color": "#d3a6a0",
+   "source": "密录 · 莱恩哈特",
+   "nodes": 10,
+   "pairs": 13,
+   "relations": 19,
+   "top": [
+    "莱恩哈特",
+    "断崖",
+    "疲惫的工人"
+   ]
+  },
+  {
+   "id": "record-167",
+   "title": "THRM-EX",
+   "category": "密录",
+   "code": "密录",
+   "order": 266,
+   "description": "11 名角色，16 组关系。关系最多的是 博士、THRM-EX、可露希尔。",
+   "color": "#a0bfbc",
+   "source": "密录 · THRM-EX",
+   "nodes": 11,
+   "pairs": 16,
+   "relations": 24,
+   "top": [
+    "博士",
+    "THRM-EX",
+    "可露希尔"
+   ]
+  },
+  {
+   "id": "record-168",
+   "title": "澄闪",
+   "category": "密录",
+   "code": "密录",
+   "order": 267,
+   "description": "12 名角色，19 组关系。关系最多的是 澄闪、感染者毕恩、苦根。",
+   "color": "#b5a788",
+   "source": "密录 · 澄闪",
+   "nodes": 12,
+   "pairs": 19,
+   "relations": 25,
+   "top": [
+    "澄闪",
+    "感染者毕恩",
+    "苦根"
+   ]
+  },
+  {
+   "id": "record-169",
+   "title": "石棉",
+   "category": "密录",
+   "code": "密录",
+   "order": 268,
+   "description": "7 名角色，6 组关系。关系最多的是 石棉、直爽的阿达克利斯人、认真的阿达克利斯人。",
+   "color": "#b49baa",
+   "source": "密录 · 石棉",
+   "nodes": 7,
+   "pairs": 6,
+   "relations": 6,
+   "top": [
+    "石棉",
+    "直爽的阿达克利斯人",
+    "认真的阿达克利斯人"
+   ]
+  },
+  {
+   "id": "record-170",
+   "title": "慑砂",
+   "category": "密录",
+   "code": "密录",
+   "order": 269,
+   "description": "9 名角色，10 组关系。关系最多的是 慑砂、达雷尔、傲慢的商人。",
+   "color": "#a8b7d2",
+   "source": "密录 · 慑砂",
+   "nodes": 9,
+   "pairs": 10,
+   "relations": 15,
+   "top": [
+    "慑砂",
+    "达雷尔",
+    "傲慢的商人"
+   ]
+  },
+  {
+   "id": "record-171",
+   "title": "泡泡",
+   "category": "密录",
+   "code": "密录",
+   "order": 270,
+   "description": "9 名角色，11 组关系。关系最多的是 泡泡、泡普卡、巫恋。",
+   "color": "#c9a98c",
+   "source": "密录 · 泡泡",
+   "nodes": 9,
+   "pairs": 11,
+   "relations": 18,
+   "top": [
+    "泡泡",
+    "泡普卡",
+    "巫恋"
+   ]
+  },
+  {
+   "id": "record-172",
+   "title": "雪雉",
+   "category": "密录",
+   "code": "密录",
+   "order": 271,
+   "description": "3 名角色，3 组关系。关系最多的是 雪雉、可露希尔、杰西卡。",
+   "color": "#d2997e",
+   "source": "密录 · 雪雉",
+   "nodes": 3,
+   "pairs": 3,
+   "relations": 6,
+   "top": [
+    "雪雉",
+    "可露希尔",
+    "杰西卡"
+   ]
+  },
+  {
+   "id": "record-173",
+   "title": "清流",
+   "category": "密录",
+   "code": "密录",
+   "order": 272,
+   "description": "6 名角色，4 组关系。关系最多的是 清流、桑葚、温蒂。",
+   "color": "#c69abd",
+   "source": "密录 · 清流",
+   "nodes": 6,
+   "pairs": 4,
+   "relations": 8,
+   "top": [
+    "清流",
+    "桑葚",
+    "温蒂"
+   ]
+  },
+  {
+   "id": "record-174",
+   "title": "薄绿",
+   "category": "密录",
+   "code": "密录",
+   "order": 273,
+   "description": "6 名角色，5 组关系。关系最多的是 薄绿、天火、桑葚。",
+   "color": "#d3a6a0",
+   "source": "密录 · 薄绿",
+   "nodes": 6,
+   "pairs": 5,
+   "relations": 8,
+   "top": [
+    "薄绿",
+    "天火",
+    "桑葚"
+   ]
+  },
+  {
+   "id": "record-175",
+   "title": "哈蒂娅",
+   "category": "密录",
+   "code": "密录",
+   "order": 274,
+   "description": "12 名角色，11 组关系。关系最多的是 哈蒂娅、酒吧老板、哥伦比亚巡警。",
+   "color": "#a0bfbc",
+   "source": "密录 · 哈蒂娅",
+   "nodes": 12,
+   "pairs": 11,
+   "relations": 19,
+   "top": [
+    "哈蒂娅",
+    "酒吧老板",
+    "哥伦比亚巡警"
+   ]
+  },
+  {
+   "id": "record-176",
+   "title": "正义骑士号",
+   "category": "密录",
+   "code": "密录",
+   "order": 275,
+   "description": "5 名角色，3 组关系。关系最多的是 正义骑士号、野鬃、谜图。",
+   "color": "#b5a788",
+   "source": "密录 · 正义骑士号",
+   "nodes": 5,
+   "pairs": 3,
+   "relations": 5,
+   "top": [
+    "正义骑士号",
+    "野鬃",
+    "谜图"
+   ]
+  },
+  {
+   "id": "record-177",
+   "title": "布丁",
+   "category": "密录",
+   "code": "密录",
+   "order": 276,
+   "description": "6 名角色，6 组关系。关系最多的是 布丁、工程部干员、医疗部干员。",
+   "color": "#b49baa",
+   "source": "密录 · 布丁",
+   "nodes": 6,
+   "pairs": 6,
+   "relations": 9,
+   "top": [
+    "布丁",
+    "工程部干员",
+    "医疗部干员"
+   ]
+  },
+  {
+   "id": "record-178",
+   "title": "玫拉",
+   "category": "密录",
+   "code": "密录",
+   "order": 277,
+   "description": "11 名角色，9 组关系。关系最多的是 玫拉、布雷娜、父亲的身影。",
+   "color": "#a8b7d2",
+   "source": "密录 · 玫拉",
+   "nodes": 11,
+   "pairs": 9,
+   "relations": 15,
+   "top": [
+    "玫拉",
+    "布雷娜",
+    "父亲的身影"
+   ]
+  },
+  {
+   "id": "record-179",
+   "title": "艾丽妮",
+   "category": "密录",
+   "code": "密录",
+   "order": 278,
+   "description": "4 名角色，4 组关系。关系最多的是 艾丽妮、卡门、凯尔希。",
+   "color": "#c9a98c",
+   "source": "密录 · 艾丽妮",
+   "nodes": 4,
+   "pairs": 4,
+   "relations": 6,
+   "top": [
+    "艾丽妮",
+    "卡门",
+    "凯尔希"
+   ]
+  },
+  {
+   "id": "record-180",
+   "title": "温蒂",
+   "category": "密录",
+   "code": "密录",
+   "order": 279,
+   "description": "10 名角色，10 组关系。关系最多的是 温蒂、可露希尔、煌。",
+   "color": "#d2997e",
+   "source": "密录 · 温蒂",
+   "nodes": 10,
+   "pairs": 10,
+   "relations": 16,
+   "top": [
+    "温蒂",
+    "可露希尔",
+    "煌"
+   ]
+  },
+  {
+   "id": "record-181",
+   "title": "止颂",
+   "category": "密录",
+   "code": "密录",
+   "order": 280,
+   "description": "7 名角色，10 组关系。关系最多的是 吉菲大叔、止颂、小女儿。",
+   "color": "#c69abd",
+   "source": "密录 · 止颂",
+   "nodes": 7,
+   "pairs": 10,
+   "relations": 15,
+   "top": [
+    "吉菲大叔",
+    "止颂",
+    "小女儿"
+   ]
+  },
+  {
+   "id": "record-182",
+   "title": "耶拉",
+   "category": "密录",
+   "code": "密录",
+   "order": 281,
+   "description": "8 名角色，6 组关系。关系最多的是 雅儿、活泼的职员、修甲人。",
+   "color": "#d3a6a0",
+   "source": "密录 · 耶拉",
+   "nodes": 8,
+   "pairs": 6,
+   "relations": 11,
+   "top": [
+    "雅儿",
+    "活泼的职员",
+    "修甲人"
+   ]
+  },
+  {
+   "id": "record-183",
+   "title": "子月",
+   "category": "密录",
+   "code": "密录",
+   "order": 282,
+   "description": "6 名角色，6 组关系。关系最多的是 司机、量杯、子月。",
+   "color": "#a0bfbc",
+   "source": "密录 · 子月",
+   "nodes": 6,
+   "pairs": 6,
+   "relations": 7,
+   "top": [
+    "司机",
+    "量杯",
+    "子月"
+   ]
+  },
+  {
+   "id": "record-184",
+   "title": "空构",
+   "category": "密录",
+   "code": "密录",
+   "order": 283,
+   "description": "8 名角色，9 组关系。关系最多的是 空构、福尔图娜、莱蒙德。",
+   "color": "#b5a788",
+   "source": "密录 · 空构",
+   "nodes": 8,
+   "pairs": 9,
+   "relations": 16,
+   "top": [
+    "空构",
+    "福尔图娜",
+    "莱蒙德"
+   ]
+  },
+  {
+   "id": "record-185",
+   "title": "风丸",
+   "category": "密录",
+   "code": "密录",
+   "order": 284,
+   "description": "22 名角色，26 组关系。关系最多的是 风丸、情绪激动的议员、沉默的老人。",
+   "color": "#b49baa",
+   "source": "密录 · 风丸",
+   "nodes": 22,
+   "pairs": 26,
+   "relations": 37,
+   "top": [
+    "风丸",
+    "情绪激动的议员",
+    "沉默的老人"
+   ]
+  },
+  {
+   "id": "record-186",
+   "title": "谜图",
+   "category": "密录",
+   "code": "密录",
+   "order": 285,
+   "description": "11 名角色，12 组关系。关系最多的是 康拉德先生、比利、热情的学生。",
+   "color": "#a8b7d2",
+   "source": "密录 · 谜图",
+   "nodes": 11,
+   "pairs": 12,
+   "relations": 19,
+   "top": [
+    "康拉德先生",
+    "比利",
+    "热情的学生"
+   ]
+  },
+  {
+   "id": "record-187",
+   "title": "九色鹿",
+   "category": "密录",
+   "code": "密录",
+   "order": 286,
+   "description": "10 名角色，14 组关系。关系最多的是 九色鹿、村民、诊所医生。",
+   "color": "#c9a98c",
+   "source": "密录 · 九色鹿",
+   "nodes": 10,
+   "pairs": 14,
+   "relations": 21,
+   "top": [
+    "九色鹿",
+    "村民",
+    "诊所医生"
+   ]
+  },
+  {
+   "id": "record-188",
+   "title": "极境",
+   "category": "密录",
+   "code": "密录",
+   "order": 287,
+   "description": "10 名角色，9 组关系。关系最多的是 极境、强壮的镇民、蒙面怪人。",
+   "color": "#d2997e",
+   "source": "密录 · 极境",
+   "nodes": 10,
+   "pairs": 9,
+   "relations": 17,
+   "top": [
+    "极境",
+    "强壮的镇民",
+    "蒙面怪人"
+   ]
+  },
+  {
+   "id": "record-189",
+   "title": "红隼",
+   "category": "密录",
+   "code": "密录",
+   "order": 288,
+   "description": "13 名角色，12 组关系。关系最多的是 红隼、首领、旅行商人。",
+   "color": "#c69abd",
+   "source": "密录 · 红隼",
+   "nodes": 13,
+   "pairs": 12,
+   "relations": 20,
+   "top": [
+    "红隼",
+    "首领",
+    "旅行商人"
+   ]
+  },
+  {
+   "id": "record-190",
+   "title": "暮落",
+   "category": "密录",
+   "code": "密录",
+   "order": 289,
+   "description": "5 名角色，4 组关系。关系最多的是 暮落、悲伤的男性、头颅。",
+   "color": "#d3a6a0",
+   "source": "密录 · 暮落",
+   "nodes": 5,
+   "pairs": 4,
+   "relations": 6,
+   "top": [
+    "暮落",
+    "悲伤的男性",
+    "头颅"
+   ]
+  },
+  {
+   "id": "record-191",
+   "title": "图耶",
+   "category": "密录",
+   "code": "密录",
+   "order": 290,
+   "description": "6 名角色，5 组关系。关系最多的是 图耶、镇长、外勤干员。",
+   "color": "#a0bfbc",
+   "source": "密录 · 图耶",
+   "nodes": 6,
+   "pairs": 5,
+   "relations": 10,
+   "top": [
+    "图耶",
+    "镇长",
+    "外勤干员"
+   ]
+  },
+  {
+   "id": "record-192",
+   "title": "复奏",
+   "category": "密录",
+   "code": "密录",
+   "order": 291,
+   "description": "6 名角色，6 组关系。关系最多的是 复奏、马赛拉、蛮横的男人。",
+   "color": "#b5a788",
+   "source": "密录 · 复奏",
+   "nodes": 6,
+   "pairs": 6,
+   "relations": 10,
+   "top": [
+    "复奏",
+    "马赛拉",
+    "蛮横的男人"
+   ]
+  },
+  {
+   "id": "record-193",
+   "title": "但书",
+   "category": "密录",
+   "code": "密录",
+   "order": 292,
+   "description": "9 名角色，10 组关系。关系最多的是 但书、公诉人、法官。",
+   "color": "#b49baa",
+   "source": "密录 · 但书",
+   "nodes": 9,
+   "pairs": 10,
+   "relations": 15,
+   "top": [
+    "但书",
+    "公诉人",
+    "法官"
+   ]
+  },
+  {
+   "id": "record-194",
+   "title": "见行者",
+   "category": "密录",
+   "code": "密录",
+   "order": 293,
+   "description": "6 名角色，6 组关系。关系最多的是 见行者、泥岩、红豆。",
+   "color": "#a8b7d2",
+   "source": "密录 · 见行者",
+   "nodes": 6,
+   "pairs": 6,
+   "relations": 11,
+   "top": [
+    "见行者",
+    "泥岩",
+    "红豆"
+   ]
+  },
+  {
+   "id": "record-195",
+   "title": "贝洛内",
+   "category": "密录",
+   "code": "密录",
+   "order": 294,
+   "description": "11 名角色，14 组关系。关系最多的是 德米特里、紧张的家族成员、拘谨的泥瓦匠。",
+   "color": "#c9a98c",
+   "source": "密录 · 贝洛内",
+   "nodes": 11,
+   "pairs": 14,
+   "relations": 23,
+   "top": [
+    "德米特里",
+    "紧张的家族成员",
+    "拘谨的泥瓦匠"
+   ]
+  },
+  {
+   "id": "record-196",
+   "title": "号角",
+   "category": "密录",
+   "code": "密录",
+   "order": 295,
+   "description": "9 名角色，11 组关系。关系最多的是 号角、蔓德拉、深池士兵A。",
+   "color": "#d2997e",
+   "source": "密录 · 号角",
+   "nodes": 9,
+   "pairs": 11,
+   "relations": 15,
+   "top": [
+    "号角",
+    "蔓德拉",
+    "深池士兵A"
+   ]
+  },
+  {
+   "id": "record-197",
+   "title": "洛洛",
+   "category": "密录",
+   "code": "密录",
+   "order": 296,
+   "description": "9 名角色，7 组关系。关系最多的是 洛洛、憔悴的工人、劫匪。",
+   "color": "#c69abd",
+   "source": "密录 · 洛洛",
+   "nodes": 9,
+   "pairs": 7,
+   "relations": 14,
+   "top": [
+    "洛洛",
+    "憔悴的工人",
+    "劫匪"
+   ]
+  },
+  {
+   "id": "record-198",
+   "title": "褐果",
+   "category": "密录",
+   "code": "密录",
+   "order": 297,
+   "description": "9 名角色，8 组关系。关系最多的是 褐果、神秘人物、谨慎的男人。",
+   "color": "#d3a6a0",
+   "source": "密录 · 褐果",
+   "nodes": 9,
+   "pairs": 8,
+   "relations": 13,
+   "top": [
+    "褐果",
+    "神秘人物",
+    "谨慎的男人"
+   ]
+  },
+  {
+   "id": "record-199",
+   "title": "流明",
+   "category": "密录",
+   "code": "密录",
+   "order": 298,
+   "description": "5 名角色，4 组关系。关系最多的是 流明、阿玛雅、地方信使。",
+   "color": "#a0bfbc",
+   "source": "密录 · 流明",
+   "nodes": 5,
+   "pairs": 4,
+   "relations": 7,
+   "top": [
+    "流明",
+    "阿玛雅",
+    "地方信使"
+   ]
+  },
+  {
+   "id": "record-200",
+   "title": "埃拉托",
+   "category": "密录",
+   "code": "密录",
+   "order": 299,
+   "description": "8 名角色，8 组关系。关系最多的是 埃拉托、贾维、燧石。",
+   "color": "#b5a788",
+   "source": "密录 · 埃拉托",
+   "nodes": 8,
+   "pairs": 8,
+   "relations": 15,
+   "top": [
+    "埃拉托",
+    "贾维",
+    "燧石"
+   ]
+  },
+  {
+   "id": "record-201",
+   "title": "海蒂",
+   "category": "密录",
+   "code": "密录",
+   "order": 300,
+   "description": "5 名角色，4 组关系。关系最多的是 海蒂、茉莉、顽皮的孩子。",
+   "color": "#b49baa",
+   "source": "密录 · 海蒂",
+   "nodes": 5,
+   "pairs": 4,
+   "relations": 8,
+   "top": [
+    "海蒂",
+    "茉莉",
+    "顽皮的孩子"
+   ]
+  },
+  {
+   "id": "record-202",
+   "title": "黑键",
+   "category": "密录",
+   "code": "密录",
+   "order": 301,
+   "description": "8 名角色，8 组关系。关系最多的是 黑键、冷漠的贵族、车尔尼。",
+   "color": "#a8b7d2",
+   "source": "密录 · 黑键",
+   "nodes": 8,
+   "pairs": 8,
+   "relations": 15,
+   "top": [
+    "黑键",
+    "冷漠的贵族",
+    "车尔尼"
+   ]
+  },
+  {
+   "id": "record-203",
+   "title": "车尔尼",
+   "category": "密录",
+   "code": "密录",
+   "order": 302,
+   "description": "11 名角色，12 组关系。关系最多的是 车尔尼、芙蓉、格特鲁德。",
+   "color": "#c9a98c",
+   "source": "密录 · 车尔尼",
+   "nodes": 11,
+   "pairs": 12,
+   "relations": 19,
+   "top": [
+    "车尔尼",
+    "芙蓉",
+    "格特鲁德"
+   ]
+  },
+  {
+   "id": "record-204",
+   "title": "多萝西",
+   "category": "密录",
+   "code": "密录",
+   "order": 303,
+   "description": "9 名角色，12 组关系。关系最多的是 多萝西、菜菜、格罗斯。",
+   "color": "#d2997e",
+   "source": "密录 · 多萝西",
+   "nodes": 9,
+   "pairs": 12,
+   "relations": 17,
+   "top": [
+    "多萝西",
+    "菜菜",
+    "格罗斯"
+   ]
+  },
+  {
+   "id": "record-205",
+   "title": "寻澜",
+   "category": "密录",
+   "code": "密录",
+   "order": 304,
+   "description": "4 名角色，3 组关系。关系最多的是 寻澜、高级管理人员、黑钢先遣队员。",
+   "color": "#c69abd",
+   "source": "密录 · 寻澜",
+   "nodes": 4,
+   "pairs": 3,
+   "relations": 6,
+   "top": [
+    "寻澜",
+    "高级管理人员",
+    "黑钢先遣队员"
+   ]
+  },
+  {
+   "id": "record-206",
+   "title": "至简",
+   "category": "密录",
+   "code": "密录",
+   "order": 305,
+   "description": "8 名角色，8 组关系。关系最多的是 至简、耶奇·地心、鸿雪。",
+   "color": "#d3a6a0",
+   "source": "密录 · 至简",
+   "nodes": 8,
+   "pairs": 8,
+   "relations": 11,
+   "top": [
+    "至简",
+    "耶奇·地心",
+    "鸿雪"
+   ]
+  },
+  {
+   "id": "record-207",
+   "title": "鸿雪",
+   "category": "密录",
+   "code": "密录",
+   "order": 306,
+   "description": "9 名角色，9 组关系。关系最多的是 鸿雪、严谨的杜林人、期待的杜林人。",
+   "color": "#a0bfbc",
+   "source": "密录 · 鸿雪",
+   "nodes": 9,
+   "pairs": 9,
+   "relations": 17,
+   "top": [
+    "鸿雪",
+    "严谨的杜林人",
+    "期待的杜林人"
+   ]
+  },
+  {
+   "id": "record-208",
+   "title": "苦艾",
+   "category": "密录",
+   "code": "密录",
+   "order": 307,
+   "description": "3 名角色，2 组关系。关系最多的是 苦艾、早露、医疗干员。",
+   "color": "#b5a788",
+   "source": "密录 · 苦艾",
+   "nodes": 3,
+   "pairs": 2,
+   "relations": 3,
+   "top": [
+    "苦艾",
+    "早露",
+    "医疗干员"
+   ]
+  },
+  {
+   "id": "record-209",
+   "title": "铅踝",
+   "category": "密录",
+   "code": "密录",
+   "order": 308,
+   "description": "18 名角色，18 组关系。关系最多的是 铅踝、哥伦比亚旅人、“智者”。",
+   "color": "#b49baa",
+   "source": "密录 · 铅踝",
+   "nodes": 18,
+   "pairs": 18,
+   "relations": 25,
+   "top": [
+    "铅踝",
+    "哥伦比亚旅人",
+    "“智者”"
+   ]
+  },
+  {
+   "id": "record-210",
+   "title": "石英",
+   "category": "密录",
+   "code": "密录",
+   "order": 309,
+   "description": "9 名角色，17 组关系。关系最多的是 石英、艾维、皮克特大叔。",
+   "color": "#a8b7d2",
+   "source": "密录 · 石英",
+   "nodes": 9,
+   "pairs": 17,
+   "relations": 24,
+   "top": [
+    "石英",
+    "艾维",
+    "皮克特大叔"
+   ]
+  },
+  {
+   "id": "record-211",
+   "title": "斥罪",
+   "category": "密录",
+   "code": "密录",
+   "order": 310,
+   "description": "4 名角色，4 组关系。关系最多的是 斥罪、职员特丽莎、卢娜。",
+   "color": "#c9a98c",
+   "source": "密录 · 斥罪",
+   "nodes": 4,
+   "pairs": 4,
+   "relations": 7,
+   "top": [
+    "斥罪",
+    "职员特丽莎",
+    "卢娜"
+   ]
+  },
+  {
+   "id": "record-212",
+   "title": "罗小黑",
+   "category": "密录",
+   "code": "密录",
+   "order": 311,
+   "description": "10 名角色，10 组关系。关系最多的是 罗小黑、山、夜烟。",
+   "color": "#d2997e",
+   "source": "密录 · 罗小黑",
+   "nodes": 10,
+   "pairs": 10,
+   "relations": 17,
+   "top": [
+    "罗小黑",
+    "山",
+    "夜烟"
+   ]
+  },
+  {
+   "id": "record-213",
+   "title": "明椒",
+   "category": "密录",
+   "code": "密录",
+   "order": 312,
+   "description": "3 名角色，2 组关系。关系最多的是 明椒、格林、黑市打手B。",
+   "color": "#c69abd",
+   "source": "密录 · 明椒",
+   "nodes": 3,
+   "pairs": 2,
+   "relations": 3,
+   "top": [
+    "明椒",
+    "格林",
+    "黑市打手B"
+   ]
+  },
+  {
+   "id": "record-214",
+   "title": "白铁",
+   "category": "密录",
+   "code": "密录",
+   "order": 313,
+   "description": "6 名角色，7 组关系。关系最多的是 白铁、厂长、斯坦。",
+   "color": "#d3a6a0",
+   "source": "密录 · 白铁",
+   "nodes": 6,
+   "pairs": 7,
+   "relations": 12,
+   "top": [
+    "白铁",
+    "厂长",
+    "斯坦"
+   ]
+  },
+  {
+   "id": "record-215",
+   "title": "截云",
+   "category": "密录",
+   "code": "密录",
+   "order": 314,
+   "description": "8 名角色，9 组关系。关系最多的是 截云、巡防营守军B、巡防营守军A。",
+   "color": "#a0bfbc",
+   "source": "密录 · 截云",
+   "nodes": 8,
+   "pairs": 9,
+   "relations": 13,
+   "top": [
+    "截云",
+    "巡防营守军B",
+    "巡防营守军A"
+   ]
+  },
+  {
+   "id": "record-216",
+   "title": "海霓",
+   "category": "密录",
+   "code": "密录",
+   "order": 315,
+   "description": "5 名角色，4 组关系。关系最多的是 海霓、海巡队队长、帕波斯。",
+   "color": "#b5a788",
+   "source": "密录 · 海霓",
+   "nodes": 5,
+   "pairs": 4,
+   "relations": 7,
+   "top": [
+    "海霓",
+    "海巡队队长",
+    "帕波斯"
+   ]
+  },
+  {
+   "id": "record-217",
+   "title": "林",
+   "category": "密录",
+   "code": "密录",
+   "order": 316,
+   "description": "11 名角色，13 组关系。关系最多的是 诗怀雅、瘦子张、林。",
+   "color": "#b49baa",
+   "source": "密录 · 林",
+   "nodes": 11,
+   "pairs": 13,
+   "relations": 21,
+   "top": [
+    "诗怀雅",
+    "瘦子张",
+    "林"
+   ]
+  },
+  {
+   "id": "record-218",
+   "title": "温米",
+   "category": "密录",
+   "code": "密录",
+   "order": 317,
+   "description": "9 名角色，7 组关系。关系最多的是 温米、修理铺钳工、小镇放映员。",
+   "color": "#a8b7d2",
+   "source": "密录 · 温米",
+   "nodes": 9,
+   "pairs": 7,
+   "relations": 13,
+   "top": [
+    "温米",
+    "修理铺钳工",
+    "小镇放映员"
+   ]
+  },
+  {
+   "id": "record-219",
+   "title": "仇白",
+   "category": "密录",
+   "code": "密录",
+   "order": 318,
+   "description": "5 名角色，4 组关系。关系最多的是 仇白、租赁店老板、顾客。",
+   "color": "#c9a98c",
+   "source": "密录 · 仇白",
+   "nodes": 5,
+   "pairs": 4,
+   "relations": 8,
+   "top": [
+    "仇白",
+    "租赁店老板",
+    "顾客"
+   ]
+  },
+  {
+   "id": "record-220",
+   "title": "铎铃",
+   "category": "密录",
+   "code": "密录",
+   "order": 319,
+   "description": "10 名角色，9 组关系。关系最多的是 铎铃、近卫局成员、好奇的村民。",
+   "color": "#d2997e",
+   "source": "密录 · 铎铃",
+   "nodes": 10,
+   "pairs": 9,
+   "relations": 14,
+   "top": [
+    "铎铃",
+    "近卫局成员",
+    "好奇的村民"
+   ]
+  },
+  {
+   "id": "record-221",
+   "title": "薇薇安娜",
+   "category": "密录",
+   "code": "密录",
+   "order": 320,
+   "description": "10 名角色，11 组关系。关系最多的是 薇薇安娜、奥比娜、麦基。",
+   "color": "#c69abd",
+   "source": "密录 · 薇薇安娜",
+   "nodes": 10,
+   "pairs": 11,
+   "relations": 18,
+   "top": [
+    "薇薇安娜",
+    "奥比娜",
+    "麦基"
+   ]
+  },
+  {
+   "id": "record-222",
+   "title": "跃跃",
+   "category": "密录",
+   "code": "密录",
+   "order": 321,
+   "description": "5 名角色，4 组关系。关系最多的是 跃跃、红毛、“利齿帮”头领。",
+   "color": "#d3a6a0",
+   "source": "密录 · 跃跃",
+   "nodes": 5,
+   "pairs": 4,
+   "relations": 7,
+   "top": [
+    "跃跃",
+    "红毛",
+    "“利齿帮”头领"
+   ]
+  },
+  {
+   "id": "record-223",
+   "title": "冰酿",
+   "category": "密录",
+   "code": "密录",
+   "order": 322,
+   "description": "5 名角色，4 组关系。关系最多的是 冰酿、杰西卡、酒馆老板。",
+   "color": "#a0bfbc",
+   "source": "密录 · 冰酿",
+   "nodes": 5,
+   "pairs": 4,
+   "relations": 8,
+   "top": [
+    "冰酿",
+    "杰西卡",
+    "酒馆老板"
+   ]
+  },
+  {
+   "id": "record-224",
+   "title": "杏仁",
+   "category": "密录",
+   "code": "密录",
+   "order": 323,
+   "description": "6 名角色，5 组关系。关系最多的是 杏仁、芙兰卡、黑钢文员。",
+   "color": "#b5a788",
+   "source": "密录 · 杏仁",
+   "nodes": 6,
+   "pairs": 5,
+   "relations": 10,
+   "top": [
+    "杏仁",
+    "芙兰卡",
+    "黑钢文员"
+   ]
+  },
+  {
+   "id": "record-225",
+   "title": "苍苔",
+   "category": "密录",
+   "code": "密录",
+   "order": 324,
+   "description": "6 名角色，7 组关系。关系最多的是 苍苔、哈莉、冷饮店店主。",
+   "color": "#b49baa",
+   "source": "密录 · 苍苔",
+   "nodes": 6,
+   "pairs": 7,
+   "relations": 13,
+   "top": [
+    "苍苔",
+    "哈莉",
+    "冷饮店店主"
+   ]
+  },
+  {
+   "id": "record-226",
+   "title": "维荻",
+   "category": "密录",
+   "code": "密录",
+   "order": 325,
+   "description": "7 名角色，7 组关系。关系最多的是 维荻、图克、镇静的打手。",
+   "color": "#a8b7d2",
+   "source": "密录 · 维荻",
+   "nodes": 7,
+   "pairs": 7,
+   "relations": 10,
+   "top": [
+    "维荻",
+    "图克",
+    "镇静的打手"
+   ]
+  },
+  {
+   "id": "record-227",
+   "title": "深律",
+   "category": "密录",
+   "code": "密录",
+   "order": 326,
+   "description": "4 名角色，3 组关系。关系最多的是 深律、伊维格娜德、负责接待的侍从。",
+   "color": "#c9a98c",
+   "source": "密录 · 深律",
+   "nodes": 4,
+   "pairs": 3,
+   "relations": 5,
+   "top": [
+    "深律",
+    "伊维格娜德",
+    "负责接待的侍从"
+   ]
+  },
+  {
+   "id": "record-228",
+   "title": "哈洛德",
+   "category": "密录",
+   "code": "密录",
+   "order": 327,
+   "description": "9 名角色，8 组关系。关系最多的是 哈洛德、医疗干员、角峰。",
+   "color": "#d2997e",
+   "source": "密录 · 哈洛德",
+   "nodes": 9,
+   "pairs": 8,
+   "relations": 14,
+   "top": [
+    "哈洛德",
+    "医疗干员",
+    "角峰"
+   ]
+  },
+  {
+   "id": "record-229",
+   "title": "锏",
+   "category": "密录",
+   "code": "密录",
+   "order": 328,
+   "description": "8 名角色，9 组关系。关系最多的是 锏、寒夜骑士、酒馆老板。",
+   "color": "#c69abd",
+   "source": "密录 · 锏",
+   "nodes": 8,
+   "pairs": 9,
+   "relations": 13,
+   "top": [
+    "锏",
+    "寒夜骑士",
+    "酒馆老板"
+   ]
+  },
+  {
+   "id": "record-230",
+   "title": "莱伊",
+   "category": "密录",
+   "code": "密录",
+   "order": 329,
+   "description": "16 名角色，18 组关系。关系最多的是 莱伊、阿兰娜、杰里。",
+   "color": "#d3a6a0",
+   "source": "密录 · 莱伊",
+   "nodes": 16,
+   "pairs": 18,
+   "relations": 24,
+   "top": [
+    "莱伊",
+    "阿兰娜",
+    "杰里"
+   ]
+  },
+  {
+   "id": "record-231",
+   "title": "万顷",
+   "category": "密录",
+   "code": "密录",
+   "order": 330,
+   "description": "5 名角色，5 组关系。关系最多的是 万顷、山中小童、“仙人”。",
+   "color": "#a0bfbc",
+   "source": "密录 · 万顷",
+   "nodes": 5,
+   "pairs": 5,
+   "relations": 9,
+   "top": [
+    "万顷",
+    "山中小童",
+    "“仙人”"
+   ]
+  },
+  {
+   "id": "record-232",
+   "title": "特米米",
+   "category": "密录",
+   "code": "密录",
+   "order": 331,
+   "description": "8 名角色，8 组关系。关系最多的是 特米米、蓝毒、医疗干员。",
+   "color": "#b5a788",
+   "source": "密录 · 特米米",
+   "nodes": 8,
+   "pairs": 8,
+   "relations": 14,
+   "top": [
+    "特米米",
+    "蓝毒",
+    "医疗干员"
+   ]
+  },
+  {
+   "id": "record-233",
+   "title": "小满",
+   "category": "密录",
+   "code": "密录",
+   "order": 332,
+   "description": "9 名角色，12 组关系。关系最多的是 小满、年轻的农夫、路过的神仙。",
+   "color": "#b49baa",
+   "source": "密录 · 小满",
+   "nodes": 9,
+   "pairs": 12,
+   "relations": 17,
+   "top": [
+    "小满",
+    "年轻的农夫",
+    "路过的神仙"
+   ]
+  },
+  {
+   "id": "record-234",
+   "title": "艾拉",
+   "category": "密录",
+   "code": "密录",
+   "order": 333,
+   "description": "9 名角色，9 组关系。关系最多的是 艾拉、拉法尔、警察。",
+   "color": "#a8b7d2",
+   "source": "密录 · 艾拉",
+   "nodes": 9,
+   "pairs": 9,
+   "relations": 17,
+   "top": [
+    "艾拉",
+    "拉法尔",
+    "警察"
+   ]
+  },
+  {
+   "id": "record-235",
+   "title": "双月",
+   "category": "密录",
+   "code": "密录",
+   "order": 334,
+   "description": "6 名角色，6 组关系。关系最多的是 双月、老成的杜林人、年轻的杜林人。",
+   "color": "#c9a98c",
+   "source": "密录 · 双月",
+   "nodes": 6,
+   "pairs": 6,
+   "relations": 8,
+   "top": [
+    "双月",
+    "老成的杜林人",
+    "年轻的杜林人"
+   ]
+  },
+  {
+   "id": "record-236",
+   "title": "医生",
+   "category": "密录",
+   "code": "密录",
+   "order": 335,
+   "description": "8 名角色，7 组关系。关系最多的是 医生、阿贝尔、当地官员。",
+   "color": "#d2997e",
+   "source": "密录 · 医生",
+   "nodes": 8,
+   "pairs": 7,
+   "relations": 12,
+   "top": [
+    "医生",
+    "阿贝尔",
+    "当地官员"
+   ]
+  },
+  {
+   "id": "record-237",
+   "title": "导火索",
+   "category": "密录",
+   "code": "密录",
+   "order": 336,
+   "description": "5 名角色，5 组关系。关系最多的是 导火索、伯梅、镇民。",
+   "color": "#c69abd",
+   "source": "密录 · 导火索",
+   "nodes": 5,
+   "pairs": 5,
+   "relations": 8,
+   "top": [
+    "导火索",
+    "伯梅",
+    "镇民"
+   ]
+  },
+  {
+   "id": "record-238",
+   "title": "露托",
+   "category": "密录",
+   "code": "密录",
+   "order": 337,
+   "description": "5 名角色，4 组关系。关系最多的是 露托、烤肉店老板、医疗干员。",
+   "color": "#d3a6a0",
+   "source": "密录 · 露托",
+   "nodes": 5,
+   "pairs": 4,
+   "relations": 6,
+   "top": [
+    "露托",
+    "烤肉店老板",
+    "医疗干员"
+   ]
+  },
+  {
+   "id": "record-239",
+   "title": "阿斯卡纶",
+   "category": "密录",
+   "code": "密录",
+   "order": 338,
+   "description": "3 名角色，2 组关系。关系最多的是 阿斯卡纶、凯尔希、特雷西斯。",
+   "color": "#a0bfbc",
+   "source": "密录 · 阿斯卡纶",
+   "nodes": 3,
+   "pairs": 2,
+   "relations": 4,
+   "top": [
+    "阿斯卡纶",
+    "凯尔希",
+    "特雷西斯"
+   ]
+  },
+  {
+   "id": "record-240",
+   "title": "魔王",
+   "category": "密录",
+   "code": "密录",
+   "order": 339,
+   "description": "5 名角色，4 组关系。关系最多的是 阿米娅、特蕾西娅、云兽。",
+   "color": "#b5a788",
+   "source": "密录 · 魔王",
+   "nodes": 5,
+   "pairs": 4,
+   "relations": 6,
+   "top": [
+    "阿米娅",
+    "特蕾西娅",
+    "云兽"
+   ]
+  },
+  {
+   "id": "record-241",
+   "title": "深巡",
+   "category": "密录",
+   "code": "密录",
+   "order": 340,
+   "description": "5 名角色，4 组关系。关系最多的是 深巡、艾达、小帮手。",
+   "color": "#b49baa",
+   "source": "密录 · 深巡",
+   "nodes": 5,
+   "pairs": 4,
+   "relations": 8,
+   "top": [
+    "深巡",
+    "艾达",
+    "小帮手"
+   ]
+  },
+  {
+   "id": "record-242",
+   "title": "娜仁图亚",
+   "category": "密录",
+   "code": "密录",
+   "order": 341,
+   "description": "6 名角色，5 组关系。关系最多的是 娜仁图亚、假酒贩子、商队头领。",
+   "color": "#a8b7d2",
+   "source": "密录 · 娜仁图亚",
+   "nodes": 6,
+   "pairs": 5,
+   "relations": 8,
+   "top": [
+    "娜仁图亚",
+    "假酒贩子",
+    "商队头领"
+   ]
+  },
+  {
+   "id": "record-243",
+   "title": "莎草",
+   "category": "密录",
+   "code": "密录",
+   "order": 342,
+   "description": "7 名角色，5 组关系。关系最多的是 莎草、巡回医生、急躁的村民。",
+   "color": "#c9a98c",
+   "source": "密录 · 莎草",
+   "nodes": 7,
+   "pairs": 5,
+   "relations": 8,
+   "top": [
+    "莎草",
+    "巡回医生",
+    "急躁的村民"
+   ]
+  },
+  {
+   "id": "record-244",
+   "title": "衡沙",
+   "category": "密录",
+   "code": "密录",
+   "order": 343,
+   "description": "12 名角色，14 组关系。关系最多的是 衡沙、交易所女员工、宝石收藏家。",
+   "color": "#d2997e",
+   "source": "密录 · 衡沙",
+   "nodes": 12,
+   "pairs": 14,
+   "relations": 23,
+   "top": [
+    "衡沙",
+    "交易所女员工",
+    "宝石收藏家"
+   ]
+  },
+  {
+   "id": "record-245",
+   "title": "妮芙",
+   "category": "密录",
+   "code": "密录",
+   "order": 344,
+   "description": "17 名角色，17 组关系。关系最多的是 妮芙、齐提特-努库尔提、间谍。",
+   "color": "#c69abd",
+   "source": "密录 · 妮芙",
+   "nodes": 17,
+   "pairs": 17,
+   "relations": 30,
+   "top": [
+    "妮芙",
+    "齐提特-努库尔提",
+    "间谍"
+   ]
+  },
+  {
+   "id": "record-246",
+   "title": "渡桥",
+   "category": "密录",
+   "code": "密录",
+   "order": 345,
+   "description": "13 名角色，13 组关系。关系最多的是 渡桥、妮芙、莉丝。",
+   "color": "#d3a6a0",
+   "source": "密录 · 渡桥",
+   "nodes": 13,
+   "pairs": 13,
+   "relations": 20,
+   "top": [
+    "渡桥",
+    "妮芙",
+    "莉丝"
+   ]
+  },
+  {
+   "id": "record-247",
+   "title": "菲莱",
+   "category": "密录",
+   "code": "密录",
+   "order": 346,
+   "description": "7 名角色，9 组关系。关系最多的是 菲莱、阿依莎、担忧的村民。",
+   "color": "#a0bfbc",
+   "source": "密录 · 菲莱",
+   "nodes": 7,
+   "pairs": 9,
+   "relations": 15,
+   "top": [
+    "菲莱",
+    "阿依莎",
+    "担忧的村民"
+   ]
+  },
+  {
+   "id": "record-248",
+   "title": "锡人",
+   "category": "密录",
+   "code": "密录",
+   "order": 347,
+   "description": "7 名角色，6 组关系。关系最多的是 莫斯比警探、锡人、实习警员。",
+   "color": "#b5a788",
+   "source": "密录 · 锡人",
+   "nodes": 7,
+   "pairs": 6,
+   "relations": 12,
+   "top": [
+    "莫斯比警探",
+    "锡人",
+    "实习警员"
+   ]
+  },
+  {
+   "id": "record-249",
+   "title": "燧石",
+   "category": "密录",
+   "code": "密录",
+   "order": 348,
+   "description": "6 名角色，6 组关系。关系最多的是 燧石、被卷入的行商、布洛卡。",
+   "color": "#b49baa",
+   "source": "密录 · 燧石",
+   "nodes": 6,
+   "pairs": 6,
+   "relations": 10,
+   "top": [
+    "燧石",
+    "被卷入的行商",
+    "布洛卡"
+   ]
+  },
+  {
+   "id": "record-250",
+   "title": "凯瑟琳",
+   "category": "密录",
+   "code": "密录",
+   "order": 349,
+   "description": "7 名角色，10 组关系。关系最多的是 克拉拉、凯瑟琳、高个子工友。",
+   "color": "#a8b7d2",
+   "source": "密录 · 凯瑟琳",
+   "nodes": 7,
+   "pairs": 10,
+   "relations": 17,
+   "top": [
+    "克拉拉",
+    "凯瑟琳",
+    "高个子工友"
+   ]
+  },
+  {
+   "id": "record-251",
+   "title": "瑰盐",
+   "category": "密录",
+   "code": "密录",
+   "order": 350,
+   "description": "5 名角色，4 组关系。关系最多的是 瑰盐、温柔的仆人、宠溺的仆人。",
+   "color": "#c9a98c",
+   "source": "密录 · 瑰盐",
+   "nodes": 5,
+   "pairs": 4,
+   "relations": 8,
+   "top": [
+    "瑰盐",
+    "温柔的仆人",
+    "宠溺的仆人"
+   ]
+  },
+  {
+   "id": "record-252",
+   "title": "特克诺",
+   "category": "密录",
+   "code": "密录",
+   "order": 351,
+   "description": "15 名角色，14 组关系。关系最多的是 特克诺、记者、萨里凡。",
+   "color": "#d2997e",
+   "source": "密录 · 特克诺",
+   "nodes": 15,
+   "pairs": 14,
+   "relations": 20,
+   "top": [
+    "特克诺",
+    "记者",
+    "萨里凡"
+   ]
+  },
+  {
+   "id": "record-253",
+   "title": "云迹",
+   "category": "密录",
+   "code": "密录",
+   "order": 352,
+   "description": "2 名角色，1 组关系。关系最多的是 云迹、母亲。",
+   "color": "#c69abd",
+   "source": "密录 · 云迹",
+   "nodes": 2,
+   "pairs": 1,
+   "relations": 2,
+   "top": [
+    "云迹",
+    "母亲"
+   ]
+  },
+  {
+   "id": "record-254",
+   "title": "森蚺",
+   "category": "密录",
+   "code": "密录",
+   "order": 353,
+   "description": "8 名角色，11 组关系。关系最多的是 大祭司、森蚺、尤吉。",
+   "color": "#d3a6a0",
+   "source": "密录 · 森蚺",
+   "nodes": 8,
+   "pairs": 11,
+   "relations": 20,
+   "top": [
+    "大祭司",
+    "森蚺",
+    "尤吉"
+   ]
+  },
+  {
+   "id": "record-255",
+   "title": "行箸",
+   "category": "密录",
+   "code": "密录",
+   "order": 355,
+   "description": "2 名角色，1 组关系。关系最多的是 行箸、煌。",
+   "color": "#a0bfbc",
+   "source": "密录 · 行箸",
+   "nodes": 2,
+   "pairs": 1,
+   "relations": 2,
+   "top": [
+    "行箸",
+    "煌"
+   ]
+  },
+  {
+   "id": "record-256",
+   "title": "诺威尔",
+   "category": "密录",
+   "code": "密录",
+   "order": 356,
+   "description": "7 名角色，6 组关系。关系最多的是 诺威尔、镇定的老人、慌乱的干员。",
+   "color": "#b5a788",
+   "source": "密录 · 诺威尔",
+   "nodes": 7,
+   "pairs": 6,
+   "relations": 10,
+   "top": [
+    "诺威尔",
+    "镇定的老人",
+    "慌乱的干员"
+   ]
+  },
+  {
+   "id": "record-257",
+   "title": "水灯心",
+   "category": "密录",
+   "code": "密录",
+   "order": 357,
+   "description": "4 名角色，3 组关系。关系最多的是 水灯心、伊芙琳、女人的声音。",
+   "color": "#b49baa",
+   "source": "密录 · 水灯心",
+   "nodes": 4,
+   "pairs": 3,
+   "relations": 5,
+   "top": [
+    "水灯心",
+    "伊芙琳",
+    "女人的声音"
+   ]
+  },
+  {
+   "id": "record-258",
+   "title": "阿兰娜",
+   "category": "密录",
+   "code": "密录",
+   "order": 358,
+   "description": "7 名角色，7 组关系。关系最多的是 阿兰娜、温米、小查理。",
+   "color": "#a8b7d2",
+   "source": "密录 · 阿兰娜",
+   "nodes": 7,
+   "pairs": 7,
+   "relations": 12,
+   "top": [
+    "阿兰娜",
+    "温米",
+    "小查理"
+   ]
+  },
+  {
+   "id": "record-259",
+   "title": "聆音",
+   "category": "密录",
+   "code": "密录",
+   "order": 359,
+   "description": "8 名角色，7 组关系。关系最多的是 聆音、虚弱的修女、潘格尼尼。",
+   "color": "#c9a98c",
+   "source": "密录 · 聆音",
+   "nodes": 8,
+   "pairs": 7,
+   "relations": 12,
+   "top": [
+    "聆音",
+    "虚弱的修女",
+    "潘格尼尼"
+   ]
+  },
+  {
+   "id": "record-260",
+   "title": "CONFESS-47",
+   "category": "密录",
+   "code": "密录",
+   "order": 360,
+   "description": "8 名角色，6 组关系。关系最多的是 萨卡兹、CONFESS-47、戴兜帽的人。",
+   "color": "#d2997e",
+   "source": "密录 · CONFESS-47",
+   "nodes": 8,
+   "pairs": 6,
+   "relations": 11,
+   "top": [
+    "萨卡兹",
+    "CONFESS-47",
+    "戴兜帽的人"
+   ]
+  },
+  {
+   "id": "record-261",
+   "title": "蒂比",
+   "category": "密录",
+   "code": "密录",
+   "order": 361,
+   "description": "6 名角色，9 组关系。关系最多的是 蒂比、摄影师、场记。",
+   "color": "#c69abd",
+   "source": "密录 · 蒂比",
+   "nodes": 6,
+   "pairs": 9,
+   "relations": 13,
+   "top": [
+    "蒂比",
+    "摄影师",
+    "场记"
+   ]
+  },
+  {
+   "id": "record-262",
+   "title": "录武官",
+   "category": "密录",
+   "code": "密录",
+   "order": 362,
+   "description": "6 名角色，4 组关系。关系最多的是 录武官、陈锈清、少年云青萍。",
+   "color": "#d3a6a0",
+   "source": "密录 · 录武官",
+   "nodes": 6,
+   "pairs": 4,
+   "relations": 8,
+   "top": [
+    "录武官",
+    "陈锈清",
+    "少年云青萍"
+   ]
+  },
+  {
+   "id": "record-263",
+   "title": "Miss.Christine",
+   "category": "密录",
+   "code": "密录",
+   "order": 363,
+   "description": "8 名角色，10 组关系。关系最多的是 小王子、前王后、国王的弟弟。",
+   "color": "#a0bfbc",
+   "source": "密录 · Miss.Christine",
+   "nodes": 8,
+   "pairs": 10,
+   "relations": 13,
+   "top": [
+    "小王子",
+    "前王后",
+    "国王的弟弟"
+   ]
+  },
+  {
+   "id": "record-264",
+   "title": "松桐",
+   "category": "密录",
+   "code": "密录",
+   "order": 364,
+   "description": "4 名角色，3 组关系。关系最多的是 浅井、松桐、莉子。",
+   "color": "#b5a788",
+   "source": "密录 · 松桐",
+   "nodes": 4,
+   "pairs": 3,
+   "relations": 4,
+   "top": [
+    "浅井",
+    "松桐",
+    "莉子"
+   ]
+  },
+  {
+   "id": "record-265",
+   "title": "吉星",
+   "category": "密录",
+   "code": "密录",
+   "order": 365,
+   "description": "9 名角色，10 组关系。关系最多的是 吉星、黑道老大、冷静的黑道成员。",
+   "color": "#b49baa",
+   "source": "密录 · 吉星",
+   "nodes": 9,
+   "pairs": 10,
+   "relations": 16,
+   "top": [
+    "吉星",
+    "黑道老大",
+    "冷静的黑道成员"
+   ]
+  },
+  {
+   "id": "record-266",
+   "title": "真言",
+   "category": "密录",
+   "code": "密录",
+   "order": 366,
+   "description": "4 名角色，2 组关系。关系最多的是 监听员、扬声器里的声音、真言。",
+   "color": "#a8b7d2",
+   "source": "密录 · 真言",
+   "nodes": 4,
+   "pairs": 2,
+   "relations": 4,
+   "top": [
+    "监听员",
+    "扬声器里的声音",
+    "真言"
+   ]
+  },
+  {
+   "id": "record-267",
+   "title": "折桠",
+   "category": "密录",
+   "code": "密录",
+   "order": 367,
+   "description": "6 名角色，7 组关系。关系最多的是 救援队队长、折桠、感染者孩童。",
+   "color": "#c9a98c",
+   "source": "密录 · 折桠",
+   "nodes": 6,
+   "pairs": 7,
+   "relations": 12,
+   "top": [
+    "救援队队长",
+    "折桠",
+    "感染者孩童"
+   ]
+  },
+  {
+   "id": "record-268",
+   "title": "冬时",
+   "category": "密录",
+   "code": "密录",
+   "order": 368,
+   "description": "8 名角色，5 组关系。关系最多的是 女孩、镜头外的声音、圆脸女孩。",
+   "color": "#d2997e",
+   "source": "密录 · 冬时",
+   "nodes": 8,
+   "pairs": 5,
+   "relations": 7,
+   "top": [
+    "女孩",
+    "镜头外的声音",
+    "圆脸女孩"
+   ]
+  },
+  {
+   "id": "record-269",
+   "title": "焰尾",
+   "category": "密录",
+   "code": "密录",
+   "order": 369,
+   "description": "5 名角色，7 组关系。关系最多的是 焰尾、格蕾纳蒂、远牙。",
+   "color": "#c69abd",
+   "source": "密录 · 焰尾",
+   "nodes": 5,
+   "pairs": 7,
+   "relations": 10,
+   "top": [
+    "焰尾",
+    "格蕾纳蒂",
+    "远牙"
+   ]
+  },
+  {
+   "id": "record-270",
+   "title": "雪猎",
+   "category": "密录",
+   "code": "密录",
+   "order": 370,
+   "description": "4 名角色，3 组关系。关系最多的是 雪猎、礼品店老板、年长的谢拉格孩子。",
+   "color": "#d3a6a0",
+   "source": "密录 · 雪猎",
+   "nodes": 4,
+   "pairs": 3,
+   "relations": 4,
+   "top": [
+    "雪猎",
+    "礼品店老板",
+    "年长的谢拉格孩子"
+   ]
+  },
+  {
+   "id": "record-271",
+   "title": "天空盒",
+   "category": "密录",
+   "code": "密录",
+   "order": 371,
+   "description": "8 名角色，6 组关系。关系最多的是 高登、助理探员、少年高登。",
+   "color": "#a0bfbc",
+   "source": "密录 · 天空盒",
+   "nodes": 8,
+   "pairs": 6,
+   "relations": 11,
+   "top": [
+    "高登",
+    "助理探员",
+    "少年高登"
+   ]
+  },
+  {
+   "id": "record-272",
+   "title": "羽毛笔",
+   "category": "密录",
+   "code": "密录",
+   "order": 372,
+   "description": "8 名角色，9 组关系。关系最多的是 羽毛笔、强壮的士兵、坎黛拉。",
+   "color": "#b5a788",
+   "source": "密录 · 羽毛笔",
+   "nodes": 8,
+   "pairs": 9,
+   "relations": 18,
+   "top": [
+    "羽毛笔",
+    "强壮的士兵",
+    "坎黛拉"
+   ]
+  },
+  {
+   "id": "record-273",
+   "title": "矩",
+   "category": "密录",
+   "code": "密录",
+   "order": 373,
+   "description": "9 名角色，12 组关系。关系最多的是 小木头、老木头、邻镇的老汉。",
+   "color": "#b49baa",
+   "source": "密录 · 矩",
+   "nodes": 9,
+   "pairs": 12,
+   "relations": 23,
+   "top": [
+    "小木头",
+    "老木头",
+    "邻镇的老汉"
+   ]
+  },
+  {
+   "id": "record-274",
+   "title": "伯塔尼",
+   "category": "密录",
+   "code": "密录",
+   "order": 374,
+   "description": "5 名角色，4 组关系。关系最多的是 伯塔尼、严肃的军官、轻蔑的学生。",
+   "color": "#a8b7d2",
+   "source": "密录 · 伯塔尼",
+   "nodes": 5,
+   "pairs": 4,
+   "relations": 6,
+   "top": [
+    "伯塔尼",
+    "严肃的军官",
+    "轻蔑的学生"
+   ]
+  },
+  {
+   "id": "record-275",
+   "title": "乌啾",
+   "category": "密录",
+   "code": "密录",
+   "order": 375,
+   "description": "10 名角色，10 组关系。关系最多的是 乌啾、刻薄的贵族、警察。",
+   "color": "#c9a98c",
+   "source": "密录 · 乌啾",
+   "nodes": 10,
+   "pairs": 10,
+   "relations": 18,
+   "top": [
+    "乌啾",
+    "刻薄的贵族",
+    "警察"
+   ]
+  },
+  {
+   "id": "record-276",
+   "title": "裂响",
+   "category": "密录",
+   "code": "密录",
+   "order": 376,
+   "description": "14 名角色，14 组关系。关系最多的是 裂响、图林、窃贼。",
+   "color": "#d2997e",
+   "source": "密录 · 裂响",
+   "nodes": 14,
+   "pairs": 14,
+   "relations": 23,
+   "top": [
+    "裂响",
+    "图林",
+    "窃贼"
+   ]
+  },
+  {
+   "id": "record-277",
+   "title": "可露希尔",
+   "category": "密录",
+   "code": "密录",
+   "order": 377,
+   "description": "14 名角色，16 组关系。关系最多的是 可露希尔、博士、阿米娅。",
+   "color": "#c69abd",
+   "source": "密录 · 可露希尔",
+   "nodes": 14,
+   "pairs": 16,
+   "relations": 25,
+   "top": [
+    "可露希尔",
+    "博士",
+    "阿米娅"
+   ]
+  },
+  {
+   "id": "record-278",
+   "title": "极光",
+   "category": "密录",
+   "code": "密录",
+   "order": 378,
+   "description": "3 名角色，2 组关系。关系最多的是 极光、麦哲伦、勇敢的同学。",
+   "color": "#d3a6a0",
+   "source": "密录 · 极光",
+   "nodes": 3,
+   "pairs": 2,
+   "relations": 4,
+   "top": [
+    "极光",
+    "麦哲伦",
+    "勇敢的同学"
+   ]
+  },
+  {
+   "id": "record-279",
+   "title": "时隙",
+   "category": "密录",
+   "code": "密录",
+   "order": 379,
+   "description": "11 名角色，13 组关系。关系最多的是 时隙、嘉辛塔、态度强硬的家伙。",
+   "color": "#a0bfbc",
+   "source": "密录 · 时隙",
+   "nodes": 11,
+   "pairs": 13,
+   "relations": 21,
+   "top": [
+    "时隙",
+    "嘉辛塔",
+    "态度强硬的家伙"
+   ]
+  },
+  {
+   "id": "record-280",
+   "title": "瑕光",
+   "category": "密录",
+   "code": "密录",
+   "order": 380,
+   "description": "9 名角色，13 组关系。关系最多的是 猎人弟弟、瑕光、术师干员。",
+   "color": "#b5a788",
+   "source": "密录 · 瑕光",
+   "nodes": 9,
+   "pairs": 13,
+   "relations": 18,
+   "top": [
+    "猎人弟弟",
+    "瑕光",
+    "术师干员"
+   ]
+  },
+  {
+   "id": "record-281",
+   "title": "卡涅利安",
+   "category": "密录",
+   "code": "密录",
+   "order": 381,
+   "description": "9 名角色，11 组关系。关系最多的是 卡涅利安、精明的劫掠者、蜜蜡。",
+   "color": "#b49baa",
+   "source": "密录 · 卡涅利安",
+   "nodes": 9,
+   "pairs": 11,
+   "relations": 17,
+   "top": [
+    "卡涅利安",
+    "精明的劫掠者",
+    "蜜蜡"
+   ]
+  },
+  {
+   "id": "record-282",
+   "title": "伺夜",
+   "category": "密录",
+   "code": "密录",
+   "order": 382,
+   "description": "15 名角色，18 组关系。关系最多的是 伺夜、老法官、嚣张的家族成员。",
+   "color": "#a8b7d2",
+   "source": "密录 · 伺夜",
+   "nodes": 15,
+   "pairs": 18,
+   "relations": 30,
+   "top": [
+    "伺夜",
+    "老法官",
+    "嚣张的家族成员"
+   ]
+  },
+  {
+   "id": "record-283",
+   "title": "远牙",
+   "category": "密录",
+   "code": "密录",
+   "order": 383,
+   "description": "15 名角色，15 组关系。关系最多的是 远牙、野鬃、佐拉。",
+   "color": "#c9a98c",
+   "source": "密录 · 远牙",
+   "nodes": 15,
+   "pairs": 15,
+   "relations": 20,
+   "top": [
+    "远牙",
+    "野鬃",
+    "佐拉"
+   ]
+  },
+  {
+   "id": "record-284",
+   "title": "灰毫",
+   "category": "密录",
+   "code": "密录",
+   "order": 384,
+   "description": "10 名角色，12 组关系。关系最多的是 阿贝特、格蕾纳蒂、乔伊。",
+   "color": "#d2997e",
+   "source": "密录 · 灰毫",
+   "nodes": 10,
+   "pairs": 12,
+   "relations": 20,
+   "top": [
+    "阿贝特",
+    "格蕾纳蒂",
+    "乔伊"
+   ]
+  },
+  {
+   "id": "record-285",
+   "title": "掠风",
+   "category": "密录",
+   "code": "密录",
+   "order": 385,
+   "description": "5 名角色，5 组关系。关系最多的是 掠风、老工人、玛吉。",
+   "color": "#c69abd",
+   "source": "密录 · 掠风",
+   "nodes": 5,
+   "pairs": 5,
+   "relations": 7,
+   "top": [
+    "掠风",
+    "老工人",
+    "玛吉"
+   ]
+  },
+  {
+   "id": "record-286",
+   "title": "絮雨",
+   "category": "密录",
+   "code": "密录",
+   "order": 386,
+   "description": "5 名角色，5 组关系。关系最多的是 絮雨、洛拉、蜜莓。",
+   "color": "#d3a6a0",
+   "source": "密录 · 絮雨",
+   "nodes": 5,
+   "pairs": 5,
+   "relations": 9,
+   "top": [
+    "絮雨",
+    "洛拉",
+    "蜜莓"
+   ]
+  },
+  {
+   "id": "record-287",
+   "title": "水月",
+   "category": "密录",
+   "code": "密录",
+   "order": 387,
+   "description": "10 名角色，9 组关系。关系最多的是 急躁的雇佣兵、水月、凯尔希。",
+   "color": "#a0bfbc",
+   "source": "密录 · 水月",
+   "nodes": 10,
+   "pairs": 9,
+   "relations": 15,
+   "top": [
+    "急躁的雇佣兵",
+    "水月",
+    "凯尔希"
+   ]
+  },
+  {
+   "id": "record-288",
+   "title": "松果",
+   "category": "密录",
+   "code": "密录",
+   "order": 388,
+   "description": "8 名角色，8 组关系。关系最多的是 松果、工程部干员A、工程部干员B。",
+   "color": "#b5a788",
+   "source": "密录 · 松果",
+   "nodes": 8,
+   "pairs": 8,
+   "relations": 15,
+   "top": [
+    "松果",
+    "工程部干员A",
+    "工程部干员B"
+   ]
+  },
+  {
+   "id": "record-289",
+   "title": "骋风",
+   "category": "密录",
+   "code": "密录",
+   "order": 389,
+   "description": "7 名角色，7 组关系。关系最多的是 骋风、德叔、文姨。",
+   "color": "#b49baa",
+   "source": "密录 · 骋风",
+   "nodes": 7,
+   "pairs": 7,
+   "relations": 10,
+   "top": [
+    "骋风",
+    "德叔",
+    "文姨"
+   ]
+  },
+  {
+   "id": "record-290",
+   "title": "阿罗玛",
+   "category": "密录",
+   "code": "密录",
+   "order": 390,
+   "description": "7 名角色，7 组关系。关系最多的是 阿罗玛、橡皮、清流。",
+   "color": "#a8b7d2",
+   "source": "密录 · 阿罗玛",
+   "nodes": 7,
+   "pairs": 7,
+   "relations": 10,
+   "top": [
+    "阿罗玛",
+    "橡皮",
+    "清流"
+   ]
+  },
+  {
+   "id": "record-291",
+   "title": "蜜莓",
+   "category": "密录",
+   "code": "密录",
+   "order": 391,
+   "description": "14 名角色，18 组关系。关系最多的是 蜜莓、马丁森、加斯。",
+   "color": "#c9a98c",
+   "source": "密录 · 蜜莓",
+   "nodes": 14,
+   "pairs": 18,
+   "relations": 26,
+   "top": [
+    "蜜莓",
+    "马丁森",
+    "加斯"
+   ]
+  },
+  {
+   "id": "record-292",
+   "title": "罗宾",
+   "category": "密录",
+   "code": "密录",
+   "order": 392,
+   "description": "8 名角色，9 组关系。关系最多的是 罗宾、医疗干员、可露希尔。",
+   "color": "#d2997e",
+   "source": "密录 · 罗宾",
+   "nodes": 8,
+   "pairs": 9,
+   "relations": 16,
+   "top": [
+    "罗宾",
+    "医疗干员",
+    "可露希尔"
+   ]
+  },
+  {
+   "id": "record-293",
+   "title": "豆苗",
+   "category": "密录",
+   "code": "密录",
+   "order": 393,
+   "description": "5 名角色，4 组关系。关系最多的是 豆苗、主办方人员、参赛者B。",
+   "color": "#c69abd",
+   "source": "密录 · 豆苗",
+   "nodes": 5,
+   "pairs": 4,
+   "relations": 5,
+   "top": [
+    "豆苗",
+    "主办方人员",
+    "参赛者B"
+   ]
+  },
+  {
+   "id": "record-294",
+   "title": "乌有",
+   "category": "密录",
+   "code": "密录",
+   "order": 394,
+   "description": "8 名角色，7 组关系。关系最多的是 “荆先生”、酒家掌柜、女侠。",
+   "color": "#d3a6a0",
+   "source": "密录 · 乌有",
+   "nodes": 8,
+   "pairs": 7,
+   "relations": 11,
+   "top": [
+    "“荆先生”",
+    "酒家掌柜",
+    "女侠"
+   ]
+  },
+  {
+   "id": "record-295",
+   "title": "灰烬",
+   "category": "密录",
+   "code": "密录",
+   "order": 395,
+   "description": "6 名角色，8 组关系。关系最多的是 灰烬、莱塔尼亚工人、乌萨斯村民。",
+   "color": "#a0bfbc",
+   "source": "密录 · 灰烬",
+   "nodes": 6,
+   "pairs": 8,
+   "relations": 14,
+   "top": [
+    "灰烬",
+    "莱塔尼亚工人",
+    "乌萨斯村民"
+   ]
+  },
+  {
+   "id": "record-296",
+   "title": "闪击",
+   "category": "密录",
+   "code": "密录",
+   "order": 396,
+   "description": "5 名角色，5 组关系。关系最多的是 闪击、灰烬、战车。",
+   "color": "#b5a788",
+   "source": "密录 · 闪击",
+   "nodes": 5,
+   "pairs": 5,
+   "relations": 7,
+   "top": [
+    "闪击",
+    "灰烬",
+    "战车"
+   ]
+  },
+  {
+   "id": "record-297",
+   "title": "霜华",
+   "category": "密录",
+   "code": "密录",
+   "order": 397,
+   "description": "2 名角色，1 组关系。关系最多的是 年迈的萨卡兹猎人、霜华。",
+   "color": "#b49baa",
+   "source": "密录 · 霜华",
+   "nodes": 2,
+   "pairs": 1,
+   "relations": 2,
+   "top": [
+    "年迈的萨卡兹猎人",
+    "霜华"
+   ]
+  },
+  {
+   "id": "record-298",
+   "title": "战车",
+   "category": "密录",
+   "code": "密录",
+   "order": 398,
+   "description": "9 名角色，11 组关系。关系最多的是 阿尔苏、感染者纠察队、战车。",
+   "color": "#a8b7d2",
+   "source": "密录 · 战车",
+   "nodes": 9,
+   "pairs": 11,
+   "relations": 17,
+   "top": [
+    "阿尔苏",
+    "感染者纠察队",
+    "战车"
+   ]
+  },
+  {
+   "id": "record-299",
+   "title": "洋灰",
+   "category": "密录",
+   "code": "密录",
+   "order": 399,
+   "description": "7 名角色，6 组关系。关系最多的是 洋灰、老穆伊曼、辛苦的矿工。",
+   "color": "#c9a98c",
+   "source": "密录 · 洋灰",
+   "nodes": 7,
+   "pairs": 6,
+   "relations": 8,
+   "top": [
+    "洋灰",
+    "老穆伊曼",
+    "辛苦的矿工"
+   ]
+  },
+  {
+   "id": "record-300",
+   "title": "雪绒",
+   "category": "密录",
+   "code": "密录",
+   "order": 400,
+   "description": "7 名角色，6 组关系。关系最多的是 雪绒、幸存者A、幸存者B。",
+   "color": "#d2997e",
+   "source": "密录 · 雪绒",
+   "nodes": 7,
+   "pairs": 6,
+   "relations": 9,
+   "top": [
+    "雪绒",
+    "幸存者A",
+    "幸存者B"
+   ]
+  },
+  {
+   "id": "record-301",
+   "title": "深靛",
+   "category": "密录",
+   "code": "密录",
+   "order": 401,
+   "description": "6 名角色，6 组关系。关系最多的是 深靛、澄闪、蓝毒。",
+   "color": "#c69abd",
+   "source": "密录 · 深靛",
+   "nodes": 6,
+   "pairs": 6,
+   "relations": 10,
+   "top": [
+    "深靛",
+    "澄闪",
+    "蓝毒"
+   ]
+  },
+  {
+   "id": "record-302",
+   "title": "桑葚",
+   "category": "密录",
+   "code": "密录",
+   "order": 402,
+   "description": "4 名角色，5 组关系。关系最多的是 桑葚、救援队队长、年轻的受困者。",
+   "color": "#d3a6a0",
+   "source": "密录 · 桑葚",
+   "nodes": 4,
+   "pairs": 5,
+   "relations": 9,
+   "top": [
+    "桑葚",
+    "救援队队长",
+    "年轻的受困者"
+   ]
+  },
+  {
+   "id": "record-303",
+   "title": "歌蕾蒂娅",
+   "category": "密录",
+   "code": "密录",
+   "order": 403,
+   "description": "4 名角色，3 组关系。关系最多的是 歌蕾蒂娅、虔诚的青年、凯尔希。",
+   "color": "#a0bfbc",
+   "source": "密录 · 歌蕾蒂娅",
+   "nodes": 4,
+   "pairs": 3,
+   "relations": 6,
+   "top": [
+    "歌蕾蒂娅",
+    "虔诚的青年",
+    "凯尔希"
+   ]
+  },
+  {
+   "id": "record-304",
+   "title": "赤冬",
+   "category": "密录",
+   "code": "密录",
+   "order": 404,
+   "description": "7 名角色，6 组关系。关系最多的是 赤冬、水产小贩、早餐店老板。",
+   "color": "#b5a788",
+   "source": "密录 · 赤冬",
+   "nodes": 7,
+   "pairs": 6,
+   "relations": 10,
+   "top": [
+    "赤冬",
+    "水产小贩",
+    "早餐店老板"
+   ]
+  },
+  {
+   "id": "record-305",
+   "title": "夜半",
+   "category": "密录",
+   "code": "密录",
+   "order": 405,
+   "description": "4 名角色，4 组关系。关系最多的是 夜半、桑葚、博士。",
+   "color": "#b49baa",
+   "source": "密录 · 夜半",
+   "nodes": 4,
+   "pairs": 4,
+   "relations": 8,
+   "top": [
+    "夜半",
+    "桑葚",
+    "博士"
+   ]
+  },
+  {
+   "id": "record-306",
+   "title": "绮良",
+   "category": "密录",
+   "code": "密录",
+   "order": 406,
+   "description": "15 名角色，20 组关系。关系最多的是 绮良、宴、赤冬。",
+   "color": "#a8b7d2",
+   "source": "密录 · 绮良",
+   "nodes": 15,
+   "pairs": 20,
+   "relations": 28,
+   "top": [
+    "绮良",
+    "宴",
+    "赤冬"
+   ]
+  },
+  {
+   "id": "record-307",
+   "title": "琴柳",
+   "category": "密录",
+   "code": "密录",
+   "order": 407,
+   "description": "13 名角色，15 组关系。关系最多的是 琴柳、瘦小的女孩、受伤的士兵。",
+   "color": "#c9a98c",
+   "source": "密录 · 琴柳",
+   "nodes": 13,
+   "pairs": 15,
+   "relations": 28,
+   "top": [
+    "琴柳",
+    "瘦小的女孩",
+    "受伤的士兵"
+   ]
+  },
+  {
+   "id": "record-308",
+   "title": "罗比菈塔",
+   "category": "密录",
+   "code": "密录",
+   "order": 408,
+   "description": "3 名角色，2 组关系。关系最多的是 罗比菈塔、停尸间员工、高瘦的女人。",
+   "color": "#d2997e",
+   "source": "密录 · 罗比菈塔",
+   "nodes": 3,
+   "pairs": 2,
+   "relations": 4,
+   "top": [
+    "罗比菈塔",
+    "停尸间员工",
+    "高瘦的女人"
+   ]
+  },
+  {
+   "id": "record-309",
+   "title": "龙舌兰",
+   "category": "密录",
+   "code": "密录",
+   "order": 409,
+   "description": "10 名角色，9 组关系。关系最多的是 龙舌兰、坎黛拉、潘乔。",
+   "color": "#c69abd",
+   "source": "密录 · 龙舌兰",
+   "nodes": 10,
+   "pairs": 9,
+   "relations": 12,
+   "top": [
+    "龙舌兰",
+    "坎黛拉",
+    "潘乔"
+   ]
+  },
+  {
+   "id": "record-310",
+   "title": "波卜",
+   "category": "密录",
+   "code": "密录",
+   "order": 410,
+   "description": "6 名角色，6 组关系。关系最多的是 波卜、尤里欧、娜蒂。",
+   "color": "#d3a6a0",
+   "source": "密录 · 波卜",
+   "nodes": 6,
+   "pairs": 6,
+   "relations": 11,
+   "top": [
+    "波卜",
+    "尤里欧",
+    "娜蒂"
+   ]
+  },
+  {
+   "id": "record-311",
+   "title": "青枳",
+   "category": "密录",
+   "code": "密录",
+   "order": 411,
+   "description": "10 名角色，8 组关系。关系最多的是 安麦尔、小吃摊摊主、科斯达。",
+   "color": "#a0bfbc",
+   "source": "密录 · 青枳",
+   "nodes": 10,
+   "pairs": 8,
+   "relations": 15,
+   "top": [
+    "安麦尔",
+    "小吃摊摊主",
+    "科斯达"
+   ]
+  },
+  {
+   "id": "record-312",
+   "title": "蚀清",
+   "category": "密录",
+   "code": "密录",
+   "order": 412,
+   "description": "5 名角色，6 组关系。关系最多的是 蚀清、博士、星源。",
+   "color": "#b5a788",
+   "source": "密录 · 蚀清",
+   "nodes": 5,
+   "pairs": 6,
+   "relations": 11,
+   "top": [
+    "蚀清",
+    "博士",
+    "星源"
+   ]
+  },
+  {
+   "id": "record-313",
+   "title": "休谟斯",
+   "category": "密录",
+   "code": "密录",
+   "order": 413,
+   "description": "10 名角色，10 组关系。关系最多的是 休谟斯、记者、展会主持人。",
+   "color": "#b49baa",
+   "source": "密录 · 休谟斯",
+   "nodes": 10,
+   "pairs": 10,
+   "relations": 17,
+   "top": [
+    "休谟斯",
+    "记者",
+    "展会主持人"
+   ]
+  },
+  {
+   "id": "record-314",
+   "title": "夏栎",
+   "category": "密录",
+   "code": "密录",
+   "order": 414,
+   "description": "13 名角色，16 组关系。关系最多的是 夏栎、班特、瘦弱的孩子。",
+   "color": "#a8b7d2",
+   "source": "密录 · 夏栎",
+   "nodes": 13,
+   "pairs": 16,
+   "relations": 27,
+   "top": [
+    "夏栎",
+    "班特",
+    "瘦弱的孩子"
+   ]
+  },
+  {
+   "id": "record-315",
+   "title": "火哨",
+   "category": "密录",
+   "code": "密录",
+   "order": 415,
+   "description": "6 名角色，5 组关系。关系最多的是 火哨、村长、阿格妮的父亲。",
+   "color": "#c9a98c",
+   "source": "密录 · 火哨",
+   "nodes": 6,
+   "pairs": 5,
+   "relations": 8,
+   "top": [
+    "火哨",
+    "村长",
+    "阿格妮的父亲"
+   ]
+  },
+  {
+   "id": "record-316",
+   "title": "刺玫",
+   "category": "密录",
+   "code": "密录",
+   "order": 416,
+   "description": "4 名角色，5 组关系。关系最多的是 贝琳、老哈利、刺玫。",
+   "color": "#d2997e",
+   "source": "密录 · 刺玫",
+   "nodes": 4,
+   "pairs": 5,
+   "relations": 10,
+   "top": [
+    "贝琳",
+    "老哈利",
+    "刺玫"
+   ]
+  },
+  {
+   "id": "record-317",
+   "title": "野鬃",
+   "category": "密录",
+   "code": "密录",
+   "order": 417,
+   "description": "9 名角色，12 组关系。关系最多的是 野鬃、马索夫、征战骑士。",
+   "color": "#c69abd",
+   "source": "密录 · 野鬃",
+   "nodes": 9,
+   "pairs": 12,
+   "relations": 16,
+   "top": [
+    "野鬃",
+    "马索夫",
+    "征战骑士"
+   ]
+  },
+  {
+   "id": "record-318",
+   "title": "晓歌",
+   "category": "密录",
+   "code": "密录",
+   "order": 418,
+   "description": "6 名角色，5 组关系。关系最多的是 晓歌、豆苗、医疗干员。",
+   "color": "#d3a6a0",
+   "source": "密录 · 晓歌",
+   "nodes": 6,
+   "pairs": 5,
+   "relations": 6,
+   "top": [
+    "晓歌",
+    "豆苗",
+    "医疗干员"
+   ]
+  },
+  {
+   "id": "record-319",
+   "title": "隐现",
+   "category": "密录",
+   "code": "密录",
+   "order": 419,
+   "description": "11 名角色，11 组关系。关系最多的是 里凯莱、闲聊的路人、闲逛的路人。",
+   "color": "#a0bfbc",
+   "source": "密录 · 隐现",
+   "nodes": 11,
+   "pairs": 11,
+   "relations": 17,
+   "top": [
+    "里凯莱",
+    "闲聊的路人",
+    "闲逛的路人"
+   ]
+  },
+  {
+   "id": "record-320",
+   "title": "折光",
+   "category": "密录",
+   "code": "密录",
+   "order": 420,
+   "description": "4 名角色，5 组关系。关系最多的是 折光、萨克森伯爵、伯爵侍从。",
+   "color": "#b5a788",
+   "source": "密录 · 折光",
+   "nodes": 4,
+   "pairs": 5,
+   "relations": 8,
+   "top": [
+    "折光",
+    "萨克森伯爵",
+    "伯爵侍从"
+   ]
+  },
+  {
+   "id": "record-321",
+   "title": "黑角",
+   "category": "密录",
+   "code": "密录",
+   "order": 421,
+   "description": "5 名角色，9 组关系。关系最多的是 黑角、干员查德、巴蒂。",
+   "color": "#b49baa",
+   "source": "密录 · 黑角",
+   "nodes": 5,
+   "pairs": 9,
+   "relations": 15,
+   "top": [
+    "黑角",
+    "干员查德",
+    "巴蒂"
+   ]
+  },
+  {
+   "id": "record-322",
+   "title": "杜林",
+   "category": "密录",
+   "code": "密录",
+   "order": 422,
+   "description": "4 名角色，3 组关系。关系最多的是 杜林、慑砂、巡林者。",
+   "color": "#a8b7d2",
+   "source": "密录 · 杜林",
+   "nodes": 4,
+   "pairs": 3,
+   "relations": 4,
+   "top": [
+    "杜林",
+    "慑砂",
+    "巡林者"
+   ]
+  },
+  {
+   "id": "record-323",
+   "title": "夜刀",
+   "category": "密录",
+   "code": "密录",
+   "order": 423,
+   "description": "9 名角色，15 组关系。关系最多的是 夜刀、席琳、实习干员A。",
+   "color": "#c9a98c",
+   "source": "密录 · 夜刀",
+   "nodes": 9,
+   "pairs": 15,
+   "relations": 23,
+   "top": [
+    "夜刀",
+    "席琳",
+    "实习干员A"
+   ]
+  },
+  {
+   "id": "rogue-1",
+   "title": "傀影与猩红孤钻",
+   "category": "集成战略",
+   "code": "集成战略 · 第 1 季",
+   "order": 1,
+   "description": "24 名角色，22 组关系。关系最多的是 char_4025_aprot2、char_346_aosta、char_127_estell。",
+   "color": "#d2997e",
+   "source": "集成战略 · #1 傀影与猩红孤钻",
+   "nodes": 24,
+   "pairs": 22,
+   "relations": 35,
+   "top": [
+    "char_4025_aprot2",
+    "char_346_aosta",
+    "char_127_estell"
+   ]
+  },
+  {
+   "id": "rogue-2",
+   "title": "水月与深蓝之树",
+   "category": "集成战略",
+   "code": "集成战略 · 第 2 季",
+   "order": 2,
+   "description": "11 名角色，10 组关系。关系最多的是 流明、水月、艾丽妮。",
+   "color": "#c69abd",
+   "source": "集成战略 · #2 水月与深蓝之树",
+   "nodes": 11,
+   "pairs": 10,
+   "relations": 15,
+   "top": [
+    "流明",
+    "水月",
+    "艾丽妮"
+   ]
+  },
+  {
+   "id": "rogue-3",
+   "title": "探索者的银凇止境",
+   "category": "集成战略",
+   "code": "集成战略 · 第 3 季",
+   "order": 3,
+   "description": "16 名角色，10 组关系。关系最多的是 提丰、麦哲伦、凯尔希。",
+   "color": "#d3a6a0",
+   "source": "集成战略 · #3 探索者的银凇止境",
+   "nodes": 16,
+   "pairs": 10,
+   "relations": 14,
+   "top": [
+    "提丰",
+    "麦哲伦",
+    "凯尔希"
+   ]
+  },
+  {
+   "id": "rogue-4",
+   "title": "萨卡兹的无终奇语",
+   "category": "集成战略",
+   "code": "集成战略 · 第 4 季",
+   "order": 4,
+   "description": "32 名角色，34 组关系。关系最多的是 妮芙、锡人、阿米娅。",
+   "color": "#a0bfbc",
+   "source": "集成战略 · #4 萨卡兹的无终奇语",
+   "nodes": 32,
+   "pairs": 34,
+   "relations": 54,
+   "top": [
+    "妮芙",
+    "锡人",
+    "阿米娅"
+   ]
+  },
+  {
+   "id": "rogue-5",
+   "title": "岁的界园志异",
+   "category": "集成战略",
+   "code": "集成战略 · 第 5 季",
+   "order": 5,
+   "description": "35 名角色，29 组关系。关系最多的是 梁、易、惊蛰。",
+   "color": "#b5a788",
+   "source": "集成战略 · #5 岁的界园志异",
+   "nodes": 35,
+   "pairs": 29,
+   "relations": 46,
+   "top": [
+    "梁",
+    "易",
+    "惊蛰"
+   ]
+  },
+  {
+   "id": "rogue-6",
+   "title": "集成战略 #6",
+   "category": "集成战略",
+   "code": "集成战略 · 第 6 季",
+   "order": 6,
+   "description": "37 名角色，30 组关系。关系最多的是 谬因、杜宾、米格鲁。",
+   "color": "#b49baa",
+   "source": "集成战略 · #6",
+   "nodes": 37,
+   "pairs": 30,
+   "relations": 45,
+   "top": [
+    "谬因",
+    "杜宾",
+    "米格鲁"
+   ]
+  }
+ ]
+}
