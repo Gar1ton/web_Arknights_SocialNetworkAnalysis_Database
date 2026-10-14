@@ -15,6 +15,7 @@ import { type Settings, palettes } from "./settings";
 import { nodeColor, edgeColor } from "./colors";
 import { makeLayout, curve, type Point } from "./layout";
 import FlowField from "./FlowField";
+import { contentAt, panFor, pinchView, startPinch, type Pinch } from "./pinch";
 type Props = {
   nodes: AtlasNode[];
   edges: AtlasEdge[];
@@ -187,13 +188,28 @@ export default function Graph({
     }
     return clamp(Math.min(1, 440 / Math.max(1, dx), 330 / Math.max(1, dy)));
   };
-  const coordinate = (e: PointerEvent<SVGSVGElement>) => {
+  // Active touch / pen / mouse pointers in scene coordinates, for pinch zoom.
+  const pointers = useRef(new Map<number, Point>());
+  const pinch = useRef<Pinch | null>(null);
+  const coordinate = (e: { clientX: number; clientY: number }) => {
     const m = svg.current!.getScreenCTM();
     return new DOMPoint(e.clientX, e.clientY).matrixTransform(m!.inverse());
   };
   const down = (e: PointerEvent<SVGSVGElement>) => {
     if (e.button !== 0) return;
     const p = coordinate(e);
+    if (!landing) {
+      pointers.current.set(e.pointerId, { x: p.x, y: p.y });
+      if (pointers.current.size >= 2) {
+        // A second finger turns the gesture into a pinch: drop any drag.
+        const [a, b] = [...pointers.current.values()];
+        pinch.current = startPinch(a, b, { zoom, pan });
+        drag.current = null;
+        setDraggedId(null);
+        svg.current!.setPointerCapture(e.pointerId);
+        return;
+      }
+    }
     const el = (e.target as Element).closest("[data-node]");
     const id = el?.getAttribute("data-node") || null;
     if (landing && !id) return;
@@ -208,6 +224,17 @@ export default function Graph({
     svg.current!.setPointerCapture(e.pointerId);
   };
   const move = (e: PointerEvent<SVGSVGElement>) => {
+    if (pointers.current.has(e.pointerId)) {
+      const at = coordinate(e);
+      pointers.current.set(e.pointerId, { x: at.x, y: at.y });
+    }
+    if (pinch.current && pointers.current.size >= 2) {
+      const [a, b] = [...pointers.current.values()];
+      const view = pinchView(pinch.current, a, b, clamp);
+      setZoom(view.zoom);
+      setPan(view.pan);
+      return;
+    }
     if (!drag.current) return;
     const p = coordinate(e),
       d = drag.current;
@@ -221,7 +248,14 @@ export default function Graph({
       }));
     else if (!d.id) setPan({ x: d.start.x + dx, y: d.start.y + dy });
   };
-  const up = () => {
+  const release = (e: PointerEvent<SVGSVGElement>) => {
+    pointers.current.delete(e.pointerId);
+    if (pointers.current.size < 2) pinch.current = null;
+  };
+  const up = (e: PointerEvent<SVGSVGElement>) => {
+    const pinching = !!pinch.current;
+    release(e);
+    if (pinching) return;
     if (drag.current?.id && drag.current.distance < 5)
       onSelect(drag.current.id);
     drag.current = null;
@@ -264,17 +298,23 @@ export default function Graph({
         id={landing ? "hero-svg" : "network-svg"}
         viewBox="0 0 1000 760"
         role="group"
-        aria-label="关系图：点击角色查看详情，拖拽平移，滚轮缩放"
+        aria-label="关系图：点击角色查看详情，拖拽平移，滚轮或双指缩放"
         onPointerDown={down}
         onPointerMove={move}
         onPointerUp={up}
-        onPointerCancel={() => {
+        onPointerCancel={(e) => {
+          release(e);
           drag.current = null;
           setDraggedId(null);
           setHover(null);
         }}
         onWheel={(e) => {
-          if (!landing) setZoom((z) => clamp(z - e.deltaY * 0.001));
+          if (landing) return;
+          // Zoom around the cursor rather than the scene centre.
+          const at = coordinate(e);
+          const next = clamp(zoom - e.deltaY * 0.001);
+          setPan(panFor(contentAt(at, { zoom, pan }), at, next));
+          setZoom(next);
         }}
       >
         <defs>

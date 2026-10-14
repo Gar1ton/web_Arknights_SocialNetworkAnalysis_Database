@@ -452,7 +452,7 @@ export default function App() {
                 <div className="canvas-help">
                   <span>
                     {settings.locked ? "节点已锁定" : "拖拽节点 / 平移画布"} ·
-                    滚轮缩放
+                    滚轮或双指缩放
                   </span>
                   <span>
                     <kbd>空格</kbd> 暂停动效 <kbd>ESC</kbd> 取消选择
