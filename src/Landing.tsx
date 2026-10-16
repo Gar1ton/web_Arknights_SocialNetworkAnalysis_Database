@@ -169,8 +169,10 @@ export default function Landing({
           </p>
           <a href="#archives" className="primary-cta">
             <span>选择一段剧情</span>
-            <i>
-              <ArrowUpRight size={20} />
+            <i aria-hidden="true">
+              <svg viewBox="0 0 44 12">
+                <path d="M1 6h41M36.5 1 42 6l-5.5 5" />
+              </svg>
             </i>
           </a>
           <a

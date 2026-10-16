@@ -57,7 +57,8 @@
   overflow: hidden;
   border: 1px solid
     color-mix(in srgb, var(--archive-color, var(--gold)) 36%, transparent);
-  background: radial-gradient(
+  background:
+    radial-gradient(
       circle at 50% 28%,
       color-mix(in srgb, var(--archive-color, var(--gold)) 24%, transparent),
       transparent 75%
@@ -131,7 +132,8 @@
   height: 75%;
   object-fit: cover;
   /* Opaque, so the rings pass behind the portrait instead of across it. */
-  background: radial-gradient(
+  background:
+    radial-gradient(
       circle at 50% 30%,
       color-mix(in srgb, var(--node-color) 22%, transparent),
       transparent 72%
@@ -157,8 +159,9 @@
   width: max-content;
   min-width: 300px;
   max-width: 100%;
-  gap: 30px;
-  padding: 9px 9px 9px 30px;
+  min-height: 64px;
+  gap: 24px;
+  padding: 0 0 0 30px;
   margin-top: 34px;
   overflow: hidden;
   border: 1px solid #f3d7b7;
@@ -174,16 +177,24 @@
     transform 0.4s var(--ease-spring),
     box-shadow 0.4s;
 }
+/* A fine drawn arrow behind a hairline, in the site's line-work style. */
 .landing-sticky .primary-cta i {
   display: grid;
   flex: none;
+  align-self: stretch;
   place-items: center;
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  background: #1c161a;
-  color: #f0d0a6;
-  transition: transform 0.5s var(--ease-spring);
+  width: 76px;
+  overflow: hidden;
+  border-left: 1px solid #1c161a26;
+}
+.landing-sticky .primary-cta svg {
+  width: 34px;
+  height: 12px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 .landing-sticky .primary-cta:after {
   content: "";
@@ -208,13 +219,24 @@
     0 0 0 8px #e0b58c22,
     0 24px 56px -16px #e5b287b8;
 }
-.landing-sticky .primary-cta:hover i,
-.landing-sticky .primary-cta:focus-visible i {
-  transform: rotate(45deg);
+.landing-sticky .primary-cta:hover svg,
+.landing-sticky .primary-cta:focus-visible svg {
+  animation: cta-arrow 0.75s var(--ease-out);
 }
 .landing-sticky .primary-cta:hover:after,
 .landing-sticky .primary-cta:focus-visible:after {
   translate: 110% 0;
+}
+/* The arrow leaves to the right and comes back in from the left. */
+@keyframes cta-arrow {
+  40% {
+    translate: 46px 0;
+    opacity: 0;
+  }
+  41% {
+    translate: -46px 0;
+    opacity: 0;
+  }
 }
 @media (max-height: 720px) and (min-width: 761px) {
   .landing-sticky .primary-cta {
@@ -225,14 +247,14 @@
   .landing-sticky .primary-cta {
     min-width: 0;
     width: min(100%, 290px);
-    padding: 7px 7px 7px 22px;
+    min-height: 56px;
+    padding-left: 22px;
     margin-top: 24px;
     font-size: 16px;
     letter-spacing: 3px;
   }
   .landing-sticky .primary-cta i {
-    width: 40px;
-    height: 40px;
+    width: 64px;
   }
   .archive-card-content {
     padding: 6px 20px 19px;
