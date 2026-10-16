@@ -168,7 +168,10 @@ export default function Landing({
             看谁和谁有交集、彼此态度如何，以及每个角色的性格画像。
           </p>
           <a href="#archives" className="primary-cta">
-            选择一段剧情 <ArrowUpRight size={20} />
+            <span>选择一段剧情</span>
+            <i>
+              <ArrowUpRight size={20} />
+            </i>
           </a>
           <a
             href="#about"
