@@ -7,16 +7,23 @@ const flowColors = {
   mono: ["#ded6c8", "#afa8bd", "#bec7cc", "#9296a8", "#c3b7c6", "#e2d7ce"],
 };
 import {
+  advanceThreadField,
   createThreadField,
-  stepThreadField,
-  updateThreadAnchors,
-  reweaveThreadField,
+  particleFade,
   particleBudget,
+  resizeThreadField,
+  reweaveThreadField,
+  stepThreadField,
+  traceRibbon,
+  updateThreadAnchors,
   TRAIL_LENGTH,
   type FlowAnchor,
   type ThreadField,
+  type ThreadParticle,
 } from "./particles";
 const noAnchors: FlowAnchor[] = [];
+/** Opacity steps per colour: ribbons are stroked in batches, not one by one. */
+const LEVELS = 12;
 export default function FlowField({
   settings,
   subtle = false,
@@ -59,6 +66,11 @@ export default function FlowField({
       updateThreadAnchors(field, projected);
       canvas.dataset.attractors = String(points.length);
     };
+    // Reused every frame: ribbons grouped by colour and opacity step.
+    const batches: ThreadParticle[][] = Array.from(
+      { length: 6 * LEVELS },
+      () => [],
+    );
     const paint = () => {
       if (!field) return;
       const s = live.current.settings,
@@ -66,38 +78,55 @@ export default function FlowField({
       reweaveThreadField(field);
       ctx.clearRect(0, 0, field.width, field.height);
       if (s.flowOpacity === 0) return;
+      for (const batch of batches) batch.length = 0;
+      for (const p of field.particles) {
+        const level = Math.ceil(particleFade(p) * LEVELS);
+        if (level > 0) batches[p.color * LEVELS + level - 1].push(p);
+      }
       ctx.lineWidth = subtle ? 0.7 : 0.75;
       ctx.lineCap = "round";
-      for (const p of field.particles) {
-        const fade = Math.max(
-          0,
-          Math.min(1, p.age / 26, (p.life - p.age) / 40),
-        );
-        ctx.globalAlpha = fade * (subtle ? 0.44 : 0.46) * s.flowOpacity;
-        ctx.strokeStyle = colors[p.color];
+      ctx.lineJoin = "round";
+      const strength = (subtle ? 0.44 : 0.46) * s.flowOpacity;
+      batches.forEach((batch, i) => {
+        if (!batch.length) return;
+        ctx.globalAlpha = (((i % LEVELS) + 1) / LEVELS) * strength;
+        ctx.strokeStyle = colors[Math.floor(i / LEVELS)];
         ctx.beginPath();
-        // Keep long silk-like trails without tripling Canvas path operations.
-        for (let j = 0; j < p.length; j += 3) {
-          const index =
-            (p.head - p.length + 1 + j + TRAIL_LENGTH) % TRAIL_LENGTH;
-          if (j === 0) ctx.moveTo(p.trail[index * 2], p.trail[index * 2 + 1]);
-          else ctx.lineTo(p.trail[index * 2], p.trail[index * 2 + 1]);
-        }
-        ctx.lineTo(p.x, p.y);
+        for (const p of batch) traceRibbon(field!, p, ctx);
         ctx.stroke();
-      }
+      });
       ctx.globalAlpha = 1;
     };
+    // Paint every frame; if painting gets expensive, paint every other frame.
+    // Motion is driven by elapsed time either way, so speed never changes.
+    let cost = 0,
+      stride = 1,
+      frame = 0;
     const loop = (now: number) => {
       raf = 0;
       const s = live.current.settings;
-      if (!visible || document.hidden || !s.animate || s.flowOpacity === 0)
+      if (!visible || document.hidden || !s.animate || s.flowOpacity === 0) {
+        last = 0;
         return;
-      if (field && now - last >= 1000 / 24) {
-        project();
-        stepThreadField(field, s.speed, s.turbulence, s.flowGravity);
-        paint();
+      }
+      if (field) {
+        const elapsed = last ? now - last : 0;
         last = now;
+        project();
+        advanceThreadField(
+          field,
+          elapsed,
+          s.speed,
+          s.turbulence,
+          s.flowGravity,
+        );
+        if (++frame % stride === 0) {
+          const start = performance.now();
+          paint();
+          cost = cost * 0.9 + (performance.now() - start) * 0.1;
+          if (cost > 11) stride = 2;
+          else if (cost < 5) stride = 1;
+        }
       }
       raf = requestAnimationFrame(loop);
     };
@@ -108,6 +137,7 @@ export default function FlowField({
       } else {
         cancelAnimationFrame(raf);
         raf = 0;
+        last = 0;
       }
     };
     const resize = () => {
@@ -119,10 +149,13 @@ export default function FlowField({
       canvas.height = Math.round(box.height * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       const budget = particleBudget(s.particles, box.width, box.height, subtle);
-      field = createThreadField(box.width, box.height, budget);
-      project();
-      for (let i = 0; i < TRAIL_LENGTH; i++)
-        stepThreadField(field, s.speed, s.turbulence, s.flowGravity);
+      if (field) resizeThreadField(field, box.width, box.height, budget);
+      else {
+        field = createThreadField(box.width, box.height, budget);
+        project();
+        for (let i = 0; i < TRAIL_LENGTH; i++)
+          stepThreadField(field, s.speed, s.turbulence, s.flowGravity);
+      }
       canvas.dataset.particles = String(budget);
       canvas.dataset.trailLength = String(TRAIL_LENGTH);
       paint();

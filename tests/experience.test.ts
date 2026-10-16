@@ -3,10 +3,17 @@ import assert from "node:assert/strict";
 import { categories, searchArchives, visibleArchives } from "../src/archives";
 import { resolveRoute } from "../src/routes";
 import {
+  advanceThreadField,
   createThreadField,
+  resizeThreadField,
+  reweaveThreadField,
   stepThreadField,
+  traceRibbon,
   particleBudget,
+  FADE_OUT,
+  TICK_MS,
   TRAIL_LENGTH,
+  type ThreadField,
 } from "../src/particles";
 import { manifest } from "./fixture";
 
@@ -67,13 +74,16 @@ test("five simulated hours preserve the same particle buffers and bounded geomet
     grid = f.grid,
     buffers = f.particles.map((p) => p.trail);
   let peak = 0;
+  // Heads that leave the canvas keep drifting while they fade out.
+  const margin = 2 + FADE_OUT * 2.2 * 0.65 * 2.1 + 1;
   for (let frame = 0; frame < 5 * 60 * 60 * 24; frame++) {
     stepThreadField(f, 0.65, 1.2);
     if (frame % 2400 === 0) {
       for (const p of f.particles) {
         assert.ok(Number.isFinite(p.x) && Number.isFinite(p.y));
         assert.ok(p.length <= TRAIL_LENGTH && p.head < TRAIL_LENGTH);
-        assert.ok(p.x >= -4 && p.x <= 1284 && p.y >= -4 && p.y <= 804);
+        assert.ok(p.x >= -margin && p.x <= 1280 + margin);
+        assert.ok(p.y >= -margin && p.y <= 800 + margin);
         peak = Math.max(peak, p.length);
       }
     }
@@ -92,4 +102,96 @@ test("maximum density stays finite through repeated particle respawns", () => {
   for (let frame = 0; frame < 1440; frame++) stepThreadField(f, 2, 3);
   assert.equal(f.particles.length, 1600);
   for (const p of f.particles) assert.ok([...p.trail].every(Number.isFinite));
+});
+
+/** Trail samples by absolute sample number, for particles that did not respawn. */
+function history(f: ThreadField) {
+  return f.particles.map((p) => {
+    const samples = new Map<number, string>();
+    for (let back = 0; back < p.length; back++) {
+      const i = (p.head - back + TRAIL_LENGTH) % TRAIL_LENGTH;
+      samples.set(f.samples - back, p.trail[i * 2] + "," + p.trail[i * 2 + 1]);
+    }
+    return { life: p.life, age: p.age, samples };
+  });
+}
+test("still anchors never re-trace drawn ribbons, so the painting cannot snap", () => {
+  const f = createThreadField(1440, 900, 200, [{ id: "a", x: 0.6, y: 0.4 }]);
+  for (let i = 0; i < TRAIL_LENGTH; i++) stepThreadField(f);
+  reweaveThreadField(f); // the first paint traces full ribbons once
+  const before = history(f);
+  // Thirty-five ticks of 60 Hz frames, painted like FlowField does; several
+  // grid refreshes happen meanwhile.
+  for (let frame = 0; frame < 35 * 2.4; frame++) {
+    advanceThreadField(f, 1000 / 60, 0.65, 1.2, 1);
+    reweaveThreadField(f);
+  }
+  const after = history(f);
+  let compared = 0;
+  before.forEach((old, i) => {
+    if (after[i].age < old.age) return; // respawned
+    for (const [n, point] of old.samples)
+      if (after[i].samples.has(n)) {
+        assert.equal(after[i].samples.get(n), point);
+        compared++;
+      }
+  });
+  assert.ok(compared > 120 * (TRAIL_LENGTH - 35));
+});
+test("motion follows elapsed time, not the display's frame rate", () => {
+  const slow = createThreadField(1280, 800, 120),
+    fast = createThreadField(1280, 800, 120);
+  for (let i = 0; i < 24; i++) advanceThreadField(slow, TICK_MS);
+  for (let i = 0; i < 144; i++) advanceThreadField(fast, 1000 / 144);
+  assert.equal(slow.samples, fast.samples);
+  slow.particles.forEach((p, i) => {
+    const q = fast.particles[i];
+    assert.equal(p.head, q.head);
+    assert.ok(Math.hypot(p.x - q.x, p.y - q.y) < 0.5);
+  });
+  // A long stall resumes with at most two ticks of travel.
+  const before = fast.particles.map((p) => [p.x, p.y]);
+  advanceThreadField(fast, 5000);
+  assert.ok(fast.samples - slow.samples <= 2);
+  fast.particles.forEach((p, i) =>
+    assert.ok(Math.hypot(p.x - before[i][0], p.y - before[i][1]) < 2 * 3.1),
+  );
+});
+test("ribbon vertices stay pinned to their samples while the trail moves on", () => {
+  const f = createThreadField(1280, 800, 40);
+  for (let i = 0; i < TRAIL_LENGTH + 5; i++) stepThreadField(f);
+  const vertices = () =>
+    f.particles.map((p) => {
+      const out: string[] = [];
+      traceRibbon(f, p, {
+        moveTo: () => {},
+        lineTo: (x, y) => out.push(x + "," + y),
+      });
+      return out.slice(0, -2); // drop the newest sample and the moving head
+    });
+  const before = vertices();
+  advanceThreadField(f, TICK_MS * 0.5);
+  advanceThreadField(f, TICK_MS * 0.5);
+  const after = vertices();
+  before.forEach((old, i) => {
+    if (f.particles[i].age < 5) return; // respawned
+    const kept = new Set(after[i]);
+    // Only the oldest vertex may have dropped off the end.
+    assert.ok(old.slice(1).every((v) => kept.has(v)));
+  });
+});
+test("resizing stretches the existing ribbons instead of re-seeding them", () => {
+  const f = createThreadField(1000, 800, 50);
+  for (let i = 0; i < 30; i++) stepThreadField(f);
+  const buffers = f.particles.map((p) => p.trail),
+    heads = f.particles.map((p) => [p.x, p.y]);
+  resizeThreadField(f, 1000, 600, 60);
+  assert.equal(f.particles.length, 60);
+  f.particles.slice(0, 50).forEach((p, i) => {
+    assert.equal(p.trail, buffers[i]);
+    assert.equal(p.x, heads[i][0]);
+    assert.ok(Math.abs(p.y - heads[i][1] * 0.75) < 1e-9);
+  });
+  resizeThreadField(f, 1000, 600, 20);
+  assert.equal(f.particles.length, 20);
 });
