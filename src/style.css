@@ -858,20 +858,9 @@ select option {
   border-top: 1px solid var(--line);
   background: #1b171f;
 }
-.panel-bottom a {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 10px;
-  color: #c7abab;
-}
-.panel-bottom a > svg:last-child {
-  margin-left: auto;
-}
 .panel-bottom small {
   display: block;
   font-size: 8px;
-  margin-top: 13px;
   color: #877381;
 }
 .workspace-footer {
@@ -1845,9 +1834,6 @@ select option {
   }
   .panel-bottom {
     padding: 14px 25px;
-  }
-  .panel-bottom small {
-    margin-top: 10px;
   }
   .toast {
     max-width: 90vw;

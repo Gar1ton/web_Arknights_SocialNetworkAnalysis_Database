@@ -382,6 +382,11 @@ export default function App() {
                 selected={settings.mode === "ego" ? egoCenter : selected}
                 onSelect={choose}
                 onEdge={chooseEdge}
+                onBackground={() => {
+                  // A plain click on empty canvas returns to the whole network.
+                  clearDetails();
+                  if (settings.mode === "ego") update("mode", "network");
+                }}
                 onAnimate={() => update("animate", !settings.animate)}
                 resetKey={resetKey}
               />
@@ -455,7 +460,8 @@ export default function App() {
                     滚轮或双指缩放
                   </span>
                   <span>
-                    <kbd>空格</kbd> 暂停动效 <kbd>ESC</kbd> 取消选择
+                    <kbd>空格</kbd> 暂停动效 点击空白处或 <kbd>ESC</kbd>{" "}
+                    取消选择
                   </span>
                 </div>
               </div>
@@ -465,13 +471,6 @@ export default function App() {
                 <a href="#" aria-label="返回首页">
                   <Orbit size={17} />
                   <span>方舟关系图谱</span>
-                </a>
-                <a
-                  href="#archives"
-                  className="switch-archive"
-                  aria-label="切换剧情"
-                >
-                  <ArrowUpRight size={14} />
                 </a>
               </div>
               <div className="sidebar-tabs" role="tablist" aria-label="侧栏">
@@ -735,10 +734,6 @@ export default function App() {
                       )}
                     </div>
                     <div className="panel-bottom">
-                      <a href="#archives">
-                        <ArrowLeft size={13} /> 换一段剧情{" "}
-                        <ArrowUpRight size={14} />
-                      </a>
                       <small>数值由大模型根据剧情对话推断，仅供参考。</small>
                     </div>
                   </>

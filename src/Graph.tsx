@@ -24,6 +24,8 @@ type Props = {
   selected: string | null;
   onSelect: (id: string) => void;
   onEdge: (id: string) => void;
+  /** A click (not a drag) on empty canvas. */
+  onBackground?: () => void;
   onAnimate: () => void;
   landing?: boolean;
   resetKey: number;
@@ -37,6 +39,7 @@ export default function Graph({
   selected,
   onSelect,
   onEdge,
+  onBackground,
   onAnimate,
   landing = false,
   resetKey,
@@ -256,8 +259,11 @@ export default function Graph({
     const pinching = !!pinch.current;
     release(e);
     if (pinching) return;
-    if (drag.current?.id && drag.current.distance < 5)
-      onSelect(drag.current.id);
+    const d = drag.current;
+    if (d && d.distance < 5) {
+      if (d.id) onSelect(d.id);
+      else onBackground?.();
+    }
     drag.current = null;
     setDraggedId(null);
     setHover(null);
@@ -298,7 +304,7 @@ export default function Graph({
         id={landing ? "hero-svg" : "network-svg"}
         viewBox="0 0 1000 760"
         role="group"
-        aria-label="关系图：点击角色查看详情，拖拽平移，滚轮或双指缩放"
+        aria-label="关系图：点击角色查看详情，点击空白处返回全图，拖拽平移，滚轮或双指缩放"
         onPointerDown={down}
         onPointerMove={move}
         onPointerUp={up}
