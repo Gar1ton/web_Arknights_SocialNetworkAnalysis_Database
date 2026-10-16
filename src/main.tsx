@@ -10,6 +10,7 @@ import "./style.css";
 import "./experience.css";
 import "./refinement.css";
 import "./insight.css";
+import "./media.css";
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <App />

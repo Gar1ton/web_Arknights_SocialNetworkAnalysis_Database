@@ -14,6 +14,7 @@ import {
   towards,
 } from "./data";
 import IpcChart from "./IpcChart";
+import { avatarUrl, useMedia } from "./archives";
 function Metric({ value, label }: { value: number | string; label: string }) {
   return (
     <div className="metric">
@@ -241,6 +242,7 @@ export function NodeDetail({
   );
   const color = communityColor(node.community, communities);
   const scored = node.profile.bigFive.some((v) => v != null);
+  const avatar = useMedia()?.avatars[node.id];
   return (
     <>
       <button className="back-link" onClick={onBack}>
@@ -248,9 +250,16 @@ export function NodeDetail({
       </button>
       <div className="detail-content">
         <div
-          className="profile-emblem"
+          className={"profile-emblem" + (avatar ? " has-avatar" : "")}
           style={{ "--node-color": color } as React.CSSProperties}
         >
+          {avatar ? (
+            <img key={avatar} src={avatarUrl(avatar)} alt="" />
+          ) : (
+            <span aria-hidden="true">
+              {[...node.name.replace(/^[“"]/, "")][0]}
+            </span>
+          )}
           <i />
           <i />
           <i />

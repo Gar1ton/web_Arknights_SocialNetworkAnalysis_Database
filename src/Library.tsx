@@ -3,75 +3,110 @@ import { ArrowUpRight, ArrowLeft, Search, X, Orbit } from "lucide-react";
 import Brand from "./Brand";
 import FlowField from "./FlowField";
 import {
+  avatarUrl,
   categories,
   searchArchives,
   useManifest,
+  useMedia,
   type Archive,
+  type ArchiveMedia,
 } from "./archives";
 const PAGE = 24;
 import { type Settings, showcaseFlow } from "./settings";
-function Cover({ archive, index }: { archive: Archive; index: number }) {
+function Portrait({ id, name }: { id?: string | null; name: string }) {
+  return (
+    <span className="portrait">
+      {id ? (
+        <img src={avatarUrl(id)} alt="" loading="lazy" decoding="async" />
+      ) : (
+        <b>{[...name.replace(/^[“"]/, "")][0]}</b>
+      )}
+    </span>
+  );
+}
+function Cover({
+  archive,
+  index,
+  media,
+}: {
+  archive: Archive;
+  index: number;
+  media?: ArchiveMedia;
+}) {
+  if (media?.banner)
+    return (
+      <div className="archive-cover has-banner" aria-hidden="true">
+        <img src={media.banner} alt="" loading="lazy" decoding="async" />
+      </div>
+    );
+  // Without a banner: the record's operator, or the story's leading cast.
+  const faces = media?.lead
+    ? [media.lead]
+    : (media?.cast.filter(Boolean) as string[] | undefined) || [];
   return (
     <div className={"archive-cover cover-" + index} aria-hidden="true">
-      {archive.bannerUrl ? (
-        <img src={archive.bannerUrl} alt="" />
-      ) : (
-        <svg viewBox="0 0 500 240" preserveAspectRatio="xMidYMid slice">
-          <defs>
-            <radialGradient id={"wash-" + archive.id}>
-              <stop stopColor={archive.color} stopOpacity=".2" />
-              <stop offset="1" stopColor={archive.color} stopOpacity="0" />
-            </radialGradient>
-          </defs>
-          <ellipse
-            cx={320 - index * 12}
-            cy="115"
-            rx="190"
-            ry="145"
-            fill={`url(#wash-${archive.id})`}
+      <svg viewBox="0 0 500 240" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <radialGradient id={"wash-" + archive.id}>
+            <stop stopColor={archive.color} stopOpacity=".2" />
+            <stop offset="1" stopColor={archive.color} stopOpacity="0" />
+          </radialGradient>
+        </defs>
+        <ellipse
+          cx={320 - index * 12}
+          cy="115"
+          rx="190"
+          ry="145"
+          fill={`url(#wash-${archive.id})`}
+        />
+        <g fill="none" stroke={archive.color}>
+          {Array.from({ length: 15 }, (_, i) => (
+            <ellipse
+              key={i}
+              cx="330"
+              cy="120"
+              rx={36 + i * 9}
+              ry={30 + i * 3.5}
+              transform={`rotate(${index % 2 ? -36 : 32} 330 120)`}
+              opacity={0.1 + (i % 4) * 0.04}
+              strokeWidth=".55"
+            />
+          ))}
+          <circle cx="330" cy="120" r="72" strokeWidth=".7" opacity=".4" />
+          <path
+            d="M25 172Q220 48 475 150M50 180Q300 215 460 44"
+            strokeWidth=".6"
+            opacity=".2"
           />
-          <g fill="none" stroke={archive.color}>
-            {Array.from({ length: 15 }, (_, i) => (
-              <ellipse
+          <path
+            d="M330 14V225M200 120H465"
+            strokeWidth=".5"
+            opacity=".15"
+            strokeDasharray="2 8"
+          />
+        </g>
+        <g fill={archive.color}>
+          {Array.from({ length: 16 }, (_, i) => {
+            const a = i * 2.399 + index;
+            const r = 40 + i * 5.5;
+            return (
+              <circle
                 key={i}
-                cx="330"
-                cy="120"
-                rx={36 + i * 9}
-                ry={30 + i * 3.5}
-                transform={`rotate(${index % 2 ? -36 : 32} 330 120)`}
-                opacity={0.1 + (i % 4) * 0.04}
-                strokeWidth=".55"
+                cx={330 + Math.cos(a) * r * 1.2}
+                cy={120 + Math.sin(a) * r * 0.72}
+                r={i % 4 === 0 ? 2.3 : 1}
+                opacity={i % 4 === 0 ? 0.8 : 0.4}
               />
-            ))}
-            <circle cx="330" cy="120" r="72" strokeWidth=".7" opacity=".4" />
-            <path
-              d="M25 172Q220 48 475 150M50 180Q300 215 460 44"
-              strokeWidth=".6"
-              opacity=".2"
-            />
-            <path
-              d="M330 14V225M200 120H465"
-              strokeWidth=".5"
-              opacity=".15"
-              strokeDasharray="2 8"
-            />
-          </g>
-          <g fill={archive.color}>
-            {Array.from({ length: 16 }, (_, i) => {
-              const a = i * 2.399 + index;
-              const r = 40 + i * 5.5;
-              return (
-                <circle
-                  key={i}
-                  cx={330 + Math.cos(a) * r * 1.2}
-                  cy={120 + Math.sin(a) * r * 0.72}
-                  r={i % 4 === 0 ? 2.3 : 1}
-                  opacity={i % 4 === 0 ? 0.8 : 0.4}
-                />
-              );
-            })}
-          </g>
-        </svg>
+            );
+          })}
+        </g>
+      </svg>
+      {faces.length > 0 && (
+        <div className={"cover-faces" + (media?.lead ? " lead" : "")}>
+          {faces.map((id) => (
+            <Portrait key={id} id={id} name="" />
+          ))}
+        </div>
       )}
       <span className="cover-index">
         {String(archive.order).padStart(2, "0")}
@@ -95,6 +130,7 @@ export default function Library({ settings }: { settings: Settings }) {
     return () => removeEventListener("keydown", shortcut);
   }, []);
   const manifest = useManifest();
+  const media = useMedia();
   const archives = manifest.data?.archives || [];
   const [query, setQuery] = useState(""),
     [category, setCategory] = useState("全部"),
@@ -189,6 +225,8 @@ export default function Library({ settings }: { settings: Settings }) {
         </div>
         <div className="archive-grid">
           {matches.slice(0, shown).map((archive, index) => {
+            const pictures = media?.archives[archive.id];
+            const cast = pictures?.cast.some(Boolean) ? pictures.cast : null;
             return (
               <a
                 key={archive.id}
@@ -202,7 +240,11 @@ export default function Library({ settings }: { settings: Settings }) {
                 }
                 aria-label={"查看" + archive.title + "关系图"}
               >
-                <Cover archive={archive} index={archive.order % 7} />
+                <Cover
+                  archive={archive}
+                  index={archive.order % 7}
+                  media={pictures}
+                />
                 <div className="archive-card-content">
                   <div className="archive-card-top">
                     <span>{archive.code}</span>
@@ -210,7 +252,16 @@ export default function Library({ settings }: { settings: Settings }) {
                   </div>
                   <div className="archive-card-title">
                     <h2>{archive.title}</h2>
-                    <p>关系最多：{archive.top.join("、")}</p>
+                    <p>
+                      {cast && (
+                        <span className="cast-faces">
+                          {archive.top.map((name, i) => (
+                            <Portrait key={i} id={cast[i]} name={name} />
+                          ))}
+                        </span>
+                      )}
+                      <span>关系最多：{archive.top.join("、")}</span>
+                    </p>
                   </div>
                   <p className="archive-description">{archive.description}</p>
                   <div className="archive-card-bottom">

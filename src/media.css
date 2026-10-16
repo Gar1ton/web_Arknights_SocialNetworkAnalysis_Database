@@ -1,0 +1,244 @@
+/* Story banners and character avatars (scripts/build_media.py), and the
+   landing call to action. */
+
+/* ── Archive cards: the cover sits above the text so banners stay legible ── */
+.archive-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.archive-cover {
+  position: relative;
+  inset: auto;
+  flex: none;
+  height: auto;
+  aspect-ratio: 1560 / 500;
+  /* Fade into the card itself rather than into a guessed background colour. */
+  -webkit-mask-image: linear-gradient(180deg, #000 52%, transparent);
+  mask-image: linear-gradient(180deg, #000 52%, transparent);
+}
+.archive-cover:after {
+  content: none;
+}
+.archive-cover.has-banner img {
+  object-position: 50% 40%;
+}
+.archive-card:hover .archive-cover.has-banner img {
+  transform: scale(1.045);
+}
+.archive-cover .cover-index {
+  top: 50%;
+  translate: 0 -54%;
+  line-height: 1;
+}
+.archive-card-content {
+  flex: 1;
+  height: auto;
+  padding: 8px 24px 21px;
+}
+.archive-card-title {
+  margin-top: 12px;
+}
+.archive-card-title p {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+/* A square window onto an avatar; the first glyph of the name stands in. */
+.portrait {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  overflow: hidden;
+  border: 1px solid
+    color-mix(in srgb, var(--archive-color, var(--gold)) 36%, transparent);
+  background: radial-gradient(
+      circle at 50% 28%,
+      color-mix(in srgb, var(--archive-color, var(--gold)) 24%, transparent),
+      transparent 75%
+    ),
+    #19151c;
+}
+.archive-cover .portrait img,
+.portrait img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: none;
+}
+.portrait b {
+  font: 400 11px var(--sans);
+  color: var(--archive-color, var(--gold));
+}
+.cast-faces {
+  display: flex;
+  gap: 4px;
+}
+
+/* Covers without a banner: the faces sit in the centre of the rings. */
+.cover-faces {
+  position: absolute;
+  left: 66%;
+  top: 50%;
+  translate: -50% -50%;
+  display: flex;
+  gap: 8px;
+  transition: translate 0.8s var(--ease-spring);
+}
+.cover-faces .portrait {
+  width: 60px;
+  height: 60px;
+  border-color: color-mix(in srgb, var(--archive-color) 50%, transparent);
+}
+.cover-faces.lead .portrait {
+  width: 92px;
+  height: 92px;
+}
+.archive-card:hover .archive-cover .cover-faces img {
+  transform: none;
+}
+.archive-card:hover .cover-faces {
+  translate: -50% calc(-50% - 4px);
+}
+
+/* ── Profile emblem: the square stands upright and frames the avatar ── */
+.profile-emblem {
+  width: 104px;
+  height: 104px;
+}
+.profile-emblem i {
+  transform: none;
+}
+.profile-emblem i:nth-last-child(3) {
+  inset: 12.5%;
+  z-index: 2;
+  border-color: color-mix(in srgb, var(--node-color) 46%, transparent);
+}
+.profile-emblem > img,
+.profile-emblem > span {
+  position: absolute;
+  inset: 12.5%;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 75%;
+  height: 75%;
+  object-fit: cover;
+  /* Opaque, so the rings pass behind the portrait instead of across it. */
+  background: radial-gradient(
+      circle at 50% 30%,
+      color-mix(in srgb, var(--node-color) 22%, transparent),
+      transparent 72%
+    ),
+    var(--panel);
+  animation: emblem-in 0.5s var(--ease-out) both;
+}
+.profile-emblem > span {
+  font: 30px var(--serif);
+  color: color-mix(in srgb, var(--node-color) 80%, #fff);
+}
+@keyframes emblem-in {
+  from {
+    opacity: 0;
+    scale: 0.94;
+  }
+}
+
+/* ── Landing: the way into the stories ── */
+.landing-sticky .primary-cta {
+  position: relative;
+  isolation: isolate;
+  width: max-content;
+  min-width: 300px;
+  max-width: 100%;
+  gap: 30px;
+  padding: 9px 9px 9px 30px;
+  margin-top: 34px;
+  overflow: hidden;
+  border: 1px solid #f3d7b7;
+  background: linear-gradient(112deg, #f0d0a6, #d9ab83 52%, #c99477);
+  color: #1c161a;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 4px;
+  box-shadow:
+    0 0 0 6px #e0b58c14,
+    0 18px 46px -16px #e5b2878f;
+  transition:
+    transform 0.4s var(--ease-spring),
+    box-shadow 0.4s;
+}
+.landing-sticky .primary-cta i {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: #1c161a;
+  color: #f0d0a6;
+  transition: transform 0.5s var(--ease-spring);
+}
+.landing-sticky .primary-cta:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    #fff7ea80 50%,
+    transparent 70%
+  );
+  translate: -110% 0;
+  transition: translate 0.9s var(--ease-out);
+}
+.landing-sticky .primary-cta:hover,
+.landing-sticky .primary-cta:focus-visible {
+  background: linear-gradient(112deg, #f6dbb7, #e2b791 52%, #d3a083);
+  color: #1c161a;
+  transform: translateY(-3px);
+  box-shadow:
+    0 0 0 8px #e0b58c22,
+    0 24px 56px -16px #e5b287b8;
+}
+.landing-sticky .primary-cta:hover i,
+.landing-sticky .primary-cta:focus-visible i {
+  transform: rotate(45deg);
+}
+.landing-sticky .primary-cta:hover:after,
+.landing-sticky .primary-cta:focus-visible:after {
+  translate: 110% 0;
+}
+@media (max-height: 720px) and (min-width: 761px) {
+  .landing-sticky .primary-cta {
+    margin-top: 24px;
+  }
+}
+@media (max-width: 760px) {
+  .landing-sticky .primary-cta {
+    min-width: 0;
+    width: min(100%, 290px);
+    padding: 7px 7px 7px 22px;
+    margin-top: 24px;
+    font-size: 16px;
+    letter-spacing: 3px;
+  }
+  .landing-sticky .primary-cta i {
+    width: 40px;
+    height: 40px;
+  }
+  .archive-card-content {
+    padding: 6px 20px 19px;
+  }
+  .profile-emblem {
+    width: 84px;
+    height: 84px;
+  }
+}

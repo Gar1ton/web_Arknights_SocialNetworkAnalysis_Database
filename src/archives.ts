@@ -22,7 +22,6 @@ export type Archive = {
   pairs: number;
   relations: number;
   top: string[];
-  bannerUrl?: string;
 };
 export type Manifest = {
   info: {
@@ -36,8 +35,23 @@ export type Manifest = {
   };
   archives: Archive[];
 };
+/** Avatars and banners written by scripts/build_media.py. */
+export type ArchiveMedia = {
+  /** Avatar keys aligned with Archive.top; null where none exists. */
+  cast: (string | null)[];
+  banner?: string;
+  /** The operator an operator record is about. */
+  lead?: string;
+};
+export type Media = {
+  /** Node id → avatar key. */
+  avatars: Record<string, string>;
+  archives: Record<string, ArchiveMedia>;
+};
+export const avatarUrl = (key: string) => "./media/avatars/" + key + ".webp";
 const base = "./data/";
 let manifestRequest: Promise<Manifest> | null = null;
+let mediaRequest: Promise<Media> | null = null;
 const archiveRequests = new Map<string, Promise<ArchiveData>>();
 async function getJson<T>(path: string): Promise<T> {
   const response = await fetch(base + path);
@@ -53,6 +67,14 @@ export function loadManifest() {
     },
   );
   return manifestRequest;
+}
+/** Pictures are decoration: without media.json the site keeps its plain look. */
+export function loadMedia() {
+  mediaRequest ??= getJson<Media>("media.json").catch(() => ({
+    avatars: {},
+    archives: {},
+  }));
+  return mediaRequest;
 }
 export function loadArchive(id: string) {
   let request = archiveRequests.get(id);
@@ -89,6 +111,9 @@ function useLoaded<T>(load: (() => Promise<T>) | null, key: string) {
 }
 export function useManifest() {
   return useLoaded(loadManifest, "manifest");
+}
+export function useMedia() {
+  return useLoaded(loadMedia, "media").data;
 }
 export function useArchive(id: string | null) {
   return useLoaded(id ? () => loadArchive(id) : null, id || "");
