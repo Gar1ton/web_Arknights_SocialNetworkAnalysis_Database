@@ -137,6 +137,8 @@ export default function Select({
               setOpen(true);
             }
           } else if (e.key === "Escape") {
+            // An open menu takes the Escape, so a dialog around it stays open.
+            if (open) e.preventDefault();
             e.stopPropagation();
             setOpen(false);
           } else if (e.key === "Tab") setOpen(false);
@@ -175,7 +177,8 @@ export default function Select({
               </div>
             ))}
           </div>,
-          document.body,
+          // Inside a modal dialog the rest of the page is inert.
+          trigger.current?.closest("dialog") ?? document.body,
         )}
     </div>
   );

@@ -15,6 +15,8 @@ import {
 } from "./data";
 import IpcChart from "./IpcChart";
 import { avatarUrl, useMedia } from "./archives";
+import { ReportButton } from "./report/ReportDialog";
+import type { ReportTarget } from "./report/report";
 function Metric({ value, label }: { value: number | string; label: string }) {
   return (
     <div className="metric">
@@ -106,11 +108,13 @@ export function EdgeDetail({
   byId,
   onBack,
   onSelect,
+  onReport,
 }: {
   edge: AtlasEdge;
   byId: Map<string, AtlasNode>;
   onBack: () => void;
   onSelect: (id: string) => void;
+  onReport: (target: ReportTarget) => void;
 }) {
   const a = byId.get(edge.source)!,
     b = byId.get(edge.target)!;
@@ -151,6 +155,10 @@ export function EdgeDetail({
         <span className="tag">
           {isMutual(edge) ? "双向都有记录" : "只有单向记录"}
         </span>
+        <ReportButton
+          label="这组关系有问题？"
+          onClick={() => onReport({ kind: "edge", edgeId: edge.id })}
+        />
         <div className="detail-metrics">
           <Metric value={edge.events} label="同场事件" />
           <Metric value={edge.weight.toFixed(2)} label="关系强度" />
@@ -223,6 +231,7 @@ export function NodeDetail({
   onSelect,
   onEdge,
   onEgo,
+  onReport,
 }: {
   node: AtlasNode;
   graphEdges: AtlasEdge[];
@@ -232,6 +241,7 @@ export function NodeDetail({
   onSelect: (id: string) => void;
   onEdge: (id: string) => void;
   onEgo: () => void;
+  onReport: (target: ReportTarget) => void;
 }) {
   const links = graphEdges
     .filter((e) => e.source === node.id || e.target === node.id)
@@ -274,6 +284,10 @@ export function NodeDetail({
             社群：{communities[node.community]?.label}
           </span>
         </div>
+        <ReportButton
+          label="这个角色有问题？"
+          onClick={() => onReport({ kind: "node", nodeId: node.id })}
+        />
         <p className="detail-prose">
           {node.profile.description || "暂无性格简述。"}
         </p>

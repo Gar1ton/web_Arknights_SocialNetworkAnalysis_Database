@@ -26,6 +26,8 @@ export type Archive = {
 export type Manifest = {
   info: {
     version: string;
+    /** The pipeline run the data was built from; reports carry it. */
+    sources?: { fullgraph?: { runId?: string } };
     totals: {
       stories: number;
       people: number;

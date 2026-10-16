@@ -15,6 +15,7 @@ import {
   Check,
   PanelRightClose,
   PanelRightOpen,
+  Flag,
 } from "lucide-react";
 import {
   type ArchiveData,
@@ -39,6 +40,8 @@ import Graph from "./Graph";
 import Controls from "./Controls";
 import { NodeDetail, EdgeDetail } from "./Details";
 import { exportGraph } from "./export";
+import ReportDialog from "./report/ReportDialog";
+import type { ReportTarget } from "./report/report";
 const empty: ArchiveData = {
   id: "",
   communities: [],
@@ -76,6 +79,7 @@ export default function App() {
     [panelOpen, setPanelOpen] = useState(true),
     [resetKey, setResetKey] = useState(0),
     [toast, setToast] = useState("");
+  const [report, setReport] = useState<ReportTarget | null>(null);
   const manifest = useManifest();
   const loaded = useArchive(route.page === "graph" ? route.archiveId : null);
   const archive = manifest.data?.archives.find((a) => a.id === route.archiveId);
@@ -101,6 +105,7 @@ export default function App() {
           setSelected(null);
           setSelectedEdge(null);
           setPanelOpen(true);
+          setReport(null);
         });
         window.scrollTo({ top: 0, behavior: "instant" });
       };
@@ -120,6 +125,7 @@ export default function App() {
   useEffect(() => {
     setSelected(null);
     setSelectedEdge(null);
+    setReport(null);
     setQuery("");
     setCommunity(-1);
     setPanelTab("nodes");
@@ -153,6 +159,8 @@ export default function App() {
   );
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
+      // The report dialog handles its own keys.
+      if ((e.target as HTMLElement).closest("dialog")) return;
       if (e.key === "Escape") {
         setSelected(null);
         setSelectedEdge(null);
@@ -290,6 +298,10 @@ export default function App() {
           ? ["顺从", "中性", "主导"].map((l, i) => [l, scaleColors.power[i]])
           : null;
   const title = archive?.title || "关系图谱";
+  const dataVersion =
+    manifest.data?.info.sources?.fullgraph?.runId ||
+    manifest.data?.info.version ||
+    "";
   return (
     <div
       className={
@@ -422,6 +434,23 @@ export default function App() {
                   <PanelRightOpen size={16} />
                 )}
               </button>
+              {loaded.data && (
+                <button
+                  className="report-cta"
+                  onClick={() => setReport({ kind: "none" })}
+                >
+                  <Flag size={16} />
+                  <span>
+                    <small>发现数据有误？</small>
+                    提交纠错
+                  </span>
+                  <i aria-hidden="true">
+                    <svg viewBox="0 0 44 12">
+                      <path d="M1 6h41M36.5 1 42 6l-5.5 5" />
+                    </svg>
+                  </i>
+                </button>
+              )}
               <div className="canvas-bottom">
                 <div className="legend">
                   {legend
@@ -540,6 +569,7 @@ export default function App() {
                       byId={byId}
                       onBack={clearDetails}
                       onSelect={choose}
+                      onReport={setReport}
                     />
                   </div>
                 ) : selected && byId.has(selected) ? (
@@ -552,6 +582,7 @@ export default function App() {
                       onBack={() => setSelected(null)}
                       onSelect={choose}
                       onEdge={chooseEdge}
+                      onReport={setReport}
                       onEgo={() => {
                         update("mode", "ego");
                         update("hops", 1);
@@ -755,6 +786,19 @@ export default function App() {
             </button>
           </footer>
         </>
+      )}
+      {report && archive && loaded.data && (
+        <ReportDialog
+          origin={report}
+          archive={archive}
+          dataVersion={dataVersion}
+          data={loaded.data}
+          byId={byId}
+          onClose={(kept) => {
+            setReport(null);
+            if (kept) setToast("草稿已保留，再次打开纠错面板即可继续");
+          }}
+        />
       )}
       {toast && (
         <div className="toast" role="status">
