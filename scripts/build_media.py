@@ -250,7 +250,8 @@ def main() -> None:
         top = sorted(nodes, key=lambda x: (-x["degree"], -x["messages"], x["id"]))[: len(a["top"])]
         card: dict = {"cast": [node_avatar.get(n["id"]) for n in top]}
         if a["id"] in banners:
-            card["banner"] = f"media/banners/{a['id']}.webp"
+            # Not "banners/": ad blockers on phones drop any URL containing it.
+            card["banner"] = f"media/covers/{a['id']}.webp"
         if a["category"] == "密录":
             lead = next((n for n in nodes if n["name"] == a["title"] and n["id"] in node_avatar), None)
             if lead:
@@ -259,7 +260,7 @@ def main() -> None:
 
     used = set(node_avatar.values())
     sync(args.out / "avatars", {k: (files[k], f"scale={AVATAR_SIZE}:{AVATAR_SIZE}", 84) for k in used}, args.force)
-    sync(args.out / "banners", {aid: (src, f"scale={BANNER_WIDTH}:-2", 78) for aid, src in banners.items()}, args.force)
+    sync(args.out / "covers", {aid: (src, f"scale={BANNER_WIDTH}:-2", 78) for aid, src in banners.items()}, args.force)
     media = {"avatars": dict(sorted(node_avatar.items())), "archives": cards}
     (args.data / "media.json").write_text(json.dumps(media, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
 
