@@ -41,7 +41,7 @@ npm run dev    # http://localhost:4178
 
 ## 说明与条款
 
-© 2026 Gar1ton & MKiyoaki · 采用 [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/deed.zh) 许可 · 联系：zefeng.1.wu@kcl.ac.uk
+© 2026 Gar1ton & MKiyoaki · 采用 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans) 许可 · 联系：zefeng.1.wu@kcl.ac.uk
 
 本网站及其数据来自 Amiya SNA 项目，即对《明日方舟》剧情所做的社会网络分析。使用本网站或其数据前，请先阅读以下说明。
 
@@ -66,7 +66,7 @@ npm run dev    # http://localhost:4178
 
 ### 三、许可与条款
 
-* 作者自有的贡献（图谱数据、派生评分、描述、网站代码与组织方式）采用 **CC BY-NC-SA 3.0**（署名-非商业性使用-相同方式共享）许可：<https://creativecommons.org/licenses/by-nc-sa/3.0/deed.zh>。你可以在**非商业**目的下分享和改编，但须署名，并以相同许可发布改编作品。
+* 作者自有的贡献（图谱数据、派生评分、描述、网站代码与组织方式）采用 **CC BY-NC-SA 4.0**（署名-非商业性使用-相同方式共享 4.0 国际）许可：<https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans>。你可以在**非商业**目的下分享和改编，但须署名，并以相同许可发布改编作品。
 * 该许可只涵盖作者自有的贡献，**不涵盖**也不授予第三方内容的任何权利，包括《明日方舟》的角色、名称、剧情与设定（见声明第 2 条）。使用这些内容仍须遵守权利人的条款和你所在地的法律。
 * **署名。** 请注明作者、附上许可链接，并说明是否做了修改。
 * **非商业。** 不得用于商业用途，也不得以任何方式暗示作者或《明日方舟》权利方的认可。

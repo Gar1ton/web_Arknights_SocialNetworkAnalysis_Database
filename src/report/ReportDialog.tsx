@@ -252,7 +252,7 @@ export default function ReportDialog({
                   会为传输和防滥用处理这次请求。
                 </li>
                 <li>只有维护者能读报告。网站不公开报告，其他访客也看不到。</li>
-                <li>提交即同意报告内容以 CC BY-NC-SA 3.0 授权给本项目使用。</li>
+                <li>提交即同意报告内容以 CC BY-NC-SA 4.0 授权给本项目使用。</li>
               </ul>
               <p className="report-hint">
                 未满 14 周岁，请在监护人同意后提交。
