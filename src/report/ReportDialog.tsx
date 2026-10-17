@@ -21,17 +21,11 @@ import {
   type ReportTarget,
 } from "./report";
 import { countSent, feedbackOpen, sendReport, spamCheck } from "./api";
-export function ReportButton({
-  label,
-  onClick,
-}: {
-  label: string;
-  onClick: () => void;
-}) {
+export function ReportButton({ onClick }: { onClick: () => void }) {
   return (
     <button type="button" className="report-link" onClick={onClick}>
       <Flag size={13} />
-      {label}
+      数据有问题？
     </button>
   );
 }

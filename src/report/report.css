@@ -69,18 +69,30 @@
 }
 .report-link {
   display: inline-flex;
+  align-self: center;
   align-items: center;
-  gap: 7px;
-  margin-top: 14px;
-  padding: 6px 12px;
-  border: 1px solid #c3a28766;
+  gap: 6px;
+  margin-left: auto;
+  padding: 5px 12px 5px 10px;
+  border: 1px solid #f3d7b7;
   border-radius: 6px;
-  color: #ddbea4;
+  background: linear-gradient(112deg, #f0d0a6, #d9ab83 52%, #c99477);
+  color: #1c161a;
   font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  box-shadow: 0 6px 18px -10px #e5b2878f;
+  transition:
+    transform 0.3s var(--ease-spring),
+    box-shadow 0.3s;
 }
-.report-link:hover {
-  background: #cfaa8b18;
-  color: #f3d9bf;
+.report-link:hover,
+.report-link:focus-visible {
+  color: #1c161a;
+  transform: translateY(-1px);
+  box-shadow:
+    0 0 0 4px #e0b58c22,
+    0 10px 24px -10px #e5b287b8;
 }
 html:has(.report-dialog[open]) {
   overflow: hidden;
@@ -498,7 +510,9 @@ html:has(.report-dialog[open]) {
     animation: none;
   }
   .report-cta:hover,
-  .report-cta:focus-visible {
+  .report-cta:focus-visible,
+  .report-link:hover,
+  .report-link:focus-visible {
     transform: none;
   }
 }

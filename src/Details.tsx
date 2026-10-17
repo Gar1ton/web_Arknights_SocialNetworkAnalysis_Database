@@ -152,13 +152,14 @@ export function EdgeDetail({
           <span>{isMutual(edge) ? "⇄" : edge.ab ? "→" : "←"}</span>
           <button onClick={() => onSelect(b.id)}>{b.name}</button>
         </h2>
-        <span className="tag">
-          {isMutual(edge) ? "双向都有记录" : "只有单向记录"}
-        </span>
-        <ReportButton
-          label="这组关系有问题？"
-          onClick={() => onReport({ kind: "edge", edgeId: edge.id })}
-        />
+        <div className="tags">
+          <span className="tag">
+            {isMutual(edge) ? "双向都有记录" : "只有单向记录"}
+          </span>
+          <ReportButton
+            onClick={() => onReport({ kind: "edge", edgeId: edge.id })}
+          />
+        </div>
         <div className="detail-metrics">
           <Metric value={edge.events} label="同场事件" />
           <Metric value={edge.weight.toFixed(2)} label="关系强度" />
@@ -283,11 +284,10 @@ export function NodeDetail({
           <span className="tag">
             社群：{communities[node.community]?.label}
           </span>
+          <ReportButton
+            onClick={() => onReport({ kind: "node", nodeId: node.id })}
+          />
         </div>
-        <ReportButton
-          label="这个角色有问题？"
-          onClick={() => onReport({ kind: "node", nodeId: node.id })}
-        />
         <p className="detail-prose">
           {node.profile.description || "暂无性格简述。"}
         </p>
