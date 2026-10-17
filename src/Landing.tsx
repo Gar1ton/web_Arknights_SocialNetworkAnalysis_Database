@@ -5,6 +5,80 @@ import Graph from "./Graph";
 import { useArchive, useManifest } from "./archives";
 import { type Settings, showcaseFlow } from "./settings";
 import { createScreenScroller, scrollsInside } from "./screenScroll";
+/** Screen 2: each card is a title and its terms. */
+const concepts: [string, [string, string][]][] = [
+  [
+    "怎么读一条关系",
+    [
+      [
+        "关系方向",
+        "每组关系分两个方向看，如阿米娅 → 凯尔希、凯尔希 → 阿米娅。两边的态度未必一样，有时也只有一个方向有记录。",
+      ],
+      [
+        "八类态度",
+        "按友善度（敌对—友善）和支配度（顺从—主导）在环形图上分成八类：友好、热情主动、主导、傲慢算计、冷淡、疏离回避、顺从、友善配合。",
+      ],
+      [
+        "关系强度",
+        "0–1，看两人同场的事件有多少，本页最高为 1。只说明同框有多频繁，和关系好坏无关。",
+      ],
+      [
+        "情感强度与可信度",
+        "都是 0–100%：前者是态度有多强烈，后者是模型对这条判断有多大把握。「依据 N 个事件」指推断用到的事件数。",
+      ],
+    ],
+  ],
+  [
+    "怎么读整张网",
+    [
+      [
+        "关系数与发言数",
+        "当前剧情里，这个角色和多少人有关系记录、说了多少句台词。",
+      ],
+      [
+        "中介中心性",
+        "0–1，看一个角色有多常处在别人之间的最短路径上。值高的人是连接不同圈子的「桥」，不一定认识的人最多。",
+      ],
+      [
+        "社群",
+        "按来往疏密自动分出的圈子，以圈内关系最多的人命名，如「凯尔希 等 15 人」。这是算法分组，不等于剧情阵营。",
+      ],
+      [
+        "网络密度",
+        "实际关系数占「人人两两相识」时关系数的比例。剧情出场人物多，密度通常很低（如 0.04），这很正常。",
+      ],
+    ],
+  ],
+  [
+    "怎么读一个角色",
+    [
+      [
+        "大五人格",
+        "开放性、尽责性、外向性、宜人性、神经质五项，各 0–100，分高、中、低三档，根据角色在全部剧情中的表现评出。「神经质」高表示情绪更敏感、容易波动，不是贬义。",
+      ],
+      ["未评分", "台词太少的角色不评分；某一项空着表示「未评分」，不是 0 分。"],
+      [
+        "角色类型",
+        "分具名角色、无名角色和博士三类。不同剧情里同名的无名角色（如「市民 A」）算作不同的人。",
+      ],
+    ],
+  ],
+];
+/** Screen 3: what the project is, its limits and how to help. */
+const project: [string, string][] = [
+  [
+    "从台词到图谱",
+    "剧情脚本取自社区整理的游戏数据。没有标明说话人的台词，先由 AI 识别，再经人工复核。台词整理成对话后抽取出剧情事件，由大语言模型推断每个方向的态度，并综合全部剧情写出人物画像。网络指标由网站自己计算。",
+  ],
+  [
+    "独立解读与局限",
+    "这是独立的学术项目，与鹰角网络（Hypergryph）和 Yostar 无关。站内的评分与描述都是模型对虚构作品的自动解读，未经逐条人工核验，可能有错误、遗漏或偏见，请勿当作官方设定。",
+  ],
+  [
+    "众包纠错与迭代",
+    "发现重名没合并、关系方向反了，或者性格评得离谱？点详情里的「数据有问题？」或画布右下角的「提交纠错」（即将开放）告诉我们。每份报告都会先经人工核对，再用来改进下一版数据，不会自动生效。报告不记录 IP 或邮箱；愿意留名的话，我们会把你列入致谢名单。",
+  ],
+];
 const fmt = (n?: number) => (n == null ? "—" : n.toLocaleString("zh-CN"));
 export default function Landing({
   settings,
@@ -16,8 +90,8 @@ export default function Landing({
   const root = useRef<HTMLElement>(null);
   const animate = useRef(settings.animate);
   animate.current = settings.animate;
-  /** Moves to screen 0 (hero) or 1 (introduction); set by the effect below. */
-  const goTo = useRef<(screen: 0 | 1) => void>(() => {});
+  /** Moves to a screen (0 hero, 1 concepts, 2 about); set by the effect below. */
+  const goTo = useRef<(screen: number) => void>(() => {});
   const manifest = useManifest().data;
   // Preview the story with the most relations (merged tables are hidden).
   const featured = manifest?.archives.reduce<
@@ -58,9 +132,16 @@ export default function Landing({
   );
   useEffect(() => {
     document.documentElement.classList.add("landing-snap");
-    const about = () => document.getElementById("about");
-    const introTop = () =>
-      Math.round((about()?.getBoundingClientRect().top ?? 0) + scrollY);
+    const screens = () => [
+      ...(root.current?.querySelectorAll(".scene-introduction") ?? []),
+    ];
+    const stops = () => [
+      0,
+      ...screens().map((el) =>
+        Math.round(el.getBoundingClientRect().top + scrollY),
+      ),
+    ];
+    const introTop = () => stops()[1] ?? 0;
     let raf = 0;
     const update = () => {
       cancelAnimationFrame(raf);
@@ -73,17 +154,18 @@ export default function Landing({
     };
     update();
     addEventListener("scroll", update, { passive: true });
-    // Desktop: the page follows the wheel between two stops (hero and
-    // introduction); touch layouts (≤760px) keep CSS scroll snap.
+    // Desktop: the page follows the wheel one screen at a time (hero,
+    // concepts, about); touch layouts (≤760px) keep CSS scroll snap.
     const desktop = matchMedia("(min-width: 761px)");
     const reduced = matchMedia("(prefers-reduced-motion: reduce)");
     const scroller = createScreenScroller(
-      introTop,
+      stops,
       () => !animate.current || reduced.matches,
     );
     goTo.current = (screen) => {
       if (desktop.matches) scroller.go(screen);
-      else if (screen) about()?.scrollIntoView({ behavior: "smooth" });
+      else if (screen)
+        screens()[screen - 1]?.scrollIntoView({ behavior: "smooth" });
       else scrollTo({ top: 0, behavior: "smooth" });
     };
     const wheel = (e: WheelEvent) => {
@@ -91,21 +173,30 @@ export default function Landing({
       const dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;
       if (scroller.wheel(dy, scrollsInside(e.target, dy))) e.preventDefault();
     };
-    const keys: Record<string, 0 | 1> = {
+    // Screen offsets: ±1 moves to the next or previous screen; ±Infinity
+    // goes to the last or first.
+    const keys: Record<string, number> = {
       ArrowDown: 1,
       PageDown: 1,
-      End: 1,
-      ArrowUp: 0,
-      PageUp: 0,
-      Home: 0,
+      End: Infinity,
+      ArrowUp: -1,
+      PageUp: -1,
+      Home: -Infinity,
     };
     const key = (e: KeyboardEvent) => {
-      const screen = keys[e.key];
-      if (screen === undefined || !desktop.matches) return;
+      const step = keys[e.key];
+      if (step === undefined || !desktop.matches) return;
       if ((e.target as HTMLElement).closest("input,textarea,select")) return;
-      if (scrollsInside(e.target, screen ? 1 : -1)) return;
+      if (scrollsInside(e.target, step)) return;
       e.preventDefault();
-      scroller.go(screen);
+      const last = stops().length - 1;
+      scroller.go(
+        Math.abs(step) === Infinity
+          ? step > 0
+            ? last
+            : 0
+          : scroller.current() + step,
+      );
     };
     const settle = () => {
       if (desktop.matches) scroller.release();
@@ -176,14 +267,14 @@ export default function Landing({
             </i>
           </a>
           <a
-            href="#about"
+            href="#concepts"
             onClick={(e) => {
               e.preventDefault();
               goTo.current(1);
             }}
             className="secondary-cta"
           >
-            关于这个项目 <ArrowDown size={13} />
+            读图指南与项目介绍 <ArrowDown size={13} />
           </a>
         </div>
         <div className="landing-rail">
@@ -235,29 +326,76 @@ export default function Landing({
           </div>
         </section>
         <section
+          id="concepts"
+          className="scene-introduction scene-concepts"
+          aria-labelledby="concepts-heading"
+        >
+          <div className="reveal">
+            <span className="eyebrow">读图指南</span>
+            <h2 id="concepts-heading">
+              图上的数字
+              <br />
+              <em>怎么读</em>
+            </h2>
+            <p className="intro-lead">
+              不用懂社会网络分析或心理学。把剧情当作一场漫长的群聊，这些指标只回答三件事：谁和谁熟、谁对谁什么态度、谁是怎样的性格。
+            </p>
+          </div>
+          <div className="intro-chapters">
+            {concepts.map(([title, terms], i) => (
+              <article key={title} className="reveal">
+                <span>{String(i + 1).padStart(2, "0")}</span>
+                <div>
+                  <h3>{title}</h3>
+                  <dl className="concept-terms">
+                    {terms.map(([term, text]) => (
+                      <div key={term}>
+                        <dt>{term}</dt>
+                        <dd>{text}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </div>
+              </article>
+            ))}
+          </div>
+          <p className="intro-note reveal">
+            注：站内所有数值和画像都是大模型对台词的解读，不是官方设定。
+          </p>
+        </section>
+        <section
           id="about"
-          className="scene-introduction"
+          className="scene-introduction scene-about"
           aria-labelledby="about-heading"
         >
           <div className="reveal">
-            <span className="eyebrow">关于这个项目</span>
+            <span className="eyebrow">关于本项目</span>
             <h2 id="about-heading">
-              这里能
+              这张图谱是
               <br />
-              <em>看到什么</em>
+              <em>怎么来的</em>
             </h2>
             <p className="intro-lead">
-              把全部剧情台词整理成对话，
-              <br />
-              再由大模型推断人物之间的关系和性格。
+              收录主线第 0–17 章、活动、干员密录和集成战略，剧情更新到 2026 年
+              10 月的活动「昨日海」，另有跨剧情的总览图。数据是 v2
+              候选版本，仍在迭代。
             </p>
-            <p className="intro-prose">
-              目前收录主线第 0–17
-              章、全部活动和干员密录，每段剧情一张关系图。图中既有具名角色，也有剧情里的无名角色。
-            </p>
-            <p className="intro-team">
-              <span>
-                制作
+          </div>
+          <div className="intro-chapters">
+            {project.map(([title, text], i) => (
+              <article key={title} className="reveal">
+                <span>{String(i + 1).padStart(2, "0")}</span>
+                <div>
+                  <h3>{title}</h3>
+                  <p>{text}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+          <dl className="intro-team reveal">
+            <div>
+              <dt>制作与开源</dt>
+              <dd>
                 <a
                   href="https://github.com/Gar1ton"
                   target="_blank"
@@ -272,52 +410,47 @@ export default function Landing({
                 >
                   @MKiyoaki
                 </a>
-              </span>
-              <span>
-                联系
+                <span>
+                  源码于
+                  <a
+                    href="https://github.com/Gar1ton/web_Arknights_SocialNetworkAnalysis_Database"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    GitHub
+                  </a>
+                  公开
+                </span>
+              </dd>
+            </div>
+            <div>
+              <dt>联系邮箱</dt>
+              <dd>
                 <a href="mailto:zefeng.1.wu@kcl.ac.uk">zefeng.1.wu@kcl.ac.uk</a>
-              </span>
-            </p>
-          </div>
-          <div className="intro-chapters">
-            <article className="reveal">
-              <span>01</span>
-              <div>
-                <h3>人际态度（IPC）</h3>
-                <p>
-                  每组关系分两个方向：A 对 B、B 对
-                  A。用「友善—敌对」和「主导—顺从」两个维度描述态度，并归为友好、主导、冷淡、顺从等八类。
-                </p>
-              </div>
-            </article>
-            <article className="reveal">
-              <span>02</span>
-              <div>
-                <h3>关系网络（SNA）</h3>
-                <p>
-                  统计每个角色的关系数、发言数和中介中心性，并自动划分社群，方便找出核心人物和各自的圈子。
-                </p>
-              </div>
-            </article>
-            <article className="reveal">
-              <span>03</span>
-              <div>
-                <h3>大五人格</h3>
-                <p>
-                  开放性、尽责性、外向性、宜人性、神经质五项，按 0–100
-                  显示，并附上每项的评分依据。
-                </p>
-              </div>
-            </article>
-          </div>
+                <span>数据反馈、合作、权利方下架请求都可以发到这里</span>
+              </dd>
+            </div>
+            <div>
+              <dt>许可协议</dt>
+              <dd>
+                <span>
+                  本项目的图谱数据、派生评分、描述与代码采用
+                  <a
+                    href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    CC BY-NC-SA 4.0
+                  </a>
+                  许可，与 PRTS
+                  维基一致。《明日方舟》的角色、名称、剧情、设定及美术素材（头像、横幅等）归鹰角网络及其许可方所有。
+                </span>
+              </dd>
+            </div>
+          </dl>
           <div className="intro-signoff reveal">
             <span className="intro-star">✳</span>
-            <p>
-              {fmt(manifest?.archives.length)} 段剧情，每段一张关系图。
-              <small>
-                所有数值都是大模型对台词的解读，可能有误，不是官方设定。非官方项目，与鹰角网络无关联。
-              </small>
-            </p>
+            <p>感谢社区整理的基础数据，以及每一位帮模型「捉虫」的博士。</p>
             <a href="#archives" aria-label="浏览剧情目录">
               <ArrowUpRight size={23} />
             </a>

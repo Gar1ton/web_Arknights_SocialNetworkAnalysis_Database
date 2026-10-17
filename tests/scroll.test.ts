@@ -41,7 +41,7 @@ function fakeWindow() {
 test("small nudges return, larger moves finish at the next stop", () => {
   const w = fakeWindow();
   const s = createScreenScroller(
-    () => 900,
+    () => [0, 900],
     () => false,
   );
   s.wheel(40, false);
@@ -59,7 +59,7 @@ test("small nudges return, larger moves finish at the next stop", () => {
 test("stops are hard limits and absorb the rest of the gesture", () => {
   const w = fakeWindow();
   const s = createScreenScroller(
-    () => 900,
+    () => [0, 900],
     () => false,
   );
   assert.equal(s.wheel(5000, false), true);
@@ -78,10 +78,50 @@ test("stops are hard limits and absorb the rest of the gesture", () => {
 test("instant mode jumps without easing", () => {
   const w = fakeWindow();
   const s = createScreenScroller(
-    () => 900,
+    () => [0, 900],
     () => true,
   );
   s.go(1);
   w.flush();
   assert.equal(w.y, 900);
+});
+test("each gesture moves one screen, even past a middle stop", () => {
+  const w = fakeWindow();
+  const s = createScreenScroller(
+    () => [0, 900, 1800],
+    () => false,
+  );
+  s.wheel(5000, false);
+  w.idle();
+  assert.equal(w.y, 900);
+  assert.equal(s.current(), 1);
+  s.wheel(5000, false);
+  w.idle();
+  assert.equal(w.y, 1800);
+  // Past the last stop the gesture is absorbed.
+  s.wheel(500, false);
+  w.idle();
+  assert.equal(w.y, 1800);
+  s.wheel(-300, false);
+  w.idle();
+  assert.equal(w.y, 900);
+  s.wheel(-40, false);
+  w.idle();
+  assert.equal(w.y, 900);
+});
+test("go clamps to the first and last screen", () => {
+  const w = fakeWindow();
+  const s = createScreenScroller(
+    () => [0, 900, 1800],
+    () => true,
+  );
+  s.go(2);
+  w.flush();
+  assert.equal(w.y, 1800);
+  s.go(9);
+  w.flush();
+  assert.equal(w.y, 1800);
+  s.go(-1);
+  w.flush();
+  assert.equal(w.y, 0);
 });

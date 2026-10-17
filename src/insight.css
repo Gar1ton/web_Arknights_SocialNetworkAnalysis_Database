@@ -241,20 +241,91 @@
   letter-spacing: 2px;
 }
 
-/* Team and contact line in the introduction */
-.intro-team {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px 28px;
-  margin-top: 22px;
+/* The reading-guide and about screens carry more text than the old
+   introduction: a smaller heading and tighter cards keep each on one screen. */
+@media (min-width: 761px) {
+  .scene-concepts,
+  .scene-about {
+    padding-top: 28px;
+    padding-bottom: 18px;
+  }
+  .scene-concepts h2,
+  .scene-about h2 {
+    font-size: clamp(38px, 3.3vw, 52px);
+    margin: 14px 0;
+  }
+  .scene-concepts .intro-lead,
+  .scene-about .intro-lead {
+    font-size: 17px;
+    letter-spacing: 1px;
+  }
+  .scene-concepts .intro-chapters,
+  .scene-about .intro-chapters {
+    margin-top: 16px;
+  }
+  .scene-concepts .intro-chapters article,
+  .scene-about .intro-chapters article {
+    padding: 9px 0;
+  }
+}
+.scene-about .intro-chapters p {
+  max-width: none;
+}
+/* Concept terms on the reading-guide screen: term and gloss run inline. */
+.concept-terms {
+  margin-top: 6px;
+}
+.concept-terms > div {
   font-size: 13px;
+  line-height: 1.65;
+  color: #9f8796;
+}
+.concept-terms > div + div {
+  margin-top: 3px;
+}
+.concept-terms dt {
+  display: inline;
+  margin-right: 0.7em;
+  color: #d8b799;
+}
+.concept-terms dd {
+  display: inline;
+  margin: 0;
+}
+.intro-note {
+  margin-top: 12px;
+  font-size: 12px;
+  color: #927988;
+}
+
+/* Team, contact and licence on the about screen */
+.intro-team {
+  display: grid;
+  gap: 6px;
+  margin: 6px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  font-size: 13px;
+  line-height: 1.75;
   color: #a08f9a;
 }
-.intro-team span {
+.intro-team > div {
+  display: grid;
+  grid-template-columns: 6.5em 1fr;
+  gap: 12px;
+}
+.intro-team dt {
+  color: #d2bbc2;
+}
+.intro-team dd {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 12px;
+  gap: 4px 14px;
+  margin: 0;
+}
+.intro-team dd span a {
+  margin: 0 0.35em;
 }
 .intro-team a {
   color: var(--gold);
@@ -263,6 +334,12 @@
 }
 .intro-team a:hover {
   border-color: var(--gold);
+}
+@media (max-width: 760px) {
+  .intro-team > div {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
 }
 
 /* Centre the introduction when the page rests on its stop. Auto margins
@@ -276,7 +353,8 @@
   .scene-introduction > :first-child {
     margin-top: auto;
   }
-  .scene-introduction > .intro-signoff {
+  .scene-introduction > .intro-signoff,
+  .scene-introduction > .intro-note {
     margin-bottom: auto;
   }
 }

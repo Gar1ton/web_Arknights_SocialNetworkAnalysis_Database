@@ -44,7 +44,7 @@
   --journey: 0;
   display: grid;
   grid-template-columns: 46% 54%;
-  min-height: 200svh;
+  min-height: 300svh;
   position: relative;
   isolation: isolate;
   background: #141216;
