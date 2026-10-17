@@ -4,10 +4,11 @@ import {
   buildReport,
   displayName,
   newDraft,
+  parseReport,
   problems,
   type Draft,
 } from "../src/report/report.ts";
-import { feedbackOpen, spamCheck } from "../src/report/api.ts";
+import { feedbackOpen, feedbackUrl, spamCheck } from "../src/report/api.ts";
 import { archive } from "./fixture.ts";
 
 const sample = archive("main-08");
@@ -114,8 +115,48 @@ test("a report carries only the fields of its type, with the names on screen", (
   assert.deepEqual(traits.fields.traits, { C: "lower", A: "higher" });
 });
 
-test("the panel sends nothing until the service is live", () => {
-  assert.equal(feedbackOpen, false);
+test("the panel posts to the Pages Function", () => {
+  assert.equal(feedbackUrl, "https://atlas-feedback.pages.dev/reports");
+  assert.ok(feedbackOpen);
+});
+
+test("the service keeps only known keys and the panel's rules", () => {
+  const d = ready({
+    ...newDraft({ kind: "none" }, sample.edges),
+    type: "other",
+  });
+  const sent = { ...buildReport(d, ctx), ip: "1.2.3.4" };
+  const kept = parseReport(JSON.stringify(sent));
+  assert.ok(kept);
+  assert.equal("ip" in kept, false);
+  const bad = (change: object) =>
+    parseReport(JSON.stringify({ ...sent, ...change }));
+  assert.equal(bad({ contributor: "a@b.c" }), null);
+  assert.equal(bad({ reason: "太短" }), null);
+  assert.equal(bad({ type: "spam" }), null);
+  assert.equal(bad({ credit: true, contributor: "" }), null);
+  assert.equal(parseReport("not json"), null);
+});
+
+test("the service accepts every report the panel builds", () => {
+  const node = sample.nodes[0];
+  const edge = sample.edges[0];
+  const base = ready(newDraft({ kind: "node", nodeId: node.id }, sample.edges));
+  const drafts: Draft[] = [
+    { ...base, type: "merge", people: [node.id, sample.nodes[1].id] },
+    { ...base, type: "name", correctName: "新名字" },
+    { ...base, type: "relation", edgeId: edge.id, direction: "both" },
+    {
+      ...base,
+      type: "personality",
+      traits: ["higher", null, null, null, "lower"],
+    },
+    { ...base, type: "other", contributor: "罗德岛见习干员", credit: true },
+  ];
+  for (const d of drafts) {
+    assert.deepEqual(problems(d), []);
+    assert.ok(parseReport(JSON.stringify(buildReport(d, ctx))), d.type!);
+  }
 });
 
 test("light spam checks", () => {

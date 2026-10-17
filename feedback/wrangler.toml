@@ -1,0 +1,11 @@
+# The report service: Pages Functions + D1, on the default pages.dev domain.
+# Deploy with `npm run deploy` from this folder; there is no Git connection.
+name = "atlas-feedback"
+pages_build_output_dir = "./public"
+compatibility_date = "2026-10-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "atlas-feedback"
+# An identifier, not a secret: only the owner's login can use it.
+database_id = "e336733e-c20a-43c3-ab8a-c006b13cf628"

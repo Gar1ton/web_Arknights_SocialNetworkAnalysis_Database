@@ -91,6 +91,75 @@ export function problems(d: Draft): string[] {
   if (!d.agreed) out.push("请先阅读并勾选提交说明");
   return out;
 }
+const isText = (v: unknown, max: number): v is string =>
+  typeof v === "string" && length(v) <= max;
+const isObject = (v: unknown): v is Record<string, any> =>
+  typeof v === "object" && v !== null && !Array.isArray(v);
+const directions = ["ab", "ba", "both", "notReal"];
+/**
+ * The service's check: the rules of problems(), on the record the panel sent.
+ * Returns a copy with only the known keys, or null.
+ */
+export function parseReport(text: string): Report | null {
+  let r: any;
+  try {
+    r = JSON.parse(text);
+  } catch {
+    return null;
+  }
+  if (!isObject(r) || !reportTypes.some(([k]) => k === r.type)) return null;
+  if (!isText(r.archive, 40) || !/^[\w-]+$/.test(r.archive)) return null;
+  if (!isText(r.dataVersion, 80)) return null;
+  const t = r.target;
+  if (!isObject(t) || !["node", "edge", "none"].includes(t.kind)) return null;
+  if (!isText(t.id, 120) || !Array.isArray(t.names) || t.names.length > 20)
+    return null;
+  if (!t.names.every((n: unknown) => isText(n, 80))) return null;
+  const f = r.fields;
+  if (!isObject(f) || JSON.stringify(f).length > 4000) return null;
+  if (r.type === "merge") {
+    const p = f.people;
+    if (!Array.isArray(p) || p.length < 2 || p.length > 20) return null;
+    if (!p.every((id: unknown) => isText(id, 120))) return null;
+  }
+  if (r.type === "relation") {
+    if (t.kind !== "edge") return null;
+    if (f.direction != null && !directions.includes(f.direction)) return null;
+  }
+  if (r.type === "name" || r.type === "personality") {
+    if (t.kind !== "node") return null;
+    if (
+      r.type === "name" &&
+      f.correctName != null &&
+      !isText(f.correctName, limits.name)
+    )
+      return null;
+  }
+  if (r.type === "personality" && f.traits != null) {
+    if (!isObject(f.traits)) return null;
+    for (const [k, v] of Object.entries(f.traits))
+      if (!traitKeys.includes(k) || (v !== "higher" && v !== "lower"))
+        return null;
+  }
+  if (typeof r.reason !== "string") return null;
+  const reason = length(r.reason);
+  if (reason < limits.reasonMin || reason > limits.reasonMax) return null;
+  if (typeof r.contributor !== "string") return null;
+  const contributor = r.contributor.trim();
+  if (length(contributor) > limits.name || /@|\d{7,}/.test(contributor))
+    return null;
+  if (typeof r.credit !== "boolean" || (r.credit && !contributor)) return null;
+  return {
+    type: r.type,
+    archive: r.archive,
+    dataVersion: r.dataVersion,
+    target: { kind: t.kind, id: t.id, names: t.names },
+    fields: f,
+    reason: r.reason.trim(),
+    contributor,
+    credit: r.credit,
+  };
+}
 type Context = {
   archive: string;
   dataVersion: string;

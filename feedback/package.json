@@ -1,0 +1,13 @@
+{
+  "name": "atlas-feedback",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler pages dev",
+    "deploy": "wrangler pages deploy --branch main"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261016.1",
+    "wrangler": "^4.151.1"
+  }
+}

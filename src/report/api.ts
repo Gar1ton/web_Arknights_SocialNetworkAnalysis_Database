@@ -1,9 +1,9 @@
 import type { Draft, Report } from "./report";
 /**
- * The report service. Empty until the Worker on atlas-api.gariton.work is
- * live: the panel then shows the whole form but sends nothing.
+ * The report service: a Pages Function on Cloudflare's default domain
+ * (feedback/). It only accepts reports; nothing on the web can read them back.
  */
-export const feedbackUrl = "";
+export const feedbackUrl: string = "https://atlas-feedback.pages.dev/reports";
 export const feedbackOpen = feedbackUrl !== "";
 export async function sendReport(report: Report) {
   // text/plain keeps this a simple request, so the browser sends no preflight.
