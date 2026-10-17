@@ -68,7 +68,7 @@ const concepts: [string, [string, string][]][] = [
 const project: [string, string][] = [
   [
     "从台词到图谱",
-    "剧情脚本取自社区整理的游戏数据。没有标明说话人的台词，先由 AI 识别，再经人工复核。台词整理成对话后抽取出剧情事件，由大语言模型推断每个方向的态度，并综合全部剧情写出人物画像。网络指标由网站自己计算。",
+    "剧情脚本取自社区整理的游戏数据，没有标明说话人的台词先由 AI 识别、再经人工复核。台词整理成对话后，大语言模型从每个剧情事件里提取关系证据，再由我们的关系推断算法和判断器筛选证据、随剧情逐步更新每个方向的态度；人物画像则综合全部剧情写成。这套算法属于学术研究的一部分，暂不开源。",
   ],
   [
     "独立解读与局限",
@@ -411,7 +411,7 @@ export default function Landing({
                   @MKiyoaki
                 </a>
                 <span>
-                  源码于
+                  网站源码（含网络指标计算）在
                   <a
                     href="https://github.com/Gar1ton/web_Arknights_SocialNetworkAnalysis_Database"
                     target="_blank"
@@ -419,7 +419,7 @@ export default function Landing({
                   >
                     GitHub
                   </a>
-                  公开
+                  公开，关系推断算法暂不开源
                 </span>
               </dd>
             </div>
@@ -434,7 +434,7 @@ export default function Landing({
               <dt>许可协议</dt>
               <dd>
                 <span>
-                  本项目的图谱数据、派生评分、描述与代码采用
+                  图谱数据、派生评分、描述与网站代码采用
                   <a
                     href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans"
                     target="_blank"
