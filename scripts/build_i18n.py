@@ -19,7 +19,11 @@ Operator names come from the `en` field build_data.py already wrote
 them: the two servers' scripts are read side by side, speaker tag for speaker
 tag, after lining up each file's commands (sprites, sounds, timings), which
 the servers share; a Chinese name takes the English name it is paired with
-at least twice and in 80% of pairings or more. Writes:
+at least twice and in 80% of pairings or more.
+
+Names and titles with no official English get the literal translations in
+scripts/i18n/names_literal.tsv and titles_literal.tsv; an official name
+always wins over them. Writes:
   {"version": ..., "archives": {id: title}, "events": {id: "side" | "collection"},
    "names": {中文名: English}}
 """
@@ -104,6 +108,11 @@ def english_name(zh: str, names: dict[str, str]) -> str | None:
     return None
 
 
+def read_tsv(path: Path) -> list[list[str]]:
+    lines = path.read_text(encoding="utf-8").splitlines()
+    return [line.split("\t") for line in lines if line and not line.startswith("#")]
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--zh-stories", type=Path, required=True)
@@ -126,7 +135,9 @@ def main() -> None:
                 seen[node["name"]][node["en"]] += 1
     operators = {zh_name: c.most_common(1)[0][0] for zh_name, c in sorted(seen.items())}
     speakers = script_names(args.zh_scripts, args.en_scripts) if args.zh_scripts and args.en_scripts else {}
-    names = {**speakers, **operators}
+    literal_dir = Path(__file__).resolve().parent / "i18n"
+    literal = {zh: en for zh, en in read_tsv(literal_dir / "names_literal.tsv")}
+    names = {**literal, **speakers, **operators}
 
     ids: dict[str, list[str]] = defaultdict(list)
     for key, story in zh.items():
@@ -148,6 +159,9 @@ def main() -> None:
             titles[a["id"]] = english[0]
 
     # Every name a page can show: story titles, the most connected, and every node.
+    for aid, _zh, title in read_tsv(literal_dir / "titles_literal.tsv"):
+        titles.setdefault(aid, title)
+
     used = {n for a in manifest["archives"] for n in [a["title"], *a["top"]]}
     for path in (args.data / "archives").glob("*.json"):
         used.update(n["name"] for n in json.loads(path.read_text(encoding="utf-8"))["nodes"])

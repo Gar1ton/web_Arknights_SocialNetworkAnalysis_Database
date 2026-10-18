@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import assert from "node:assert/strict";
 import { lang, setLang, t } from "../src/i18n.ts";
 import { communityLabel, nodeName, altName, level } from "../src/data.ts";
-import { archiveCode, archiveTitle } from "../src/archives.ts";
+import { archiveCode, archiveTitle, visibleArchives } from "../src/archives.ts";
 import { problems, newDraft } from "../src/report/report.ts";
 import { archive, manifest } from "./fixture.ts";
 
@@ -47,4 +47,19 @@ test("en.json splits every shown event into Side Story or Story Collection", () 
   assert.ok(events.length > 0);
   for (const a of events)
     assert.ok(["side", "collection"].includes(en.events[a.id]), a.id);
+});
+
+test("en.json names every character and titles every story shown", () => {
+  const en = JSON.parse(
+    readFileSync(new URL("../public/data/en.json", import.meta.url), "utf8"),
+  );
+  const quoted = /^[“"](.+)[”"]$/;
+  for (const a of visibleArchives(manifest.archives)) {
+    assert.ok(en.archives[a.id], a.id);
+    for (const n of archive(a.id).nodes) {
+      if (n.en || /^[\x00-\x7f]+$/.test(n.name)) continue;
+      const bare = quoted.exec(n.name)?.[1];
+      assert.ok(en.names[n.name] || (bare && en.names[bare]), n.name);
+    }
+  }
 });

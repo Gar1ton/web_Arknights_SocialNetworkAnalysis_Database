@@ -78,3 +78,13 @@
     font-size: min(2.75rem, 12vw);
   }
 }
+/* Big Five rows: English trait names are far wider than three Chinese characters. */
+:lang(en) .traits > div > span {
+  width: 7.25rem;
+  flex-shrink: 0;
+}
+:lang(en) .traits b {
+  width: 3.5rem;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
