@@ -8,7 +8,7 @@ export default function Brand() {
         <i />
       </span>
       <span>
-        {t("方舟关系图谱", "Arknights Relation Atlas")}
+        {t("方舟关系图谱", "Arknights SNA")}
         <small>
           {t("明日方舟 · 剧情人物关系", "Arknights · story relations")}
         </small>

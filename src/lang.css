@@ -73,4 +73,8 @@
   .landing-brand {
     gap: 0.75rem;
   }
+  /* "Social Networks" is wider than any Chinese headline line. */
+  :lang(en) .landing-sticky .hero-copy h1 {
+    font-size: min(2.75rem, 12vw);
+  }
 }

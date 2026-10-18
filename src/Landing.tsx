@@ -332,7 +332,7 @@ export default function Landing({
             <h1>
               Arknights
               <br />
-              <em>SNA</em>
+              <em>Social Networks</em>
             </h1>
           ) : (
             <h1>

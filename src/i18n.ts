@@ -15,7 +15,7 @@ const listeners = new Set<() => void>();
 function apply() {
   if (typeof document === "undefined") return;
   document.documentElement.lang = current === "en" ? "en" : "zh-CN";
-  document.title = t("方舟关系图谱", "Arknights Relation Atlas");
+  document.title = t("方舟关系图谱", "Arknights SNA");
 }
 apply();
 export const lang = () => current;

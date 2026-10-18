@@ -570,7 +570,7 @@ export default function App() {
               <div className="workbench-context">
                 <a href="#" aria-label={t("返回首页", "Back to home")}>
                   <Orbit size={17} />
-                  <span>{t("方舟关系图谱", "Arknights Relation Atlas")}</span>
+                  <span>{t("方舟关系图谱", "Arknights SNA")}</span>
                 </a>
                 <LangSwitch />
               </div>
