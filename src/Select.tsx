@@ -46,8 +46,11 @@ export default function Select({
     const started = performance.now();
     const position = () => {
       const rect = trigger.current!.getBoundingClientRect();
-      const height = Math.min(260, options.length * 48 + 12),
-        width = Math.min(Math.max(rect.width, 220), innerWidth - 24);
+      // The menu's CSS is in rem; its sizes here follow the root font size.
+      const rem =
+        parseFloat(getComputedStyle(document.documentElement).fontSize) / 16;
+      const height = Math.min(260 * rem, options.length * 48 * rem + 12),
+        width = Math.min(Math.max(rect.width, 220 * rem), innerWidth - 24);
       const below = innerHeight - rect.bottom - 12;
       const next = {
         left: Math.max(12, Math.min(rect.left, innerWidth - width - 12)),

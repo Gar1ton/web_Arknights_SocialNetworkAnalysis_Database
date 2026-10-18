@@ -1,3 +1,4 @@
+import { t } from "./i18n";
 export type Octant =
   | "affinity"
   | "active"
@@ -70,22 +71,96 @@ export interface ArchiveData {
   nodes: AtlasNode[];
   edges: AtlasEdge[];
 }
+/**
+ * English names are the octant labels of Wiggins's Interpersonal Adjective
+ * Scales, as used by the Moirai pipeline that produced the data.
+ */
 export const octants: Record<
   Octant,
-  { name: string; color: string; angle: number }
+  { name: string; en: string; color: string; angle: number }
 > = {
-  affinity: { name: "友好", color: "#94c4b2", angle: 0 },
-  active: { name: "热情主动", color: "#c4c98e", angle: 45 },
-  dominant: { name: "主导", color: "#ddb780", angle: 90 },
-  arrogant: { name: "傲慢算计", color: "#d9886a", angle: 135 },
-  cold: { name: "冷淡", color: "#e18d9c", angle: 180 },
-  withdrawn: { name: "疏离回避", color: "#a596c4", angle: 225 },
-  submissive: { name: "顺从", color: "#92b0db", angle: 270 },
-  deferential: { name: "友善配合", color: "#81c9cb", angle: 315 },
+  affinity: { name: "友好", en: "Warm-Agreeable", color: "#94c4b2", angle: 0 },
+  active: {
+    name: "热情主动",
+    en: "Gregarious-Extraverted",
+    color: "#c4c98e",
+    angle: 45,
+  },
+  dominant: {
+    name: "主导",
+    en: "Assured-Dominant",
+    color: "#ddb780",
+    angle: 90,
+  },
+  arrogant: {
+    name: "傲慢算计",
+    en: "Arrogant-Calculating",
+    color: "#d9886a",
+    angle: 135,
+  },
+  cold: { name: "冷淡", en: "Cold-Quarrelsome", color: "#e18d9c", angle: 180 },
+  withdrawn: {
+    name: "疏离回避",
+    en: "Aloof-Introverted",
+    color: "#a596c4",
+    angle: 225,
+  },
+  submissive: {
+    name: "顺从",
+    en: "Unassured-Submissive",
+    color: "#92b0db",
+    angle: 270,
+  },
+  deferential: {
+    name: "友善配合",
+    en: "Unassuming-Ingenuous",
+    color: "#81c9cb",
+    angle: 315,
+  },
 };
+export const octantName = (k: Octant) => t(octants[k].name, octants[k].en);
 export const octantKeys = Object.keys(octants) as Octant[];
-export const bigFiveNames = ["开放性", "尽责性", "外向性", "宜人性", "神经质"];
-export const kindNames = { named: "具名角色", npc: "无名角色", doctor: "博士" };
+const bigFive = [
+  ["开放性", "Openness"],
+  ["尽责性", "Conscientiousness"],
+  ["外向性", "Extraversion"],
+  ["宜人性", "Agreeableness"],
+  ["神经质", "Neuroticism"],
+];
+/** Big Five trait names in O C E A N order, in the current language. */
+export const bigFiveNames = () => bigFive.map(([zh, en]) => t(zh, en));
+const kinds = {
+  named: ["具名角色", "Named character"],
+  npc: ["无名角色", "Unnamed character"],
+  doctor: ["博士", "The Doctor"],
+};
+export const kindName = (kind: AtlasNode["kind"]) =>
+  t(kinds[kind][0], kinds[kind][1]);
+/** The name to show: the English name in English mode when there is one. */
+export const nodeName = (n: Pick<AtlasNode, "name" | "en">) =>
+  t(n.name, n.en || n.name);
+/** The other-language name shown in small type, if it differs. */
+export const altName = (n: Pick<AtlasNode, "name" | "en">) => {
+  const alt = t(n.en, n.en ? n.name : "");
+  return alt === nodeName(n) ? "" : alt;
+};
+/**
+ * Community labels are written in Chinese by build_data.py ("凯尔希 等 9 人",
+ * "其他 12 人"); English mode rebuilds them from the lead's English name.
+ */
+export function communityLabel(c: Community | undefined, nodes: AtlasNode[]) {
+  if (!c) return "";
+  const lead = /^(.+) 等 (\d+) 人$/.exec(c.label);
+  if (lead) {
+    const n = nodes.find((x) => x.name === lead[1] && x.en) ?? {
+      name: lead[1],
+      en: "",
+    };
+    return t(c.label, `${nodeName(n)} +${+lead[2] - 1}`);
+  }
+  const rest = /^其他 (\d+) 人$/.exec(c.label);
+  return rest ? t(c.label, `Others (${rest[1]})`) : c.label;
+}
 export const communityColors = [
   "#d991a6",
   "#ddb780",
@@ -100,12 +175,16 @@ export const communityColors = [
 export const otherColor = "#8d8590";
 export function communityColor(index: number, communities: Community[]) {
   const c = communities[index];
-  if (!c || c.label.startsWith("其他")) return otherColor;
+  if (!c || /^(其他 |Others \()/.test(c.label)) return otherColor;
   return communityColors[index % communityColors.length];
 }
 export function level(score: number | null) {
-  if (score == null) return "未评估";
-  return score >= 65 ? "高" : score <= 34 ? "低" : "中等";
+  if (score == null) return t("未评估", "not scored");
+  return score >= 65
+    ? t("高", "high")
+    : score <= 34
+      ? t("低", "low")
+      : t("中等", "mid");
 }
 /** The direction with more confidence, used for single-value colouring. */
 export function primary(edge: AtlasEdge): Direction {

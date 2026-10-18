@@ -1,4 +1,5 @@
-import { octantKeys, octants } from "./data";
+import { octantKeys, octantName, octants } from "./data";
+import { lang } from "./i18n";
 export type IpcPoint = {
   benevolence: number;
   power: number;
@@ -23,7 +24,8 @@ export default function IpcChart({
   return (
     <svg
       className="ipc-chart"
-      viewBox="-150 -132 300 264"
+      // English octant names are two words; they get two lines and more room.
+      viewBox={lang() === "en" ? "-188 -142 376 284" : "-150 -132 300 264"}
       role="img"
       aria-label={label}
     >
@@ -37,13 +39,24 @@ export default function IpcChart({
             <line x1={0} y1={0} x2={edge.x} y2={edge.y} className="ipc-spoke" />
             <text
               x={text.x}
-              y={text.y + 4}
+              y={
+                text.y +
+                (lang() === "en" ? (text.y < -5 ? -8 : text.y > 5 ? 8 : -2) : 4)
+              }
               textAnchor={
                 Math.abs(text.x) < 5 ? "middle" : text.x > 0 ? "start" : "end"
               }
               fill={octants[k].color}
             >
-              {octants[k].name}
+              {lang() === "en"
+                ? octantName(k)
+                    .split("-")
+                    .map((word, i, all) => (
+                      <tspan key={i} x={text.x} dy={i ? 12 : 0}>
+                        {word + (i < all.length - 1 ? "-" : "")}
+                      </tspan>
+                    ))
+                : octantName(k)}
             </text>
           </g>
         );

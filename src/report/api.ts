@@ -1,4 +1,5 @@
 import type { Draft, Report } from "./report";
+import { t } from "../i18n";
 /**
  * The report service: a Pages Function on Cloudflare's default domain
  * (feedback/). It only accepts reports; nothing on the web can read them back.
@@ -39,8 +40,12 @@ export function countSent() {
  */
 export function spamCheck(d: Draft, openedAt: number, now = Date.now()) {
   if (d.website) return "bot";
-  if (now - openedAt < 3000) return "请稍等几秒再提交";
+  if (now - openedAt < 3000)
+    return t("请稍等几秒再提交", "Wait a few seconds before sending");
   if (sentToday() >= dailyLimit)
-    return `今天已经提交了 ${dailyLimit} 份，请明天再来`;
+    return t(
+      `今天已经提交了 ${dailyLimit} 份，请明天再来`,
+      `You have sent ${dailyLimit} reports today. Come back tomorrow`,
+    );
   return null;
 }

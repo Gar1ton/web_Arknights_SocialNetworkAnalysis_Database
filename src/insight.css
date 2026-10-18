@@ -10,15 +10,15 @@
 .landing-sticky .hero-copy h1,
 .scene-introduction h2,
 .library-intro h1 {
-  letter-spacing: 4px;
+  letter-spacing: 0.25rem;
   line-height: 1.18;
 }
 .panel-heading h2,
 .workbench .canvas-heading h1 {
-  letter-spacing: 2px;
+  letter-spacing: 0.125rem;
 }
 .hero-chinese {
-  letter-spacing: 3px;
+  letter-spacing: 0.1875rem;
 }
 .eyebrow,
 .landing-rail,
@@ -28,47 +28,47 @@
 .library-edition small,
 .scene-caption small {
   font-family: var(--sans);
-  font-size: 12px;
-  letter-spacing: 2px;
+  font-size: 0.75rem;
+  letter-spacing: 0.125rem;
 }
 .scene-caption {
   font-style: normal;
-  letter-spacing: 2px;
+  letter-spacing: 0.125rem;
 }
 .brand small {
-  font: 11px var(--sans);
-  letter-spacing: 2px;
+  font: 0.6875rem var(--sans);
+  letter-spacing: 0.125rem;
 }
 .workspace .brand small {
-  font-size: 10px;
+  font-size: 0.625rem;
 }
 .archive-card-title p {
-  font: 13px var(--sans);
+  font: 0.8125rem var(--sans);
   letter-spacing: 0.5px;
 }
 .archive-card-bottom small {
-  font: 11px var(--sans);
+  font: 0.6875rem var(--sans);
   letter-spacing: 0;
 }
 .archive-card-top {
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 .intro-footer {
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 .row-degree small {
-  font: 11px var(--sans);
+  font: 0.6875rem var(--sans);
 }
 .workspace-footer,
 .graph-corner {
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 .canvas-help kbd {
-  font-size: 10px;
+  font-size: 0.625rem;
 }
 .library-more {
-  max-width: 340px;
-  margin: 34px auto 0;
+  max-width: 21.25rem;
+  margin: 2.125rem auto 0;
   justify-content: center;
 }
 
@@ -76,57 +76,57 @@
 .network-stats {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 6px;
-  padding: 18px 25px 4px;
+  gap: 0.375rem;
+  padding: 1.125rem 1.5625rem 0.25rem;
 }
 .network-stats > div > strong {
   display: block;
-  font: 21px var(--serif);
+  font: 1.3125rem var(--serif);
   color: #e3cfc4;
 }
 .network-stats > div > span {
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: #9d8d99;
 }
 .network-stats .network-octants {
   grid-column: 1 / -1;
-  margin-top: 10px;
+  margin-top: 0.625rem;
 }
 .network-octants > span,
 .breakdown > span {
-  font-size: 12px;
+  font-size: 0.75rem;
   color: #b9a3af;
 }
 .breakdown-bar {
   display: flex;
-  height: 4px;
+  height: 0.25rem;
   gap: 1px;
-  margin: 8px 0 7px;
-  border-radius: 2px;
+  margin: 0.5rem 0 0.4375rem;
+  border-radius: 0.125rem;
   overflow: hidden;
   background: #82637930;
 }
 .breakdown-bar i {
   display: block;
-  min-width: 2px;
+  min-width: 0.125rem;
 }
 .network-octants small,
 .breakdown small {
   display: block;
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: #9d8d99;
 }
 .breakdown {
-  margin-top: 16px;
+  margin-top: 1rem;
 }
 
 /* Legend for edge colour scales */
 .legend-item {
   display: flex;
-  gap: 6px;
+  gap: 0.375rem;
   align-items: center;
-  padding: 4px 0;
-  font-size: 11px;
+  padding: 0.25rem 0;
+  font-size: 0.6875rem;
   color: #a798a2;
 }
 
@@ -134,8 +134,8 @@
 .ipc-chart {
   display: block;
   width: 100%;
-  max-width: 310px;
-  margin: 14px auto 4px;
+  max-width: 19.375rem;
+  margin: 0.875rem auto 0.25rem;
   overflow: visible;
 }
 .ipc-chart text {
@@ -165,25 +165,25 @@
 .ipc-legend {
   display: flex;
   justify-content: center;
-  gap: 18px;
-  font-size: 12px;
+  gap: 1.125rem;
+  font-size: 0.75rem;
   color: #a08f9a;
 }
 .ipc-tag {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  margin: 0 0 0 10px;
+  gap: 0.375rem;
+  margin: 0 0 0 0.625rem;
   border-color: currentColor;
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 .ipc-tag i {
-  width: 5px;
-  height: 5px;
+  width: 0.3125rem;
+  height: 0.3125rem;
   border-radius: 50%;
 }
 .direction-block {
-  margin-top: 26px;
+  margin-top: 1.625rem;
 }
 .direction-block .mini-heading {
   display: flex;
@@ -191,24 +191,24 @@
   flex-wrap: wrap;
 }
 .direction-facts {
-  font-size: 12px;
+  font-size: 0.75rem;
   color: #a08f9a;
   line-height: 1.9;
-  margin-top: 14px;
+  margin-top: 0.875rem;
 }
 .direction-facts b {
-  font: 12px var(--mono);
+  font: 0.75rem var(--mono);
   color: #dccabc;
-  margin: 0 2px;
+  margin: 0 0.125rem;
 }
 .direction-facts span {
-  margin: 0 7px;
+  margin: 0 0.4375rem;
   opacity: 0.5;
 }
 
 /* Big Five */
 .traits b {
-  width: 58px;
+  width: 3.625rem;
   text-align: right;
   font-family: var(--sans);
 }
@@ -216,56 +216,56 @@
   opacity: 0.45;
 }
 .trait-evidence {
-  margin-top: 6px;
-  font-size: 12px;
+  margin-top: 0.375rem;
+  font-size: 0.75rem;
   color: #b09ca8;
 }
 .trait-evidence summary {
   cursor: pointer;
   color: var(--gold);
-  padding: 6px 0;
+  padding: 0.375rem 0;
 }
 .trait-evidence p {
   line-height: 1.8;
-  margin: 8px 0;
+  margin: 0.5rem 0;
 }
 .trait-evidence p b {
   color: #dccabc;
   font-weight: 500;
-  margin-right: 8px;
+  margin-right: 0.5rem;
 }
 .profile-emblem > span {
   letter-spacing: 1px;
 }
 .load-state h2 {
-  letter-spacing: 2px;
+  letter-spacing: 0.125rem;
 }
 
 /* The reading-guide and about screens carry more text than the old
    introduction: a smaller heading and tighter cards keep each on one screen. */
-@media (min-width: 761px) {
+@media (min-width: 913px) {
   .scene-concepts,
   .scene-about {
-    padding-top: 28px;
-    padding-bottom: 18px;
+    padding-top: 1.75rem;
+    padding-bottom: 1.125rem;
   }
   .scene-concepts h2,
   .scene-about h2 {
-    font-size: clamp(38px, 3.3vw, 52px);
-    margin: 14px 0;
+    font-size: clamp(2.375rem, 3.3vw, 3.25rem);
+    margin: 0.875rem 0;
   }
   .scene-concepts .intro-lead,
   .scene-about .intro-lead {
-    font-size: 17px;
+    font-size: 1.0625rem;
     letter-spacing: 1px;
   }
   .scene-concepts .intro-chapters,
   .scene-about .intro-chapters {
-    margin-top: 16px;
+    margin-top: 1rem;
   }
   .scene-concepts .intro-chapters article,
   .scene-about .intro-chapters article {
-    padding: 9px 0;
+    padding: 0.5625rem 0;
   }
 }
 .scene-about .intro-chapters p {
@@ -273,15 +273,15 @@
 }
 /* Concept terms on the reading-guide screen: term and gloss run inline. */
 .concept-terms {
-  margin-top: 6px;
+  margin-top: 0.375rem;
 }
 .concept-terms > div {
-  font-size: 13px;
+  font-size: 0.8125rem;
   line-height: 1.65;
   color: #9f8796;
 }
 .concept-terms > div + div {
-  margin-top: 3px;
+  margin-top: 0.1875rem;
 }
 .concept-terms dt {
   display: inline;
@@ -293,26 +293,26 @@
   margin: 0;
 }
 .intro-note {
-  margin-top: 12px;
-  font-size: 12px;
+  margin-top: 0.75rem;
+  font-size: 0.75rem;
   color: #927988;
 }
 
 /* Team, contact and licence on the about screen */
 .intro-team {
   display: grid;
-  gap: 6px;
-  margin: 6px 0 0;
-  padding-top: 14px;
+  gap: 0.375rem;
+  margin: 0.375rem 0 0;
+  padding-top: 0.875rem;
   border-top: 1px solid var(--line);
-  font-size: 13px;
+  font-size: 0.8125rem;
   line-height: 1.75;
   color: #a08f9a;
 }
 .intro-team > div {
   display: grid;
   grid-template-columns: 6.5em 1fr;
-  gap: 12px;
+  gap: 0.75rem;
 }
 .intro-team dt {
   color: #d2bbc2;
@@ -321,7 +321,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 4px 14px;
+  gap: 0.25rem 0.875rem;
   margin: 0;
 }
 .intro-team dd span a {
@@ -335,17 +335,17 @@
 .intro-team a:hover {
   border-color: var(--gold);
 }
-@media (max-width: 760px) {
+@media (max-width: 912px) {
   .intro-team > div {
     grid-template-columns: 1fr;
-    gap: 2px;
+    gap: 0.125rem;
   }
 }
 
 /* Centre the introduction when the page rests on its stop. Auto margins
    collapse to zero when the content is taller than the screen, so it still
    starts at the top and scrolls. The footer stays at the bottom. */
-@media (min-width: 761px) {
+@media (min-width: 913px) {
   .scene-introduction {
     display: flex;
     flex-direction: column;

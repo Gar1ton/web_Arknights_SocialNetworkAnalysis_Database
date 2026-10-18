@@ -1,4 +1,5 @@
 import { type Settings, palettes } from "./settings";
+import { t } from "./i18n";
 export function download(name: string, content: string, type: string) {
   const url = URL.createObjectURL(new Blob([content], { type }));
   const a = document.createElement("a");
@@ -7,8 +8,11 @@ export function download(name: string, content: string, type: string) {
   a.click();
   setTimeout(() => URL.revokeObjectURL(url), 1500);
 }
-const note =
-  "Arknights SNA v2 · IPC 与大五人格数值由大模型根据剧情对话推断，非官方设定";
+const note = () =>
+  t(
+    "Arknights SNA v2 · IPC 与大五人格数值由大模型根据剧情对话推断，非官方设定",
+    "Arknights SNA v2 · IPC and Big Five values are inferred by a language model from story dialogue, not official lore",
+  );
 /** Exports the visible network as an SVG image (the only export format). */
 export function exportGraph(
   settings: Settings,
@@ -17,7 +21,7 @@ export function exportGraph(
   const stem = "arknights-sna-" + (archive.id || "graph");
   const original = document.getElementById("network-svg");
   const scene = original?.querySelector<SVGGElement>(":scope > g");
-  if (!original || !scene) throw Error("未找到关系图");
+  if (!original || !scene) throw Error("no graph");
   // Frame every visible node, not just the part currently on screen.
   const box = scene.getBBox();
   const pad = 40;
@@ -52,7 +56,8 @@ export function exportGraph(
   title.setAttribute("y", String(y + h - 20));
   title.setAttribute("fill", "#dcb99b");
   title.setAttribute("font-size", "12");
-  title.textContent = (archive.title || "关系图谱") + " · " + note;
+  title.textContent =
+    (archive.title || t("关系图谱", "Relation graph")) + " · " + note();
   copy.append(title);
   download(
     stem + ".svg",

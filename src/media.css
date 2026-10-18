@@ -34,16 +34,16 @@
 .archive-card-content {
   flex: 1;
   height: auto;
-  padding: 8px 24px 21px;
+  padding: 0.5rem 1.5rem 1.3125rem;
 }
 .archive-card-title {
-  margin-top: 12px;
+  margin-top: 0.75rem;
 }
 .archive-card-title p {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-top: 8px;
+  gap: 0.625rem;
+  margin-top: 0.5rem;
 }
 
 /* A square window onto an avatar; the first glyph of the name stands in. */
@@ -52,8 +52,8 @@
   display: inline-grid;
   place-items: center;
   flex: none;
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   overflow: hidden;
   border: 1px solid
     color-mix(in srgb, var(--archive-color, var(--gold)) 36%, transparent);
@@ -74,12 +74,12 @@
   transform: none;
 }
 .portrait b {
-  font: 400 11px var(--sans);
+  font: 400 0.6875rem var(--sans);
   color: var(--archive-color, var(--gold));
 }
 .cast-faces {
   display: flex;
-  gap: 4px;
+  gap: 0.25rem;
 }
 
 /* Covers without a banner: the faces sit in the centre of the rings. */
@@ -89,29 +89,29 @@
   top: 50%;
   translate: -50% -50%;
   display: flex;
-  gap: 8px;
+  gap: 0.5rem;
   transition: translate 0.8s var(--ease-spring);
 }
 .cover-faces .portrait {
-  width: 60px;
-  height: 60px;
+  width: 3.75rem;
+  height: 3.75rem;
   border-color: color-mix(in srgb, var(--archive-color) 50%, transparent);
 }
 .cover-faces.lead .portrait {
-  width: 92px;
-  height: 92px;
+  width: 5.75rem;
+  height: 5.75rem;
 }
 .archive-card:hover .archive-cover .cover-faces img {
   transform: none;
 }
 .archive-card:hover .cover-faces {
-  translate: -50% calc(-50% - 4px);
+  translate: -50% calc(-50% - 0.25rem);
 }
 
 /* ── Profile emblem: the square stands upright and frames the avatar ── */
 .profile-emblem {
-  width: 104px;
-  height: 104px;
+  width: 6.5rem;
+  height: 6.5rem;
 }
 .profile-emblem i {
   transform: none;
@@ -142,7 +142,7 @@
   animation: emblem-in 0.5s var(--ease-out) both;
 }
 .profile-emblem > span {
-  font: 30px var(--serif);
+  font: 1.875rem var(--serif);
   color: color-mix(in srgb, var(--node-color) 80%, #fff);
 }
 @keyframes emblem-in {
@@ -157,22 +157,22 @@
   position: relative;
   isolation: isolate;
   width: max-content;
-  min-width: 300px;
+  min-width: 18.75rem;
   max-width: 100%;
-  min-height: 64px;
-  gap: 24px;
-  padding: 0 0 0 30px;
-  margin-top: 34px;
+  min-height: 4rem;
+  gap: 1.5rem;
+  padding: 0 0 0 1.875rem;
+  margin-top: 2.125rem;
   overflow: hidden;
   border: 1px solid #f3d7b7;
   background: linear-gradient(112deg, #f0d0a6, #d9ab83 52%, #c99477);
   color: #1c161a;
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: 500;
-  letter-spacing: 4px;
+  letter-spacing: 0.25rem;
   box-shadow:
-    0 0 0 6px #e0b58c14,
-    0 18px 46px -16px #e5b2878f;
+    0 0 0 0.375rem #e0b58c14,
+    0 1.125rem 2.875rem -1rem #e5b2878f;
   transition:
     transform 0.4s var(--ease-spring),
     box-shadow 0.4s;
@@ -183,13 +183,13 @@
   flex: none;
   align-self: stretch;
   place-items: center;
-  width: 76px;
+  width: 4.75rem;
   overflow: hidden;
   border-left: 1px solid #1c161a26;
 }
 .landing-sticky .primary-cta svg {
-  width: 34px;
-  height: 12px;
+  width: 2.125rem;
+  height: 0.75rem;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.4;
@@ -214,10 +214,10 @@
 .landing-sticky .primary-cta:focus-visible {
   background: linear-gradient(112deg, #f6dbb7, #e2b791 52%, #d3a083);
   color: #1c161a;
-  transform: translateY(-3px);
+  transform: translateY(-0.1875rem);
   box-shadow:
-    0 0 0 8px #e0b58c22,
-    0 24px 56px -16px #e5b287b8;
+    0 0 0 0.5rem #e0b58c22,
+    0 1.5rem 3.5rem -1rem #e5b287b8;
 }
 .landing-sticky .primary-cta:hover svg,
 .landing-sticky .primary-cta:focus-visible svg {
@@ -230,37 +230,37 @@
 /* The arrow leaves to the right and comes back in from the left. */
 @keyframes cta-arrow {
   40% {
-    translate: 46px 0;
+    translate: 2.875rem 0;
     opacity: 0;
   }
   41% {
-    translate: -46px 0;
+    translate: -2.875rem 0;
     opacity: 0;
   }
 }
-@media (max-height: 720px) and (min-width: 761px) {
+@media (max-height: 864px) and (min-width: 913px) {
   .landing-sticky .primary-cta {
-    margin-top: 24px;
+    margin-top: 1.5rem;
   }
 }
-@media (max-width: 760px) {
+@media (max-width: 912px) {
   .landing-sticky .primary-cta {
     min-width: 0;
-    width: min(100%, 290px);
-    min-height: 56px;
-    padding-left: 22px;
-    margin-top: 24px;
-    font-size: 16px;
-    letter-spacing: 3px;
+    width: min(100%, 18.125rem);
+    min-height: 3.5rem;
+    padding-left: 1.375rem;
+    margin-top: 1.5rem;
+    font-size: 1rem;
+    letter-spacing: 0.1875rem;
   }
   .landing-sticky .primary-cta i {
-    width: 64px;
+    width: 4rem;
   }
   .archive-card-content {
-    padding: 6px 20px 19px;
+    padding: 0.375rem 1.25rem 1.1875rem;
   }
   .profile-emblem {
-    width: 84px;
-    height: 84px;
+    width: 5.25rem;
+    height: 5.25rem;
   }
 }

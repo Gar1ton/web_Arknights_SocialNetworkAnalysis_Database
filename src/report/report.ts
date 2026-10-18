@@ -1,12 +1,13 @@
 import type { AtlasEdge, AtlasNode, Octant } from "../data";
+import { t } from "../i18n";
 export type ReportType =
   "merge" | "name" | "relation" | "personality" | "other";
-export const reportTypes: [ReportType, string][] = [
-  ["merge", "角色合并"],
-  ["name", "人名异常"],
-  ["relation", "关系异常"],
-  ["personality", "人格异常"],
-  ["other", "其他问题"],
+export const reportTypes: [ReportType, string, string][] = [
+  ["merge", "角色合并", "Same person"],
+  ["name", "人名异常", "Wrong name"],
+  ["relation", "关系异常", "Wrong relation"],
+  ["personality", "人格异常", "Wrong personality"],
+  ["other", "其他问题", "Something else"],
 ];
 /** Where the panel was opened from. */
 export type ReportTarget =
@@ -52,7 +53,8 @@ export interface Report {
 export const limits = { reasonMin: 10, reasonMax: 2000, name: 40 };
 /** Counts characters, not UTF-16 units, so 40 Chinese characters fit 40. */
 export const length = (text: string) => Array.from(text.trim()).length;
-export const displayName = (name: string) => name.trim() || "匿名贡献者";
+export const displayName = (name: string) =>
+  name.trim() || t("匿名贡献者", "Anonymous contributor");
 export function newDraft(origin: ReportTarget, edges: AtlasEdge[]): Draft {
   const edge =
     origin.kind === "edge"
@@ -78,17 +80,33 @@ export function newDraft(origin: ReportTarget, edges: AtlasEdge[]): Draft {
 /** Messages for the form, in the order of the fields. Empty means it can be sent. */
 export function problems(d: Draft): string[] {
   const out: string[] = [];
-  if (!d.type) out.push("请选择问题类型");
-  if (d.type === "merge" && d.people.length < 2) out.push("请选择至少两个角色");
+  if (!d.type) out.push(t("请选择问题类型", "Choose a problem type"));
+  if (d.type === "merge" && d.people.length < 2)
+    out.push(t("请选择至少两个角色", "Choose at least two characters"));
   if ((d.type === "name" || d.type === "personality") && !d.nodeId)
-    out.push("请选择角色");
-  if (d.type === "relation" && !d.edgeId) out.push("请选择是哪一组关系");
+    out.push(t("请选择角色", "Choose a character"));
+  if (d.type === "relation" && !d.edgeId)
+    out.push(t("请选择是哪一组关系", "Choose the relation"));
   const reason = length(d.reason);
-  if (reason < limits.reasonMin) out.push("请写下至少 10 个字的理由");
-  if (reason > limits.reasonMax) out.push("理由最多 2000 字");
-  if (length(d.contributor) > limits.name) out.push("用户名最多 40 个字");
-  if (/@|\d{7,}/.test(d.contributor)) out.push("用户名里不要放邮箱或电话号码");
-  if (!d.agreed) out.push("请先阅读并勾选提交说明");
+  if (reason < limits.reasonMin)
+    out.push(
+      t("请写下至少 10 个字的理由", "Give a reason of at least 10 characters"),
+    );
+  if (reason > limits.reasonMax)
+    out.push(
+      t("理由最多 2000 字", "The reason can be 2000 characters at most"),
+    );
+  if (length(d.contributor) > limits.name)
+    out.push(t("用户名最多 40 个字", "Usernames can be 40 characters at most"));
+  if (/@|\d{7,}/.test(d.contributor))
+    out.push(
+      t(
+        "用户名里不要放邮箱或电话号码",
+        "Leave email addresses and phone numbers out of the username",
+      ),
+    );
+  if (!d.agreed)
+    out.push(t("请先阅读并勾选提交说明", "Read and tick the notice first"));
   return out;
 }
 const isText = (v: unknown, max: number): v is string =>

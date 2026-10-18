@@ -3,16 +3,27 @@ import { ArrowUpRight, ArrowLeft, Search, X, Orbit } from "lucide-react";
 import Brand from "./Brand";
 import FlowField from "./FlowField";
 import {
+  archiveCode,
+  archiveDescription,
+  archiveTitle,
   avatarUrl,
-  categories,
+  archiveCategory,
+  filterName,
+  filters,
+  dataVersion,
+  englishName,
   searchArchives,
   useManifest,
   useMedia,
   type Archive,
   type ArchiveMedia,
+  type Filter,
 } from "./archives";
 const PAGE = 24;
 import { type Settings, showcaseFlow } from "./settings";
+import { plural, t } from "./i18n";
+import LangSwitch from "./LangSwitch";
+import { useLang } from "./useLang";
 function Portrait({ id, name }: { id?: string | null; name: string }) {
   return (
     <span className="portrait">
@@ -133,13 +144,18 @@ export default function Library({ settings }: { settings: Settings }) {
   const media = useMedia();
   const archives = manifest.data?.archives || [];
   const [query, setQuery] = useState(""),
-    [category, setCategory] = useState("全部"),
+    [category, setCategory] = useState<Filter>("全部"),
     [shown, setShown] = useState(PAGE);
   const matches = useMemo(
     () => searchArchives(archives, query, category),
     [archives, query, category],
   );
   useEffect(() => setShown(PAGE), [query, category]);
+  // The event kinds are English-only filters.
+  const language = useLang();
+  useEffect(() => {
+    if (!filters().includes(category)) setCategory("全部");
+  }, [language]);
   const artSettings = useMemo(
     () => ({ ...settings, particles: 480, flowOpacity: showcaseFlow }),
     [settings],
@@ -156,48 +172,66 @@ export default function Library({ settings }: { settings: Settings }) {
       <div className="library-shell">
         <div className="library-brand-row">
           <Brand />
-          <a href="#" className="quiet-link">
-            <ArrowLeft size={13} /> 返回首页
-          </a>
+          <div className="library-brand-tools">
+            <LangSwitch />
+            <a href="#" className="quiet-link">
+              <ArrowLeft size={13} /> {t("返回首页", "Home")}
+            </a>
+          </div>
         </div>
         <section className="library-intro">
           <div>
             <span className="eyebrow">
-              <i /> 剧情目录
+              <i /> {t("剧情目录", "Stories")}
             </span>
             <h1>
-              选择一段
+              {t("选择一段", "Choose a")}
               <br />
-              <em>剧情</em>
+              <em>{t("剧情", "story")}</em>
             </h1>
-            <p>每段剧情一张关系图，按剧情顺序排列。</p>
+            <p>
+              {t(
+                "每段剧情一张关系图，按剧情顺序排列。",
+                "One relation graph per story, in story order.",
+              )}
+            </p>
           </div>
           <div className="library-edition">
-            <span>收录</span>
+            <span>{t("收录", "Covers")}</span>
             <strong>{archives.length || "—"}</strong>
             <p>
-              段剧情
+              {t("段剧情", "stories")}
               <br />
-              {categories
+              {filters()
+                .slice(1)
                 .map(
-                  (c) =>
-                    `${c} ${archives.filter((a) => a.category === c).length}`,
+                  (f) =>
+                    `${filterName(f)} ${searchArchives(archives, "", f).length}`,
                 )
                 .join(" · ")}
             </p>
-            <small>数据版本：{manifest.data?.info.version || "载入中"}</small>
+            <small>
+              {t("数据版本：", "Data version: ")}
+              {manifest.data
+                ? dataVersion(manifest.data)
+                : t("载入中", "loading")}
+            </small>
           </div>
         </section>
         <div className="archive-toolbar">
-          <div className="archive-tabs" role="group" aria-label="剧情分类">
-            {["全部", ...categories].map((c) => (
+          <div
+            className="archive-tabs"
+            role="group"
+            aria-label={t("剧情分类", "Story type")}
+          >
+            {filters().map((c) => (
               <button
                 key={c}
                 className={c === category ? "active" : ""}
                 aria-pressed={c === category}
                 onClick={() => setCategory(c)}
               >
-                {c === "全部" ? "全部" : c}
+                {filterName(c)}
               </button>
             ))}
           </div>
@@ -205,13 +239,19 @@ export default function Library({ settings }: { settings: Settings }) {
             <Search size={16} />
             <input
               ref={searchInput}
-              aria-label="搜索剧情"
-              placeholder="搜索剧情名、章节或角色名…"
+              aria-label={t("搜索剧情", "Search stories")}
+              placeholder={t(
+                "搜索剧情名、章节或角色名…",
+                "Search by story, chapter or character…",
+              )}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
             {query ? (
-              <button onClick={() => setQuery("")} aria-label="清空搜索">
+              <button
+                onClick={() => setQuery("")}
+                aria-label={t("清空搜索", "Clear search")}
+              >
                 <X size={14} />
               </button>
             ) : (
@@ -220,8 +260,13 @@ export default function Library({ settings }: { settings: Settings }) {
           </label>
         </div>
         <div className="archive-result-count" role="status">
-          <span>共 {matches.length} 项</span>
-          <span>按剧情顺序排列</span>
+          <span>
+            {t(
+              `共 ${matches.length} 项`,
+              plural("story", matches.length, "stories"),
+            )}
+          </span>
+          <span>{t("按剧情顺序排列", "In story order")}</span>
         </div>
         <div className="archive-grid">
           {matches.slice(0, shown).map((archive, index) => {
@@ -238,7 +283,10 @@ export default function Library({ settings }: { settings: Settings }) {
                     "--card-order": index % PAGE,
                   } as React.CSSProperties
                 }
-                aria-label={"查看" + archive.title + "关系图"}
+                aria-label={t(
+                  "查看" + archive.title + "关系图",
+                  "Open the relation graph of " + archiveTitle(archive),
+                )}
               >
                 <Cover
                   archive={archive}
@@ -247,11 +295,21 @@ export default function Library({ settings }: { settings: Settings }) {
                 />
                 <div className="archive-card-content">
                   <div className="archive-card-top">
-                    <span>{archive.code}</span>
-                    <span className="archive-category">{archive.category}</span>
+                    {/* The category sits on the right; English keeps only the episode here. */}
+                    <span>
+                      {t(
+                        archive.code,
+                        archiveCode(archive)
+                          .replace(archiveCategory(archive), "")
+                          .replace(/^ · /, ""),
+                      )}
+                    </span>
+                    <span className="archive-category">
+                      {archiveCategory(archive)}
+                    </span>
                   </div>
                   <div className="archive-card-title">
-                    <h2>{archive.title}</h2>
+                    <h2>{archiveTitle(archive)}</h2>
                     <p>
                       {cast && (
                         <span className="cast-faces">
@@ -260,14 +318,20 @@ export default function Library({ settings }: { settings: Settings }) {
                           ))}
                         </span>
                       )}
-                      <span>关系最多：{archive.top.join("、")}</span>
+                      <span>
+                        {t("关系最多：", "Most connected: ")}
+                        {archive.top.map(englishName).join(t("、", ", "))}
+                      </span>
                     </p>
                   </div>
-                  <p className="archive-description">{archive.description}</p>
+                  <p className="archive-description">
+                    {archiveDescription(archive)}
+                  </p>
                   <div className="archive-card-bottom">
                     <span>
-                      {archive.nodes} <small>名角色</small>
-                      <i /> {archive.pairs} <small>组关系</small>
+                      {archive.nodes} <small>{t("名角色", "characters")}</small>
+                      <i /> {archive.pairs}{" "}
+                      <small>{t("组关系", "relations")}</small>
                     </span>
                     <span className="card-open">
                       <ArrowUpRight size={19} />
@@ -283,22 +347,29 @@ export default function Library({ settings }: { settings: Settings }) {
             className="wide-button library-more"
             onClick={() => setShown((n) => n + PAGE * 2)}
           >
-            再显示 {Math.min(PAGE * 2, matches.length - shown)} 项（还有{" "}
-            {matches.length - shown} 项）
+            {t(
+              `再显示 ${Math.min(PAGE * 2, matches.length - shown)} 项（还有 ${matches.length - shown} 项）`,
+              `Show ${Math.min(PAGE * 2, matches.length - shown)} more (${matches.length - shown} left)`,
+            )}
           </button>
         )}
         {manifest.error && (
           <div className="archive-empty">
             <Orbit size={32} />
-            <h2>目录载入失败</h2>
-            <p>请刷新页面重试。</p>
+            <h2>{t("目录载入失败", "Could not load the stories")}</h2>
+            <p>{t("请刷新页面重试。", "Refresh the page to try again.")}</p>
           </div>
         )}
         {manifest.data && !matches.length && (
           <div className="archive-empty">
             <Orbit size={32} />
-            <h2>没有找到这段剧情</h2>
-            <p>试试剧情名、章节号或角色名。</p>
+            <h2>{t("没有找到这段剧情", "No story found")}</h2>
+            <p>
+              {t(
+                "试试剧情名、章节号或角色名。",
+                "Try a story title, chapter number or character name.",
+              )}
+            </p>
             <button
               className="wide-button"
               onClick={() => {
@@ -306,13 +377,23 @@ export default function Library({ settings }: { settings: Settings }) {
                 setCategory("全部");
               }}
             >
-              查看全部
+              {t("查看全部", "Show all")}
             </button>
           </div>
         )}
         <footer className="library-footer">
-          <span>数值由大模型根据剧情台词推断，仅供参考。</span>
-          <small>非官方项目，与鹰角网络无关联</small>
+          <span>
+            {t(
+              "数值由大模型根据剧情台词推断，仅供参考。",
+              "Values are inferred by a large language model from the script. Treat them as estimates.",
+            )}
+          </span>
+          <small>
+            {t(
+              "非官方项目，与鹰角网络无关联",
+              "Unofficial project, not affiliated with Hypergryph",
+            )}
+          </small>
         </footer>
       </div>
     </main>

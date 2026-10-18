@@ -5,14 +5,18 @@ import {
   type Community,
   type Direction,
   type Octant,
+  altName,
   bigFiveNames,
   communityColor,
   isMutual,
-  kindNames,
+  kindName,
   level,
+  nodeName,
+  octantName,
   octants,
   towards,
 } from "./data";
+import { lang, t } from "./i18n";
 import IpcChart from "./IpcChart";
 import { avatarUrl, useMedia } from "./archives";
 import { ReportButton } from "./report/ReportDialog";
@@ -31,7 +35,7 @@ function TypeTag({ type }: { type: Octant }) {
   return (
     <span className="tag ipc-tag" style={{ color: octants[type].color }}>
       <i style={{ background: octants[type].color }} />
-      {octants[type].name}
+      {octantName(type)}
     </span>
   );
 }
@@ -74,31 +78,46 @@ function DirectionBlock({
   return (
     <div className="direction-block">
       <h3 className="mini-heading">
-        {from} 对 {to}
+        {t(`${from} 对 ${to}`, `${from} → ${to}`)}
         {d && <TypeTag type={d.type} />}
       </h3>
       {d ? (
         <>
           <Scale
-            label="友善度"
+            label={t("友善度", "Affiliation")}
             value={d.benevolence}
-            left="敌对"
-            right="友善"
+            left={t("敌对", "hostile")}
+            right={t("友善", "friendly")}
           />
-          <Scale label="支配度" value={d.power} left="顺从" right="主导" />
+          <Scale
+            label={t("支配度", "Dominance")}
+            value={d.power}
+            left={t("顺从", "submissive")}
+            right={t("主导", "dominant")}
+          />
           <p className="direction-facts">
-            情感强度 <b>{percent(d.intensity)}</b>
-            <span>·</span>可信度 <b>{percent(d.confidence)}</b>
-            <span>·</span>依据 <b>{d.evidence}</b> 个事件
+            {t("情感强度", "Affect intensity")} <b>{percent(d.intensity)}</b>
+            <span>·</span>
+            {t("可信度", "confidence")} <b>{percent(d.confidence)}</b>
+            <span>·</span>
+            {t("依据", "based on")} <b>{d.evidence}</b>{" "}
+            {t("个事件", d.evidence === 1 ? "event" : "events")}
             {d.scopes ? (
               <>
-                <span>·</span>来自 <b>{d.scopes}</b> 段剧情
+                <span>·</span>
+                {t("来自", "from")} <b>{d.scopes}</b>{" "}
+                {t("段剧情", d.scopes === 1 ? "story" : "stories")}
               </>
             ) : null}
           </p>
         </>
       ) : (
-        <p className="control-note">没有记录到这个方向的态度。</p>
+        <p className="control-note">
+          {t(
+            "没有记录到这个方向的态度。",
+            "No attitude recorded in this direction.",
+          )}
+        </p>
       )}
     </div>
   );
@@ -125,7 +144,7 @@ export function EdgeDetail({
             ...edge.ab,
             color: octants[edge.ab.type].color,
             arrow: true,
-            label: a.name + "→" + b.name,
+            label: nodeName(a) + "→" + nodeName(b),
           },
         ]
       : []),
@@ -135,7 +154,7 @@ export function EdgeDetail({
             ...edge.ba,
             color: octants[edge.ba.type].color,
             arrow: true,
-            label: b.name + "→" + a.name,
+            label: nodeName(b) + "→" + nodeName(a),
           },
         ]
       : []),
@@ -143,41 +162,59 @@ export function EdgeDetail({
   return (
     <>
       <button className="back-link" onClick={onBack}>
-        <ChevronLeft size={14} /> 返回角色列表
+        <ChevronLeft size={14} /> {t("返回角色列表", "Back to characters")}
       </button>
       <div className="detail-content">
-        <span className="eyebrow">关系详情</span>
+        <span className="eyebrow">{t("关系详情", "Relation")}</span>
         <h2 className="edge-names">
-          <button onClick={() => onSelect(a.id)}>{a.name}</button>
+          <button onClick={() => onSelect(a.id)}>{nodeName(a)}</button>
           <span>{isMutual(edge) ? "⇄" : edge.ab ? "→" : "←"}</span>
-          <button onClick={() => onSelect(b.id)}>{b.name}</button>
+          <button onClick={() => onSelect(b.id)}>{nodeName(b)}</button>
         </h2>
         <div className="tags">
           <span className="tag">
-            {isMutual(edge) ? "双向都有记录" : "只有单向记录"}
+            {isMutual(edge)
+              ? t("双向都有记录", "Recorded both ways")
+              : t("只有单向记录", "Recorded one way only")}
           </span>
           <ReportButton
             onClick={() => onReport({ kind: "edge", edgeId: edge.id })}
           />
         </div>
         <div className="detail-metrics">
-          <Metric value={edge.events} label="同场事件" />
-          <Metric value={edge.weight.toFixed(2)} label="关系强度" />
+          <Metric value={edge.events} label={t("同场事件", "Shared events")} />
+          <Metric
+            value={edge.weight.toFixed(2)}
+            label={t("关系强度", "Tie strength")}
+          />
         </div>
         <p className="control-note">
-          关系强度按两人同时出场的事件数计算，在本页范围内换算到 0–1。
+          {t(
+            "关系强度按两人同时出场的事件数计算，在本页范围内换算到 0–1。",
+            "Tie strength counts the events both appear in, scaled to 0–1 within this story.",
+          )}
         </p>
-        <h3 className="mini-heading">人际态度（IPC）</h3>
+        <h3 className="mini-heading">
+          {t("人际态度（IPC）", "Interpersonal circumplex (IPC)")}
+        </h3>
         <IpcChart
           points={points}
-          label={`${a.name}与${b.name}的人际态度坐标图`}
+          label={t(
+            `${a.name}与${b.name}的人际态度坐标图`,
+            `Attitude chart of ${nodeName(a)} and ${nodeName(b)}`,
+          )}
         />
-        <DirectionBlock from={a.name} to={b.name} d={edge.ab} />
-        <DirectionBlock from={b.name} to={a.name} d={edge.ba} />
+        <DirectionBlock from={nodeName(a)} to={nodeName(b)} d={edge.ab} />
+        <DirectionBlock from={nodeName(b)} to={nodeName(a)} d={edge.ba} />
         <div className="evidence-note">
-          <span className="eyebrow">怎么看这张图</span>
+          <span className="eyebrow">
+            {t("怎么看这张图", "Reading this chart")}
+          </span>
           <p>
-            横轴是友善度（右友善、左敌对），纵轴是支配度（上主导、下顺从），按所在区域归为八种关系类型。数值由大模型根据剧情对话推断，不是官方设定。
+            {t(
+              "横轴是友善度（右友善、左敌对），纵轴是支配度（上主导、下顺从），按所在区域归为八种关系类型。数值由大模型根据剧情对话推断，不是官方设定。",
+              "The horizontal axis is affiliation (friendly right, hostile left), the vertical axis dominance (dominant up, submissive down); the region a point falls in gives one of eight relation types. Values are inferred by a language model from the dialogue and are not official lore.",
+            )}
           </p>
         </div>
       </div>
@@ -205,7 +242,7 @@ function Breakdown({
             {sorted.map(([k, v]) => (
               <i
                 key={k}
-                title={`${octants[k].name} ${v}`}
+                title={`${octantName(k)} ${v}`}
                 style={{ flex: v, background: octants[k].color }}
               />
             ))}
@@ -213,12 +250,12 @@ function Breakdown({
           <small>
             {sorted
               .slice(0, 3)
-              .map(([k, v]) => `${octants[k].name} ${v}`)
+              .map(([k, v]) => `${octantName(k)} ${v}`)
               .join(" · ")}
           </small>
         </>
       ) : (
-        <small>暂无记录</small>
+        <small>{t("暂无记录", "None recorded")}</small>
       )}
     </div>
   );
@@ -254,10 +291,11 @@ export function NodeDetail({
   const color = communityColor(node.community, communities);
   const scored = node.profile.bigFive.some((v) => v != null);
   const avatar = useMedia()?.avatars[node.id];
+  const en = lang() === "en";
   return (
     <>
       <button className="back-link" onClick={onBack}>
-        <ChevronLeft size={14} /> 返回角色列表
+        <ChevronLeft size={14} /> {t("返回角色列表", "Back to characters")}
       </button>
       <div className="detail-content">
         <div
@@ -268,47 +306,60 @@ export function NodeDetail({
             <img key={avatar} src={avatarUrl(avatar)} alt="" />
           ) : (
             <span aria-hidden="true">
-              {[...node.name.replace(/^[“"]/, "")][0]}
+              {[...nodeName(node).replace(/^[“"]/, "")][0]}
             </span>
           )}
           <i />
           <i />
           <i />
         </div>
-        <span className="eyebrow">{kindNames[node.kind]}</span>
+        <span className="eyebrow">{kindName(node.kind)}</span>
         <h2 className="profile-name">
-          {node.name}
-          {node.en && <em>{node.en}</em>}
+          {nodeName(node)}
+          {altName(node) && <em>{altName(node)}</em>}
         </h2>
         <div className="tags">
           <span className="tag">
-            社群：{communities[node.community]?.label}
+            {t("社群：", "Community: ")}
+            {communities[node.community]?.label}
           </span>
           <ReportButton
             onClick={() => onReport({ kind: "node", nodeId: node.id })}
           />
         </div>
-        <p className="detail-prose">
-          {node.profile.description || "暂无性格简述。"}
+        <p className="detail-prose" lang="zh-CN">
+          {node.profile.description || t("暂无性格简述。", "No profile yet.")}
         </p>
+        {en && node.profile.description && (
+          <p className="control-note">
+            Profile notes are written in Chinese for now.
+          </p>
+        )}
         <div className="detail-metrics">
-          <Metric value={links.length} label="关系数" />
-          <Metric value={node.messages} label="发言数" />
-          <Metric value={node.betweenness.toFixed(2)} label="中介中心性" />
+          <Metric value={links.length} label={t("关系数", "Relations")} />
+          <Metric value={node.messages} label={t("发言数", "Lines")} />
+          <Metric
+            value={node.betweenness.toFixed(2)}
+            label={t("中介中心性", "Betweenness centrality")}
+          />
         </div>
         <p className="control-note">
-          发言数为本页范围内的台词条数；中介中心性越高，说明越常处在其他角色彼此联系的路径上。
+          {t(
+            "发言数为本页范围内的台词条数；中介中心性越高，说明越常处在其他角色彼此联系的路径上。",
+            "Lines are counted within this story. Higher betweenness centrality means the character more often sits on the paths that connect others.",
+          )}
         </p>
         <button className="wide-button" onClick={onEgo}>
-          <Focus size={15} /> 只看 TA 的关系圈 <ArrowUpRight size={15} />
+          <Focus size={15} /> {t("只看 TA 的关系圈", "Show only their circle")}{" "}
+          <ArrowUpRight size={15} />
         </button>
         <h3 className="mini-heading">
-          大五人格 <span>0–100</span>
+          {t("大五人格", "Big Five")} <span>0–100</span>
         </h3>
         {scored ? (
           <>
             <div className="traits">
-              {bigFiveNames.map((label, i) => {
+              {bigFiveNames().map((label, i) => {
                 const v = node.profile.bigFive[i];
                 return (
                   <div key={label} className={v == null ? "unscored" : ""}>
@@ -323,10 +374,10 @@ export function NodeDetail({
             </div>
             {node.profile.evidence.some(Boolean) && (
               <details className="trait-evidence">
-                <summary>查看评分依据</summary>
-                {bigFiveNames.map((label, i) =>
+                <summary>{t("查看评分依据", "Why these scores")}</summary>
+                {bigFiveNames().map((label, i) =>
                   node.profile.evidence[i] ? (
-                    <p key={label}>
+                    <p key={label} lang="zh-CN">
                       <b>{label}</b>
                       {node.profile.evidence[i]}
                     </p>
@@ -335,18 +386,34 @@ export function NodeDetail({
               </details>
             )}
             <p className="control-note">
-              根据该角色在全部剧情中的表现推断，画像可信度{" "}
-              {percent(node.profile.confidence)}。
+              {t(
+                `根据该角色在全部剧情中的表现推断，画像可信度 ${percent(node.profile.confidence)}。`,
+                `Inferred from the character across every story; profile confidence ${percent(node.profile.confidence)}.`,
+              )}
             </p>
           </>
         ) : (
-          <p className="control-note">发言太少，未做人格评分。</p>
+          <p className="control-note">
+            {t(
+              "发言太少，未做人格评分。",
+              "Too few lines to score a personality.",
+            )}
+          </p>
         )}
         <h3 className="mini-heading">
-          人际态度（IPC） <span>{links.length} 组关系</span>
+          {t("人际态度（IPC）", "Interpersonal circumplex (IPC)")}{" "}
+          <span>
+            {t(
+              `${links.length} 组关系`,
+              `${links.length} ${links.length === 1 ? "relation" : "relations"}`,
+            )}
+          </span>
         </h3>
         <IpcChart
-          label={`${node.name}的人际态度分布`}
+          label={t(
+            `${node.name}的人际态度分布`,
+            `Attitudes around ${nodeName(node)}`,
+          )}
           points={[
             ...incoming.flatMap((d) =>
               d ? [{ ...d, color: octants[d.type].color, hollow: true }] : [],
@@ -357,13 +424,14 @@ export function NodeDetail({
           ]}
         />
         <p className="ipc-legend">
-          <span>● TA 对别人</span>
-          <span>○ 别人对 TA</span>
+          <span>● {t("TA 对别人", "Them to others")}</span>
+          <span>○ {t("别人对 TA", "Others to them")}</span>
         </p>
-        <Breakdown title="TA 对别人" items={outgoing} />
-        <Breakdown title="别人对 TA" items={incoming} />
+        <Breakdown title={t("TA 对别人", "Them to others")} items={outgoing} />
+        <Breakdown title={t("别人对 TA", "Others to them")} items={incoming} />
         <h3 className="mini-heading">
-          关系列表 <span>按关系强度</span>
+          {t("关系列表", "Relations")}{" "}
+          <span>{t("按关系强度", "by tie strength")}</span>
         </h3>
         <div className="connections">
           {links.map((e) => {
@@ -380,7 +448,7 @@ export function NodeDetail({
                       background: communityColor(other.community, communities),
                     }}
                   />
-                  {other.name}
+                  {nodeName(other)}
                   <small>
                     {isMutual(e) ? "⇄" : towards(e, node.id) ? "→" : "←"}
                   </small>
@@ -388,17 +456,23 @@ export function NodeDetail({
                 <button
                   className="connection-type"
                   onClick={() => onEdge(e.id)}
-                  aria-label={`查看${node.name}与${other.name}的关系详情`}
+                  aria-label={t(
+                    `查看${node.name}与${other.name}的关系详情`,
+                    `Relation between ${nodeName(node)} and ${nodeName(other)}`,
+                  )}
                   style={{ color: octants[d.type].color }}
                 >
-                  {octants[d.type].name} <ArrowUpRight size={12} />
+                  {octantName(d.type)} <ArrowUpRight size={12} />
                 </button>
               </div>
             );
           })}
         </div>
         <p className="control-note">
-          人格评分与关系数值由大模型根据剧情对话推断，仅供参考，不是官方设定。
+          {t(
+            "人格评分与关系数值由大模型根据剧情对话推断，仅供参考，不是官方设定。",
+            "Personality scores and relation values are inferred by a language model from the dialogue. They are estimates, not official lore.",
+          )}
         </p>
       </div>
     </>

@@ -1,8 +1,8 @@
 /* The report panel: a dialog over the graph on desktop, a bottom sheet on phones. */
 .report-cta {
   position: absolute;
-  right: 30px;
-  bottom: 88px;
+  right: 1.875rem;
+  bottom: 5.5rem;
   z-index: 4;
   display: flex;
   align-items: stretch;
@@ -12,8 +12,8 @@
   background: linear-gradient(112deg, #f0d0a6, #d9ab83 52%, #c99477);
   color: #1c161a;
   box-shadow:
-    0 0 0 5px #e0b58c14,
-    0 14px 36px -14px #e5b2878f;
+    0 0 0 0.3125rem #e0b58c14,
+    0 0.875rem 2.25rem -0.875rem #e5b2878f;
   transition:
     transform 0.4s var(--ease-spring),
     box-shadow 0.4s;
@@ -21,19 +21,19 @@
 .report-cta > svg {
   align-self: center;
   flex: none;
-  margin-left: 14px;
+  margin-left: 0.875rem;
 }
 .report-cta > span {
   display: grid;
-  padding: 8px 16px 8px 10px;
-  font-size: 15px;
+  padding: 0.5rem 1rem 0.5rem 0.625rem;
+  font-size: 0.9375rem;
   font-weight: 500;
-  letter-spacing: 3px;
+  letter-spacing: 0.1875rem;
   line-height: 1.3;
   text-align: left;
 }
 .report-cta small {
-  font-size: 10px;
+  font-size: 0.625rem;
   font-weight: 400;
   letter-spacing: 1px;
   opacity: 0.72;
@@ -42,13 +42,13 @@
   display: grid;
   flex: none;
   place-items: center;
-  width: 50px;
+  width: 3.125rem;
   overflow: hidden;
   border-left: 1px solid #1c161a26;
 }
 .report-cta i svg {
-  width: 26px;
-  height: 10px;
+  width: 1.625rem;
+  height: 0.625rem;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.4;
@@ -58,10 +58,10 @@
 .report-cta:hover,
 .report-cta:focus-visible {
   color: #1c161a;
-  transform: translateY(-2px);
+  transform: translateY(-0.125rem);
   box-shadow:
-    0 0 0 7px #e0b58c22,
-    0 20px 46px -16px #e5b287b8;
+    0 0 0 0.4375rem #e0b58c22,
+    0 1.25rem 2.875rem -1rem #e5b287b8;
 }
 .report-cta:hover i svg,
 .report-cta:focus-visible i svg {
@@ -71,17 +71,17 @@
   display: inline-flex;
   align-self: center;
   align-items: center;
-  gap: 6px;
+  gap: 0.375rem;
   margin-left: auto;
-  padding: 5px 12px 5px 10px;
+  padding: 0.3125rem 0.75rem 0.3125rem 0.625rem;
   border: 1px solid #f3d7b7;
-  border-radius: 6px;
+  border-radius: 0.375rem;
   background: linear-gradient(112deg, #f0d0a6, #d9ab83 52%, #c99477);
   color: #1c161a;
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 500;
   letter-spacing: 1px;
-  box-shadow: 0 6px 18px -10px #e5b2878f;
+  box-shadow: 0 0.375rem 1.125rem -0.625rem #e5b2878f;
   transition:
     transform 0.3s var(--ease-spring),
     box-shadow 0.3s;
@@ -91,22 +91,22 @@
   color: #1c161a;
   transform: translateY(-1px);
   box-shadow:
-    0 0 0 4px #e0b58c22,
-    0 10px 24px -10px #e5b287b8;
+    0 0 0 0.25rem #e0b58c22,
+    0 0.625rem 1.5rem -0.625rem #e5b287b8;
 }
 html:has(.report-dialog[open]) {
   overflow: hidden;
 }
 .report-dialog {
-  width: min(580px, calc(100vw - 32px));
+  width: min(36.25rem, calc(100vw - 2rem));
   max-width: none;
-  max-height: min(88dvh, 860px);
+  max-height: min(88dvh, 53.75rem);
   padding: 0;
   border: 1px solid #d6bca533;
-  border-radius: 10px;
+  border-radius: 0.625rem;
   background: linear-gradient(155deg, #261e29, #19151d);
   color: var(--text);
-  box-shadow: 0 30px 90px #000b;
+  box-shadow: 0 1.875rem 5.625rem #000b;
   overflow: hidden;
 }
 .report-dialog[open] {
@@ -115,12 +115,12 @@ html:has(.report-dialog[open]) {
 }
 .report-dialog::backdrop {
   background: #0b090dcc;
-  backdrop-filter: blur(3px);
+  backdrop-filter: blur(0.1875rem);
 }
 @keyframes report-in {
   from {
     opacity: 0;
-    transform: translateY(12px) scale(0.98);
+    transform: translateY(0.75rem) scale(0.98);
   }
 }
 .report-form {
@@ -132,65 +132,65 @@ html:has(.report-dialog[open]) {
 .report-head {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
-  padding: 18px 22px 16px;
+  gap: 0.75rem;
+  padding: 1.125rem 1.375rem 1rem;
   border-bottom: 1px solid var(--line);
 }
 .report-head .eyebrow {
-  font-size: 10px;
-  letter-spacing: 3px;
+  font-size: 0.625rem;
+  letter-spacing: 0.1875rem;
   color: var(--gold);
 }
 .report-head h2 {
-  margin: 4px 0 2px;
-  font: 400 26px/1.15 var(--serif);
+  margin: 0.25rem 0 0.125rem;
+  font: 400 1.625rem/1.15 var(--serif);
 }
 .report-head p {
   margin: 0;
-  font-size: 12px;
+  font-size: 0.75rem;
   color: var(--muted);
 }
 .report-close {
   margin-left: auto;
-  padding: 6px;
+  padding: 0.375rem;
   color: var(--muted);
 }
 .report-body {
   display: grid;
-  padding: 0 22px 10px;
+  padding: 0 1.375rem 0.625rem;
   overflow-y: auto;
   overscroll-behavior: contain;
 }
 .report-closed {
-  margin: 16px 0 2px;
-  padding: 10px 13px;
+  margin: 1rem 0 0.125rem;
+  padding: 0.625rem 0.8125rem;
   border: 1px dashed #ddb78088;
-  border-radius: 6px;
+  border-radius: 0.375rem;
   background: #ddb7800f;
   color: #e6c9a5;
-  font-size: 12.5px;
+  font-size: 0.7812rem;
   line-height: 1.7;
 }
 .report-section {
   display: grid;
-  gap: 9px;
+  gap: 0.5625rem;
   min-width: 0;
   margin: 0;
-  padding: 15px 0;
+  padding: 0.9375rem 0;
   border: 0;
   border-bottom: 1px solid #d6bca514;
 }
 .report-section legend {
   float: left;
   width: 100%;
-  margin-bottom: 9px;
+  margin-bottom: 0.5625rem;
   padding: 0;
 }
 .report-section legend + * {
   clear: both;
 }
 .report-label {
-  font-size: 12px;
+  font-size: 0.75rem;
   color: var(--muted);
 }
 .report-label i {
@@ -202,15 +202,15 @@ html:has(.report-dialog[open]) {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 7px;
+  gap: 0.4375rem;
 }
 .report-chip {
   position: relative;
-  padding: 5px 13px;
+  padding: 0.3125rem 0.8125rem;
   border: 1px solid #d6bca540;
-  border-radius: 999px;
+  border-radius: 62.4375rem;
   color: #cbb9c0;
-  font-size: 13px;
+  font-size: 0.8125rem;
   cursor: pointer;
   transition:
     background 0.2s,
@@ -231,38 +231,38 @@ html:has(.report-dialog[open]) {
   color: #1a171e;
 }
 .report-chip:has(input:focus-visible) {
-  outline: 2px solid var(--gold);
-  outline-offset: 3px;
+  outline: 0.125rem solid var(--gold);
+  outline-offset: 0.1875rem;
 }
 .report-tag {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
+  gap: 0.375rem;
+  padding: 0.25rem 0.625rem;
   border: 1px solid #d6bca533;
-  border-radius: 6px;
-  font-size: 13px;
+  border-radius: 0.375rem;
+  font-size: 0.8125rem;
 }
 .report-tag button {
   display: grid;
-  padding: 2px;
+  padding: 0.125rem;
   color: var(--muted);
 }
 .report-text-button {
-  padding: 4px 2px;
+  padding: 0.25rem 0.125rem;
   color: #c9a7b4;
-  font-size: 12px;
+  font-size: 0.75rem;
   text-decoration: underline;
-  text-underline-offset: 3px;
+  text-underline-offset: 0.1875rem;
 }
 .report-input {
   width: 100%;
-  padding: 9px 11px;
+  padding: 0.5625rem 0.6875rem;
   border: 1px solid #d6bca540;
-  border-radius: 6px;
+  border-radius: 0.375rem;
   background: #141216;
   color: var(--text);
-  font: 13px/1.6 var(--sans);
+  font: 0.8125rem/1.6 var(--sans);
 }
 .report-input::placeholder {
   color: #776b76;
@@ -270,26 +270,26 @@ html:has(.report-dialog[open]) {
 .report-input:focus {
   border-color: #d8b18baa;
   outline: none;
-  box-shadow: 0 0 0 3px #d8b18b1c;
+  box-shadow: 0 0 0 0.1875rem #d8b18b1c;
 }
 .report-reason {
-  min-height: 96px;
+  min-height: 6rem;
   resize: vertical;
 }
 .report-count {
   justify-self: end;
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: #8f8290;
   font-variant-numeric: tabular-nums;
 }
 .report-field {
   display: grid;
-  gap: 9px;
+  gap: 0.5625rem;
 }
 .report-hint,
 .report-current {
   margin: 0;
-  font-size: 12px;
+  font-size: 0.75rem;
   line-height: 1.7;
   color: #8f8290;
 }
@@ -299,8 +299,8 @@ html:has(.report-dialog[open]) {
 .report-check {
   display: flex;
   align-items: baseline;
-  gap: 9px;
-  font-size: 13px;
+  gap: 0.5625rem;
+  font-size: 0.8125rem;
   line-height: 1.6;
   color: #d9cbc0;
   cursor: pointer;
@@ -312,24 +312,24 @@ html:has(.report-dialog[open]) {
 }
 .report-check small {
   color: var(--muted);
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 .report-traits {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-variant-numeric: tabular-nums;
 }
 .report-traits th,
 .report-traits td {
-  padding: 5px 6px;
+  padding: 0.3125rem 0.375rem;
   border-bottom: 1px solid #d6bca514;
   font-weight: 400;
   text-align: center;
 }
 .report-traits thead th {
   color: var(--muted);
-  font-size: 11px;
+  font-size: 0.6875rem;
 }
 .report-traits th:first-child,
 .report-traits th:nth-child(2),
@@ -340,10 +340,10 @@ html:has(.report-dialog[open]) {
   color: var(--muted);
 }
 .report-vote {
-  width: 34px;
-  height: 28px;
+  width: 2.125rem;
+  height: 1.75rem;
   border: 1px solid #d6bca540;
-  border-radius: 6px;
+  border-radius: 0.375rem;
   color: #cbb9c0;
 }
 .report-vote[aria-pressed="true"] {
@@ -353,26 +353,26 @@ html:has(.report-dialog[open]) {
 }
 .report-notice {
   display: grid;
-  gap: 8px;
-  margin: 16px 0 6px;
-  padding: 13px 15px;
+  gap: 0.5rem;
+  margin: 1rem 0 0.375rem;
+  padding: 0.8125rem 0.9375rem;
   border: 1px solid #d8b18b26;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   background: #d8b18b0b;
 }
 .report-notice h3 {
   margin: 0;
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 500;
   letter-spacing: 1px;
   color: var(--gold);
 }
 .report-notice ul {
   display: grid;
-  gap: 3px;
+  gap: 0.1875rem;
   margin: 0;
-  padding-left: 16px;
-  font-size: 12px;
+  padding-left: 1rem;
+  font-size: 0.75rem;
   line-height: 1.7;
   color: #d9cbc0;
 }
@@ -381,7 +381,7 @@ html:has(.report-dialog[open]) {
 }
 .report-trap {
   position: absolute;
-  left: -10000px;
+  left: -625rem;
   width: 1px;
   height: 1px;
   overflow: hidden;
@@ -389,8 +389,8 @@ html:has(.report-dialog[open]) {
 .report-foot {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 13px 22px;
+  gap: 0.625rem;
+  padding: 0.8125rem 1.375rem;
   border-top: 1px solid var(--line);
   background: #1a161dcc;
 }
@@ -398,7 +398,7 @@ html:has(.report-dialog[open]) {
   flex: 1;
   min-width: 0;
   margin: 0;
-  font-size: 12px;
+  font-size: 0.75rem;
   line-height: 1.5;
   color: #b49aa7;
 }
@@ -407,12 +407,12 @@ html:has(.report-dialog[open]) {
 }
 .report-button {
   flex: none;
-  min-height: 40px;
-  padding: 8px 16px;
+  min-height: 2.5rem;
+  padding: 0.5rem 1rem;
   border: 1px solid #c3a28766;
-  border-radius: 6px;
+  border-radius: 0.375rem;
   color: #ddbea4;
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 .report-button.primary {
   background: var(--gold);
@@ -430,38 +430,38 @@ html:has(.report-dialog[open]) {
 .report-done {
   display: grid;
   justify-items: center;
-  gap: 8px;
-  padding: 40px 28px;
+  gap: 0.5rem;
+  padding: 2.5rem 1.75rem;
   text-align: center;
   color: #94c4b2;
 }
 .report-done h3 {
   margin: 0;
-  font: 400 24px var(--serif);
+  font: 400 1.5rem var(--serif);
   color: var(--text);
 }
 .report-done p {
   max-width: 34em;
   margin: 0;
-  font-size: 13px;
+  font-size: 0.8125rem;
   line-height: 1.8;
   color: var(--muted);
 }
-@media (max-width: 760px) {
+@media (max-width: 912px) {
   .report-cta {
-    right: 16px;
-    bottom: 74px;
-    border-radius: 999px;
+    right: 1rem;
+    bottom: 4.625rem;
+    border-radius: 62.4375rem;
     box-shadow:
-      0 0 0 4px #e0b58c14,
-      0 10px 24px -12px #e5b2878f;
+      0 0 0 0.25rem #e0b58c14,
+      0 0.625rem 1.5rem -0.75rem #e5b2878f;
   }
   .report-cta > svg {
-    margin-left: 12px;
+    margin-left: 0.75rem;
   }
   .report-cta > span {
-    padding: 6px 13px 6px 7px;
-    font-size: 12px;
+    padding: 0.375rem 0.8125rem 0.375rem 0.4375rem;
+    font-size: 0.75rem;
     letter-spacing: 1px;
   }
   .report-cta small,
@@ -473,22 +473,22 @@ html:has(.report-dialog[open]) {
     max-height: 90dvh;
     margin: auto 0 0;
     border-bottom: 0;
-    border-radius: 14px 14px 0 0;
+    border-radius: 0.875rem 0.875rem 0 0;
   }
   .report-dialog[open] {
     animation-name: report-up;
   }
   .report-head,
   .report-foot {
-    padding-left: 18px;
-    padding-right: 18px;
+    padding-left: 1.125rem;
+    padding-right: 1.125rem;
   }
   .report-body {
-    padding: 0 18px 10px;
+    padding: 0 1.125rem 0.625rem;
   }
   .report-foot {
     flex-wrap: wrap;
-    padding-bottom: max(13px, env(safe-area-inset-bottom));
+    padding-bottom: max(0.8125rem, env(safe-area-inset-bottom));
   }
   .report-status {
     flex-basis: 100%;
@@ -500,7 +500,7 @@ html:has(.report-dialog[open]) {
 @keyframes report-up {
   from {
     opacity: 0;
-    transform: translateY(40px);
+    transform: translateY(2.5rem);
   }
 }
 @media (prefers-reduced-motion: reduce) {

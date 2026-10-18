@@ -2,11 +2,14 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowUpRight, ArrowDown, ArrowRight, Pause, Play } from "lucide-react";
 import Brand from "./Brand";
 import Graph from "./Graph";
-import { useArchive, useManifest } from "./archives";
+import { archiveCode, archiveTitle, useArchive, useManifest } from "./archives";
+import { lang, locale, t } from "./i18n";
+import LangSwitch from "./LangSwitch";
 import { type Settings, showcaseFlow } from "./settings";
 import { createScreenScroller, scrollsInside } from "./screenScroll";
 /** Screen 2: each card is a title and its terms. */
-const concepts: [string, [string, string][]][] = [
+type Concepts = [string, [string, string][]][];
+const conceptsZh: Concepts = [
   [
     "怎么读一条关系",
     [
@@ -64,8 +67,69 @@ const concepts: [string, [string, string][]][] = [
     ],
   ],
 ];
+const conceptsEn: Concepts = [
+  [
+    "Reading one relation",
+    [
+      [
+        "Direction",
+        "Every pair is read both ways, e.g. Amiya → Kal'tsit and Kal'tsit → Amiya. The two attitudes can differ, and sometimes only one direction is on record.",
+      ],
+      [
+        "Eight attitudes",
+        "Affiliation (hostile to friendly) and dominance (submissive to dominant) place each attitude on a circle split into the eight octants of Wiggins's Interpersonal Adjective Scales: warm-agreeable, gregarious-extraverted, assured-dominant, arrogant-calculating, cold-quarrelsome, aloof-introverted, unassured-submissive and unassuming-ingenuous.",
+      ],
+      [
+        "Tie strength",
+        "0–1, from how many events the two share; the strongest pair on the page is 1. It says how often they appear together, not whether they get along.",
+      ],
+      [
+        "Affect intensity and confidence",
+        "Both 0–100%: the first is how strong the attitude is, the second how sure the model is of it. \u201cBased on N events\u201d counts the events behind the call.",
+      ],
+    ],
+  ],
+  [
+    "Reading the whole network",
+    [
+      [
+        "Relations and lines",
+        "How many people a character has a recorded relation with in this story, and how many lines they speak.",
+      ],
+      [
+        "Betweenness centrality",
+        "0–1: how often a character sits on the shortest path between two others. High values mark the bridges between circles, not necessarily the people who know the most others.",
+      ],
+      [
+        "Communities",
+        "Circles found automatically from who talks to whom, named after the best-connected member, e.g. \u201cKal'tsit +14\u201d. They are an algorithm's grouping, not the factions of the story.",
+      ],
+      [
+        "Density",
+        "The share of all possible pairs that actually have a relation. Stories have large casts, so density is usually low (around 0.04), and that is normal.",
+      ],
+    ],
+  ],
+  [
+    "Reading one character",
+    [
+      [
+        "Big Five",
+        "Openness, conscientiousness, extraversion, agreeableness and neuroticism, each 0–100 and graded high, mid or low, from how the character acts across every story. High neuroticism means more emotionally sensitive; it is not an insult.",
+      ],
+      [
+        "Not scored",
+        "Characters with too few lines are not scored; an empty trait means \u201cnot scored\u201d, not zero.",
+      ],
+      [
+        "Character type",
+        "Named characters, unnamed characters and the Doctor. Unnamed characters with the same label in different stories (\u201cCitizen A\u201d) count as different people.",
+      ],
+    ],
+  ],
+];
 /** Screen 3: what the project is, its limits and how to help. */
-const project: [string, string][] = [
+const projectZh: [string, string][] = [
   [
     "从台词到图谱",
     "剧情脚本取自社区整理的游戏数据，没有标明说话人的台词先由 AI 识别、再经人工复核。台词整理成对话后，大语言模型从每个剧情事件里提取关系证据，再由我们的关系推断算法和判断器筛选证据、随剧情逐步更新每个方向的态度；人物画像则综合全部剧情写成。这套算法属于学术研究的一部分，目前处于科研闭源期。",
@@ -79,7 +143,20 @@ const project: [string, string][] = [
     "发现重名没合并、关系方向反了，或者性格评得离谱？点详情里的「数据有问题？」或画布右下角的「提交纠错」告诉我们。每份报告都会先经人工核对，再用来改进下一版数据，不会自动生效。报告不记录 IP 或邮箱；愿意留名的话，我们会把你列入致谢名单。",
   ],
 ];
-const fmt = (n?: number) => (n == null ? "—" : n.toLocaleString("zh-CN"));
+const projectEn: [string, string][] = [
+  [
+    "From script to graph",
+    "Story scripts come from community-maintained game data; lines without a marked speaker are first attributed by AI, then checked by hand. Once the lines are assembled into conversations, a large language model pulls relation evidence out of each story event, and our relation inference algorithm and a judge model filter that evidence and update each direction's attitude as the story goes on. Character profiles are written from every story together. The algorithm is part of ongoing academic research and is not open source yet.",
+  ],
+  [
+    "An independent reading, with limits",
+    "This is an independent academic project with no ties to Hypergryph or Yostar. Every score and description here is a model's automatic reading of a work of fiction. They have not been checked one by one, may contain errors, gaps or bias, and are not official lore.",
+  ],
+  [
+    "Crowd-sourced corrections",
+    "Two names that should be one person, a relation pointing the wrong way, a personality that is way off? Tell us with \u201cSomething wrong?\u201d in any detail panel or \u201cReport it\u201d at the bottom right of the graph. Every report is checked by hand before it shapes the next data release; nothing changes automatically. Reports store no IP or email, and if you leave a username we will add you to the credits.",
+  ],
+];
 export default function Landing({
   settings,
   onAnimate,
@@ -88,6 +165,10 @@ export default function Landing({
   onAnimate: () => void;
 }) {
   const root = useRef<HTMLElement>(null);
+  const en = lang() === "en";
+  const concepts = en ? conceptsEn : conceptsZh;
+  const project = en ? projectEn : projectZh;
+  const fmt = (n?: number) => (n == null ? "—" : n.toLocaleString(locale()));
   const animate = useRef(settings.animate);
   animate.current = settings.animate;
   /** Moves to a screen (0 hero, 1 concepts, 2 about); set by the effect below. */
@@ -155,8 +236,8 @@ export default function Landing({
     update();
     addEventListener("scroll", update, { passive: true });
     // Desktop: the page follows the wheel one screen at a time (hero,
-    // concepts, about); touch layouts (≤760px) keep CSS scroll snap.
-    const desktop = matchMedia("(min-width: 761px)");
+    // concepts, about); touch layouts (≤912px) keep CSS scroll snap.
+    const desktop = matchMedia("(min-width: 913px)");
     const reduced = matchMedia("(prefers-reduced-motion: reduce)");
     const scroller = createScreenScroller(
       stops,
@@ -237,29 +318,54 @@ export default function Landing({
       <div className="landing-sticky">
         <div className="landing-brand">
           <Brand />
+          <LangSwitch />
         </div>
         <div className="hero-copy">
           <span className="eyebrow">
-            <i /> 明日方舟 · 剧情人物关系分析
+            <i />{" "}
+            {t(
+              "明日方舟 · 剧情人物关系分析",
+              "Arknights · story character network analysis",
+            )}
           </span>
-          <h1>
-            角色之间的
-            <br />
-            <em>关系图谱</em>
-          </h1>
+          {en ? (
+            <h1>
+              Mapping
+              <br />
+              <em>who&rsquo;s who</em>
+            </h1>
+          ) : (
+            <h1>
+              角色之间的
+              <br />
+              <em>关系图谱</em>
+            </h1>
+          )}
           <div className="hero-divider" />
           <p className="hero-chinese">
-            {fmt(manifest?.archives.length)} 段剧情
+            {t(
+              `${fmt(manifest?.archives.length)} 段剧情`,
+              `${fmt(manifest?.archives.length)} stories`,
+            )}
             <br />
-            {fmt(shownRelations)} 条人物关系
+            {t(
+              `${fmt(shownRelations)} 条人物关系`,
+              `${fmt(shownRelations)} character relations`,
+            )}
           </p>
           <p className="hero-description">
-            按主线、活动和干员密录整理，
+            {t(
+              "按主线、活动和干员密录整理，",
+              "Sorted by Main Theme, events and Operator Records:",
+            )}
             <br />
-            看谁和谁有交集、彼此态度如何，以及每个角色的性格画像。
+            {t(
+              "看谁和谁有交集、彼此态度如何，以及每个角色的性格画像。",
+              "see who crosses paths, how they regard each other, and each character's personality.",
+            )}
           </p>
           <a href="#archives" className="primary-cta">
-            <span>选择一段剧情</span>
+            <span>{t("选择一段剧情", "Choose a story")}</span>
             <i aria-hidden="true">
               <svg viewBox="0 0 44 12">
                 <path d="M1 6h41M36.5 1 42 6l-5.5 5" />
@@ -274,24 +380,32 @@ export default function Landing({
             }}
             className="secondary-cta"
           >
-            读图指南与项目介绍 <ArrowDown size={13} />
+            {t("读图指南与项目介绍", "Reading guide and about")}{" "}
+            <ArrowDown size={13} />
           </a>
         </div>
         <div className="landing-rail">
-          <span>明日方舟剧情人物关系</span>
+          <span>{t("明日方舟剧情人物关系", "Arknights story relations")}</span>
           <button
             onClick={onAnimate}
-            aria-label={settings.animate ? "暂停背景动效" : "播放背景动效"}
+            aria-label={
+              settings.animate
+                ? t("暂停背景动效", "Pause background motion")
+                : t("播放背景动效", "Play background motion")
+            }
           >
             {settings.animate ? <Pause size={12} /> : <Play size={12} />}
           </button>
         </div>
       </div>
       <div className="landing-scenes">
-        <section className="scene-hero" aria-label="剧情关系预览">
+        <section
+          className="scene-hero"
+          aria-label={t("剧情关系预览", "Story relation preview")}
+        >
           <div className="scene-number">
-            <span>{featured?.code}</span>
-            <i /> 预览
+            <span>{featured && archiveCode(featured)}</span>
+            <i /> {t("预览", "Preview")}
           </div>
           <div className="hero-constellation">
             <Graph
@@ -312,15 +426,21 @@ export default function Landing({
           </div>
           <div className="scene-caption">
             <span>
-              {featured?.title} · 关系最多的 {preview.nodes.length} 名角色
+              {featured && archiveTitle(featured)} ·{" "}
+              {t(
+                `关系最多的 ${preview.nodes.length} 名角色`,
+                `the ${preview.nodes.length} best-connected characters`,
+              )}
             </span>
             <small>
-              {preview.nodes.length} 名角色 · {preview.edges.length} 组关系 ·
-              点击进入剧情目录
+              {t(
+                `${preview.nodes.length} 名角色 · ${preview.edges.length} 组关系 · 点击进入剧情目录`,
+                `${preview.nodes.length} characters · ${preview.edges.length} relations · click to browse stories`,
+              )}
             </small>
           </div>
           <div className="scroll-cue">
-            <span>向下了解更多</span>
+            <span>{t("向下了解更多", "Scroll for more")}</span>
             <i />
             <ArrowDown size={12} />
           </div>
@@ -331,14 +451,17 @@ export default function Landing({
           aria-labelledby="concepts-heading"
         >
           <div className="reveal">
-            <span className="eyebrow">读图指南</span>
+            <span className="eyebrow">{t("读图指南", "Reading guide")}</span>
             <h2 id="concepts-heading">
-              图上的数字
+              {t("图上的数字", "What the numbers")}
               <br />
-              <em>怎么读</em>
+              <em>{t("怎么读", "mean")}</em>
             </h2>
             <p className="intro-lead">
-              不用懂社会网络分析或心理学。把剧情当作一场漫长的群聊，这些指标只回答三件事：谁和谁熟、谁对谁什么态度、谁是怎样的性格。
+              {t(
+                "不用懂社会网络分析或心理学。把剧情当作一场漫长的群聊，这些指标只回答三件事：谁和谁熟、谁对谁什么态度、谁是怎样的性格。",
+                "No network science or psychology needed. Think of the story as one long group chat; the numbers answer three questions: who knows whom, who feels what about whom, and what each person is like.",
+              )}
             </p>
           </div>
           <div className="intro-chapters">
@@ -360,7 +483,10 @@ export default function Landing({
             ))}
           </div>
           <p className="intro-note reveal">
-            注：站内所有数值和画像都是大模型对台词的解读，不是官方设定。
+            {t(
+              "注：站内所有数值和画像都是大模型对台词的解读，不是官方设定。",
+              "Note: every number and profile here is a language model's reading of the script, not official lore.",
+            )}
           </p>
         </section>
         <section
@@ -369,16 +495,17 @@ export default function Landing({
           aria-labelledby="about-heading"
         >
           <div className="reveal">
-            <span className="eyebrow">关于本项目</span>
+            <span className="eyebrow">{t("关于本项目", "About")}</span>
             <h2 id="about-heading">
-              这张图谱是
+              {t("这张图谱是", "How this atlas")}
               <br />
-              <em>怎么来的</em>
+              <em>{t("怎么来的", "was made")}</em>
             </h2>
             <p className="intro-lead">
-              收录主线第 0–17 章、活动、干员密录和集成战略，剧情更新到 2026 年
-              10 月的活动「昨日海」，另有跨剧情的总览图。数据是 v2
-              候选版本，仍在迭代。
+              {t(
+                "收录主线第 0–17 章、活动、干员密录和集成战略，剧情更新到 2026 年 10 月的活动「昨日海」，另有跨剧情的总览图。数据是 v2 候选版本，仍在迭代。",
+                "Covers Main Theme Episodes 00–17, events, Operator Records and Integrated Strategies, up to the October 2026 event \u201c昨日海\u201d on the Chinese server, plus cross-story overviews. The data is a v2 candidate and still changing. Story titles follow the English server; stories it has not released yet keep their Chinese titles, and the personality notes are in Chinese only for now.",
+              )}
             </p>
           </div>
           <div className="intro-chapters">
@@ -394,7 +521,7 @@ export default function Landing({
           </div>
           <dl className="intro-team reveal">
             <div>
-              <dt>制作与开源</dt>
+              <dt>{t("制作与开源", "Made by")}</dt>
               <dd>
                 <a
                   href="https://github.com/Gar1ton"
@@ -411,7 +538,10 @@ export default function Landing({
                   @MKiyoaki
                 </a>
                 <span>
-                  网站源码（含网络指标计算）在
+                  {t(
+                    "网站源码（含网络指标计算）在",
+                    "The site's source, network metrics included, is public on ",
+                  )}
                   <a
                     href="https://github.com/Gar1ton/web_Arknights_SocialNetworkAnalysis_Database"
                     target="_blank"
@@ -419,46 +549,72 @@ export default function Landing({
                   >
                     GitHub
                   </a>
-                  公开，关系推断算法仍在科研闭源期内
+                  {t(
+                    "公开，关系推断算法仍在科研闭源期内",
+                    "; the relation inference algorithm stays closed during the research.",
+                  )}
                 </span>
               </dd>
             </div>
             <div>
-              <dt>联系邮箱</dt>
+              <dt>{t("联系邮箱", "Contact")}</dt>
               <dd>
                 <a href="mailto:zefeng.1.wu@kcl.ac.uk">zefeng.1.wu@kcl.ac.uk</a>
-                <span>数据反馈、合作、权利方下架请求都可以发到这里</span>
+                <span>
+                  {t(
+                    "数据反馈、合作、权利方下架请求都可以发到这里",
+                    "Data feedback, collaboration and takedown requests from rights holders",
+                  )}
+                </span>
               </dd>
             </div>
             <div>
-              <dt>许可协议</dt>
+              <dt>{t("许可协议", "Licence")}</dt>
               <dd>
                 <span>
-                  图谱数据、派生评分、描述与网站代码采用
+                  {t(
+                    "图谱数据、派生评分、描述与网站代码采用",
+                    "The graph data, derived scores, descriptions and site code are licensed under ",
+                  )}
                   <a
-                    href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans"
+                    href={
+                      "https://creativecommons.org/licenses/by-nc-sa/4.0/" +
+                      t("deed.zh-hans", "")
+                    }
                     target="_blank"
                     rel="noreferrer"
                   >
                     CC BY-NC-SA 4.0
                   </a>
-                  许可，与 PRTS
-                  维基一致。《明日方舟》的角色、名称、剧情、设定及美术素材（头像、横幅等）归鹰角网络及其许可方所有。
+                  {t(
+                    "许可，与 PRTS 维基一致。《明日方舟》的角色、名称、剧情、设定及美术素材（头像、横幅等）归鹰角网络及其许可方所有。",
+                    ", the same as the PRTS wiki. Arknights characters, names, story, setting and artwork (avatars, banners) belong to Hypergryph and its licensors.",
+                  )}
                 </span>
               </dd>
             </div>
           </dl>
           <div className="intro-signoff reveal">
             <span className="intro-star">✳</span>
-            <p>感谢社区整理的基础数据，以及每一位帮模型「捉虫」的博士。</p>
-            <a href="#archives" aria-label="浏览剧情目录">
+            <p>
+              {t(
+                "感谢社区整理的基础数据，以及每一位帮模型「捉虫」的博士。",
+                "Thanks to the community for the game data, and to every Doctor who helps catch the model's mistakes.",
+              )}
+            </p>
+            <a
+              href="#archives"
+              aria-label={t("浏览剧情目录", "Browse stories")}
+            >
               <ArrowUpRight size={23} />
             </a>
           </div>
           <div className="intro-footer">
-            <button onClick={() => goTo.current(0)}>↑ 回到顶部</button>
+            <button onClick={() => goTo.current(0)}>
+              ↑ {t("回到顶部", "Back to top")}
+            </button>
             <a href="#archives">
-              进入剧情目录 <ArrowRight size={11} />
+              {t("进入剧情目录", "Browse stories")} <ArrowRight size={11} />
             </a>
           </div>
         </section>

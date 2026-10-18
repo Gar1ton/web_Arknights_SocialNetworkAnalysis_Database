@@ -8,9 +8,11 @@ import {
   type Community,
   degreeMap,
   isMutual,
-  octants,
+  nodeName,
+  octantName,
   primary,
 } from "./data";
+import { t } from "./i18n";
 import { type Settings, palettes } from "./settings";
 import { nodeColor, edgeColor } from "./colors";
 import { makeLayout, curve, type Point } from "./layout";
@@ -272,7 +274,10 @@ export default function Graph({
     nodeColor(n.community, communities, settings.palette);
   const linkColor = (e: AtlasEdge) =>
     edgeColor(e, settings.coloring, color(byId.get(e.source)!));
-  const name = (id: string) => byId.get(id)?.name || "";
+  const name = (id: string) => {
+    const n = byId.get(id);
+    return n ? nodeName(n) : "";
+  };
   return (
     <div
       className={"graph-stage " + (landing ? "hero-graph" : "")}
@@ -304,7 +309,10 @@ export default function Graph({
         id={landing ? "hero-svg" : "network-svg"}
         viewBox="0 0 1000 760"
         role="group"
-        aria-label="关系图：点击角色查看详情，点击空白处返回全图，拖拽平移，滚轮或双指缩放"
+        aria-label={t(
+          "关系图：点击角色查看详情，点击空白处返回全图，拖拽平移，滚轮或双指缩放",
+          "Relation graph: click a character for details, click empty space to return to the whole network, drag to pan, wheel or pinch to zoom",
+        )}
         onPointerDown={down}
         onPointerMove={move}
         onPointerUp={up}
@@ -400,12 +408,15 @@ export default function Graph({
                         onEdge(e.id);
                       }
                     }}
-                    aria-label={`${name(e.source)}与${name(e.target)}的关系`}
+                    aria-label={t(
+                      `${name(e.source)}与${name(e.target)}的关系`,
+                      `Relation between ${name(e.source)} and ${name(e.target)}`,
+                    )}
                     onClick={() => onEdge(e.id)}
                   >
                     <title>
                       {name(e.source)} {isMutual(e) ? "⇄" : e.ab ? "→" : "←"}{" "}
-                      {name(e.target)} · {octants[primary(e).type].name}
+                      {name(e.target)} · {octantName(primary(e).type)}
                     </title>
                   </path>
                 )}
@@ -464,7 +475,7 @@ export default function Graph({
                     fontSize="12"
                     textAnchor="middle"
                   >
-                    {octants[primary(e).type].name}
+                    {octantName(primary(e).type)}
                   </text>
                 )}
               </g>
@@ -504,7 +515,7 @@ export default function Graph({
                 className="graph-node"
                 role="button"
                 tabIndex={landing ? -1 : 0}
-                aria-label={`${n.name} · ${communities[n.community]?.label || ""} · ${d}组关系`}
+                aria-label={`${nodeName(n)} · ${communities[n.community]?.label || ""} · ${t(`${d}组关系`, `${d} relations`)}`}
                 aria-pressed={isSelected}
                 onMouseEnter={() => setHover(n.id)}
                 onMouseLeave={() => setHover(null)}
@@ -572,10 +583,10 @@ export default function Graph({
                       strokeWidth: 3,
                     }}
                   >
-                    {n.name}
+                    {nodeName(n)}
                   </text>
                 )}
-                {landing && prominent && n.en && (
+                {landing && prominent && n.en && nodeName(n) !== n.en && (
                   <text
                     y={r + 33}
                     textAnchor="middle"
@@ -595,27 +606,29 @@ export default function Graph({
         <>
           <div className="graph-corner">
             <span className="status-dot" />
-            {settings.animate ? "动效开启" : "动效已暂停"}
+            {settings.animate
+              ? t("动效开启", "Motion on")
+              : t("动效已暂停", "Motion paused")}
             <span className="corner-sep">/</span>
             {Math.round(zoom * 100)}%
           </div>
           <div className="graph-tools">
             <button
-              aria-label="放大"
+              aria-label={t("放大", "Zoom in")}
               onClick={() => setZoom((z) => clamp(z + 0.15))}
             >
               <Plus size={16} />
             </button>
             <button
-              aria-label="缩小"
+              aria-label={t("缩小", "Zoom out")}
               onClick={() => setZoom((z) => clamp(z - 0.15))}
             >
               <Minus size={16} />
             </button>
             <i />
             <button
-              aria-label="缩放到显示全图"
-              title="显示全图"
+              aria-label={t("缩放到显示全图", "Zoom to fit")}
+              title={t("显示全图", "Fit")}
               onClick={() => {
                 setZoom(fitZoom());
                 setPan({ x: 0, y: 0 });
@@ -623,12 +636,19 @@ export default function Graph({
             >
               <Maximize size={15} />
             </button>
-            <button aria-label="重置节点位置" onClick={() => setOverrides({})}>
+            <button
+              aria-label={t("重置节点位置", "Reset node positions")}
+              onClick={() => setOverrides({})}
+            >
               <RotateCcw size={15} />
             </button>
             <i />
             <button
-              aria-label={settings.animate ? "暂停动效" : "播放动效"}
+              aria-label={
+                settings.animate
+                  ? t("暂停动效", "Pause motion")
+                  : t("播放动效", "Play motion")
+              }
               onClick={onAnimate}
             >
               {settings.animate ? <Pause size={15} /> : <Play size={15} />}

@@ -12,6 +12,7 @@ import "./refinement.css";
 import "./insight.css";
 import "./media.css";
 import "./report/report.css";
+import "./lang.css";
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <App />

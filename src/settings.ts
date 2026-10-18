@@ -63,21 +63,25 @@ export const defaults: Settings = {
 export const palettes = {
   dusk: {
     name: "暮色",
+    en: "Dusk",
     colors: ["#df96a7", "#dcb27b", "#9b86b4", "#ba746f"],
     bg: "#141216",
   },
   glacier: {
     name: "冰川",
+    en: "Glacier",
     colors: ["#81c9cb", "#92b0db", "#c6decf", "#648baf"],
     bg: "#10191f",
   },
   ember: {
     name: "余烬",
+    en: "Ember",
     colors: ["#ed986b", "#d36851", "#d8b078", "#ac6461"],
     bg: "#1c1412",
   },
   mono: {
     name: "月白",
+    en: "Moonlight",
     colors: ["#d9d1c4", "#a6a1ad", "#b9b8bd", "#807b86"],
     bg: "#151518",
   },
