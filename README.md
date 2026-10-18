@@ -22,7 +22,7 @@
 1. 在首页选择一段剧情，或在目录里搜索剧情名、章节、角色名。
 2. 点击角色，看 TA 的性格画像和人际态度；点击连线，看两人之间双向的态度。
 3. 在「画布设置」里调整布局、连线颜色和角色名大小，喜欢的画面可以导出为图片。
-4. 右上角「中 / EN」切换中英文界面。英文模式下，剧情标题和干员名使用国际服官方译名；国际服尚未上线的剧情、无名角色，以及人物性格简述与评分依据，暂时只有中文。
+4. 右上角「中 / EN」切换中英文界面。英文模式下，剧情标题、干员名和剧情角色名使用国际服官方译名（剧情角色名取自国际服剧情脚本中的说话人）；国际服尚未上线的剧情及其中的角色，以及人物性格简述与评分依据，暂时只有中文。
 
 ## 本地运行
 
@@ -31,7 +31,7 @@ npm ci
 npm run dev    # http://localhost:4178
 ```
 
-角色头像与剧情横幅由 `scripts/build_media.py` 生成（在 `build_data.py` 之后运行，需要 ffmpeg；参数见 `--help`）。英文界面用到的剧情英文标题与角色英文名在 `public/data/en.json`，由 `scripts/build_i18n.py` 生成（同样在 `build_data.py` 之后运行，需要国服与国际服的 `story_review_table.json`）。
+角色头像与剧情横幅由 `scripts/build_media.py` 生成（在 `build_data.py` 之后运行，需要 ffmpeg；参数见 `--help`）。英文界面用到的剧情英文标题与角色英文名在 `public/data/en.json`，由 `scripts/build_i18n.py` 生成（同样在 `build_data.py` 之后运行，需要国服与国际服的 `story_review_table.json`，以及可选的两服 `gamedata/story` 剧情脚本目录）。
 
 ## 团队与联系
 
@@ -82,7 +82,7 @@ npm run dev    # http://localhost:4178
 | 来源 | 说明 |
 |---|---|
 | [ArknightsGameData](https://github.com/Kengxxiao/ArknightsGameData) | 剧情脚本与角色英文名所取自的社区游戏数据仓库，相关权利归游戏权利方所有。 |
-| [ArknightsGameData_YoStar](https://github.com/Kengxxiao/ArknightsGameData_YoStar) | 英文界面中剧情标题的国际服官方译名。 |
+| [ArknightsGameData_YoStar](https://github.com/Kengxxiao/ArknightsGameData_YoStar) | 英文界面中剧情标题与剧情角色名的国际服官方译名。 |
 | 角色头像、活动横幅 | 剧情卡片与角色详情中展示的游戏图像，权利归鹰角网络所有；活动横幅为官方活动公告图，经 [PRTS 维基](https://prts.wiki) 收录。 |
 
 **数据生成**

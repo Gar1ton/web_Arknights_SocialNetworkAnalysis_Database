@@ -1,4 +1,5 @@
-import { t } from "./i18n";
+import { lang, t } from "./i18n";
+import { englishName } from "./archives";
 export type Octant =
   | "affinity"
   | "active"
@@ -137,12 +138,16 @@ const kinds = {
 export const kindName = (kind: AtlasNode["kind"]) =>
   t(kinds[kind][0], kinds[kind][1]);
 /** The name to show: the English name in English mode when there is one. */
+/**
+ * Operators carry their own English name; other story characters take the
+ * name the English script gives them (en.json), else stay in Chinese.
+ */
 export const nodeName = (n: Pick<AtlasNode, "name" | "en">) =>
-  t(n.name, n.en || n.name);
+  n.en ? t(n.name, n.en) : englishName(n.name);
 /** The other-language name shown in small type, if it differs. */
 export const altName = (n: Pick<AtlasNode, "name" | "en">) => {
-  const alt = t(n.en, n.en ? n.name : "");
-  return alt === nodeName(n) ? "" : alt;
+  if (lang() === "zh") return n.en;
+  return nodeName(n) === n.name ? "" : n.name;
 };
 /**
  * Community labels are written in Chinese by build_data.py ("凯尔希 等 9 人",
@@ -152,7 +157,7 @@ export function communityLabel(c: Community | undefined, nodes: AtlasNode[]) {
   if (!c) return "";
   const lead = /^(.+) 等 (\d+) 人$/.exec(c.label);
   if (lead) {
-    const n = nodes.find((x) => x.name === lead[1] && x.en) ?? {
+    const n = nodes.find((x) => x.name === lead[1]) ?? {
       name: lead[1],
       en: "",
     };

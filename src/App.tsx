@@ -241,7 +241,7 @@ export default function App() {
     () =>
       baseNodes
         .filter((n) =>
-          (n.name + " " + n.en)
+          (n.name + " " + n.en + " " + nodeName(n))
             .toLocaleLowerCase()
             .includes(query.trim().toLocaleLowerCase()),
         )

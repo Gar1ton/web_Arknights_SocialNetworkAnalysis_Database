@@ -330,9 +330,9 @@ export default function Landing({
           </span>
           {en ? (
             <h1>
-              Mapping
+              Arknights
               <br />
-              <em>who&rsquo;s who</em>
+              <em>SNA</em>
             </h1>
           ) : (
             <h1>
