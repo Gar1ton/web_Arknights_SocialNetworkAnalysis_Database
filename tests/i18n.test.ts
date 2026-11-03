@@ -2,7 +2,7 @@ import test from "node:test";
 import { readFileSync } from "node:fs";
 import assert from "node:assert/strict";
 import { lang, setLang, t } from "../src/i18n.ts";
-import { nodeName, altName, level } from "../src/data.ts";
+import { communityLabel, nodeName, altName, level } from "../src/data.ts";
 import { archiveCode, archiveTitle, categories } from "../src/archives.ts";
 import { problems, newDraft } from "../src/report/report.ts";
 import { archive, manifest } from "./fixture.ts";
@@ -22,6 +22,9 @@ test("English mode names operators in English and falls back to Chinese", (conte
   assert.equal(nodeName(named), named.en);
   assert.equal(altName(named), named.name);
   assert.equal(level(80), "high");
+  const lead = data.communities.find((c) => / 等 \d+ 人$/.test(c.label))!;
+  assert.match(communityLabel(lead, data.nodes), /^\S.* \+\d+$/);
+  assert.equal(communityLabel({ label: "其他 8 人", size: 8 }, []), "Others (8)");
   const chapter = manifest.stories.find((s) => s.id === "main-08")!;
   assert.equal(archiveCode(chapter), "Main Theme · Episode 08");
   // en.json is not loaded here, so the title falls back to Chinese.

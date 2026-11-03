@@ -1,30 +1,55 @@
 export type Route =
   | { page: "home" }
-  | { page: "story"; id: string | null; pair?: [number, number] }
-  | { page: "person"; p: number | null; other?: number };
-/** Opened by #atlas / #studio and the old graph links: 主线 第8章 怒号光明. */
-export const defaultStory = "main-08";
+  | { page: "archives" }
+  | { page: "people" }
+  | { page: "person"; p: number; other?: number }
+  | {
+      page: "graph";
+      archiveId: string;
+      /** A character or a pair to select on opening. */
+      focus?: number;
+      pair?: [number, number];
+    };
+/** Opened by #atlas / #studio: 主线 第8章 怒号光明. */
+export const defaultArchive = "main-08";
 const ID = /^[a-z]+-[0-9a-z]+$/;
+/**
+ * #archives, #people, #person/12[/34], #graph/<story>[/12 | /12-34]. The old
+ * #graph/<story> links keep working; #story/… is read as #graph/….
+ */
 export function resolveRoute(hash: string): Route {
-  const parts = hash.replace(/^#\/?/, "").split("/").map(decodeURIComponent);
-  const [head, a, b] = parts;
-  if (head === "archives") return { page: "story", id: null };
-  if (head === "atlas" || head === "studio") return { page: "story", id: defaultStory };
+  const [head, a, b] = hash
+    .replace(/^#\/?/, "")
+    .split("/")
+    .map((part) => {
+      try {
+        return decodeURIComponent(part);
+      } catch {
+        return "";
+      }
+    });
+  if (head === "archives") return { page: "archives" };
+  if (head === "people") return { page: "people" };
+  if (head === "atlas" || head === "studio")
+    return { page: "graph", archiveId: defaultArchive };
   if (head === "graph" || head === "story") {
-    if (!a || !ID.test(a)) return { page: "story", id: null };
+    if (!a || !ID.test(a)) return { page: "archives" };
     const pair = /^(\d+)-(\d+)$/.exec(b ?? "");
-    return pair ? { page: "story", id: a, pair: [+pair[1], +pair[2]] } : { page: "story", id: a };
+    if (pair) return { page: "graph", archiveId: a, pair: [+pair[1], +pair[2]] };
+    if (/^\d+$/.test(b ?? "")) return { page: "graph", archiveId: a, focus: +b };
+    return { page: "graph", archiveId: a };
   }
-  if (head === "person" || head === "people") {
-    const p = /^\d+$/.test(a ?? "") ? +a : null;
-    const other = /^\d+$/.test(b ?? "") ? +b : undefined;
-    return other === undefined ? { page: "person", p } : { page: "person", p, other };
+  if (head === "person") {
+    if (!/^\d+$/.test(a ?? "")) return { page: "people" };
+    return /^\d+$/.test(b ?? "")
+      ? { page: "person", p: +a, other: +b }
+      : { page: "person", p: +a };
   }
   return { page: "home" };
 }
-export function hashFor(route: Route): string {
-  if (route.page === "home") return "#/";
-  if (route.page === "story")
-    return route.id ? `#story/${route.id}${route.pair ? `/${route.pair[0]}-${route.pair[1]}` : ""}` : "#story";
-  return route.p === null ? "#person" : `#person/${route.p}${route.other !== undefined ? `/${route.other}` : ""}`;
-}
+export const storyHash = (id: string, focus?: number | [number, number]) =>
+  "#graph/" +
+  id +
+  (focus === undefined ? "" : "/" + (Array.isArray(focus) ? focus.join("-") : focus));
+export const personHash = (p: number, other?: number) =>
+  "#person/" + p + (other === undefined ? "" : "/" + other);

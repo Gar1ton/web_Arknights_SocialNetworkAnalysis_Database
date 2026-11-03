@@ -13,8 +13,6 @@ export interface Profile {
   description: string;
   /** Big Five as 0–100, in O C E A N order; null when not scored. */
   bigFive: (number | null)[];
-  evidence: (string | null)[];
-  confidence: number;
 }
 export interface AtlasNode {
   id: string;
@@ -29,15 +27,12 @@ export interface AtlasNode {
   betweenness: number;
   profile: Profile;
 }
-/** One direction of a relationship: how the observer sees the subject. */
+/** One direction of a relationship: how the observer sees the subject, at one point of the story. */
 export interface Direction {
   type: Octant;
   benevolence: number;
   power: number;
   intensity: number;
-  confidence: number;
-  evidence: number;
-  scopes?: number;
 }
 /** An unordered pair; ab is source→target, ba is target→source. */
 export interface AtlasEdge {
@@ -150,7 +145,7 @@ export const altName = (n: Pick<AtlasNode, "name" | "en">) => {
   return nodeName(n) === n.name ? "" : n.name;
 };
 /**
- * Community labels are written in Chinese by the previous build_data.py ("凯尔希 等 9 人",
+ * Community labels are written in Chinese by build_data.py ("凯尔希 等 9 人",
  * "其他 12 人"); English mode rebuilds them from the lead's English name.
  */
 export function communityLabel(c: Community | undefined, nodes: AtlasNode[]) {
@@ -191,11 +186,11 @@ export function level(score: number | null) {
       ? t("低", "low")
       : t("中等", "mid");
 }
-/** The direction with more confidence, used for single-value colouring. */
+/** The more pronounced direction, used for single-value colouring. */
 export function primary(edge: AtlasEdge): Direction {
   if (!edge.ab) return edge.ba!;
   if (!edge.ba) return edge.ab;
-  return edge.ba.confidence > edge.ab.confidence ? edge.ba : edge.ab;
+  return edge.ba.intensity > edge.ab.intensity ? edge.ba : edge.ab;
 }
 export function isMutual(edge: AtlasEdge) {
   return !!edge.ab && !!edge.ba;

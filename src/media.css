@@ -1,0 +1,266 @@
+/* Story banners and character avatars (scripts/build_media.py), and the
+   landing call to action. */
+
+/* ── Archive cards: the cover sits above the text so banners stay legible ── */
+.archive-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.archive-cover {
+  position: relative;
+  inset: auto;
+  flex: none;
+  height: auto;
+  aspect-ratio: 1560 / 500;
+  /* Fade into the card itself rather than into a guessed background colour. */
+  -webkit-mask-image: linear-gradient(180deg, #000 52%, transparent);
+  mask-image: linear-gradient(180deg, #000 52%, transparent);
+}
+.archive-cover:after {
+  content: none;
+}
+.archive-cover.has-banner img {
+  object-position: 50% 40%;
+}
+.archive-card:hover .archive-cover.has-banner img {
+  transform: scale(1.045);
+}
+.archive-cover .cover-index {
+  top: 50%;
+  translate: 0 -54%;
+  line-height: 1;
+}
+.archive-card-content {
+  flex: 1;
+  height: auto;
+  padding: 0.5rem 1.5rem 1.3125rem;
+}
+.archive-card-title {
+  margin-top: 0.75rem;
+}
+.archive-card-title p {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin-top: 0.5rem;
+}
+
+/* A square window onto an avatar; the first glyph of the name stands in. */
+.portrait {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  overflow: hidden;
+  border: 1px solid
+    color-mix(in srgb, var(--archive-color, var(--gold)) 36%, transparent);
+  background:
+    radial-gradient(
+      circle at 50% 28%,
+      color-mix(in srgb, var(--archive-color, var(--gold)) 24%, transparent),
+      transparent 75%
+    ),
+    #19151c;
+}
+.archive-cover .portrait img,
+.portrait img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: none;
+}
+.portrait b {
+  font: 400 0.6875rem var(--sans);
+  color: var(--archive-color, var(--gold));
+}
+.cast-faces {
+  display: flex;
+  gap: 0.25rem;
+}
+
+/* Covers without a banner: the faces sit in the centre of the rings. */
+.cover-faces {
+  position: absolute;
+  left: 66%;
+  top: 50%;
+  translate: -50% -50%;
+  display: flex;
+  gap: 0.5rem;
+  transition: translate 0.8s var(--ease-spring);
+}
+.cover-faces .portrait {
+  width: 3.75rem;
+  height: 3.75rem;
+  border-color: color-mix(in srgb, var(--archive-color) 50%, transparent);
+}
+.cover-faces.lead .portrait {
+  width: 5.75rem;
+  height: 5.75rem;
+}
+.archive-card:hover .archive-cover .cover-faces img {
+  transform: none;
+}
+.archive-card:hover .cover-faces {
+  translate: -50% calc(-50% - 0.25rem);
+}
+
+/* ── Profile emblem: the square stands upright and frames the avatar ── */
+.profile-emblem {
+  width: 6.5rem;
+  height: 6.5rem;
+}
+.profile-emblem i {
+  transform: none;
+}
+.profile-emblem i:nth-last-child(3) {
+  inset: 12.5%;
+  z-index: 2;
+  border-color: color-mix(in srgb, var(--node-color) 46%, transparent);
+}
+.profile-emblem > img,
+.profile-emblem > span {
+  position: absolute;
+  inset: 12.5%;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 75%;
+  height: 75%;
+  object-fit: cover;
+  /* Opaque, so the rings pass behind the portrait instead of across it. */
+  background:
+    radial-gradient(
+      circle at 50% 30%,
+      color-mix(in srgb, var(--node-color) 22%, transparent),
+      transparent 72%
+    ),
+    var(--panel);
+  animation: emblem-in 0.5s var(--ease-out) both;
+}
+.profile-emblem > span {
+  font: 1.875rem var(--serif);
+  color: color-mix(in srgb, var(--node-color) 80%, #fff);
+}
+@keyframes emblem-in {
+  from {
+    opacity: 0;
+    scale: 0.94;
+  }
+}
+
+/* ── Landing: the way into the stories ── */
+.landing-sticky .primary-cta {
+  position: relative;
+  isolation: isolate;
+  width: max-content;
+  min-width: 18.75rem;
+  max-width: 100%;
+  min-height: 4rem;
+  gap: 1.5rem;
+  padding: 0 0 0 1.875rem;
+  margin-top: 2.125rem;
+  overflow: hidden;
+  border: 1px solid #f3d7b7;
+  background: linear-gradient(112deg, #f0d0a6, #d9ab83 52%, #c99477);
+  color: #1c161a;
+  font-size: 1.125rem;
+  font-weight: 500;
+  letter-spacing: 0.25rem;
+  box-shadow:
+    0 0 0 0.375rem #e0b58c14,
+    0 1.125rem 2.875rem -1rem #e5b2878f;
+  transition:
+    transform 0.4s var(--ease-spring),
+    box-shadow 0.4s;
+}
+/* A fine drawn arrow behind a hairline, in the site's line-work style. */
+.landing-sticky .primary-cta i {
+  display: grid;
+  flex: none;
+  align-self: stretch;
+  place-items: center;
+  width: 4.75rem;
+  overflow: hidden;
+  border-left: 1px solid #1c161a26;
+}
+.landing-sticky .primary-cta svg {
+  width: 2.125rem;
+  height: 0.75rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.landing-sticky .primary-cta:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    #fff7ea80 50%,
+    transparent 70%
+  );
+  translate: -110% 0;
+  transition: translate 0.9s var(--ease-out);
+}
+.landing-sticky .primary-cta:hover,
+.landing-sticky .primary-cta:focus-visible {
+  background: linear-gradient(112deg, #f6dbb7, #e2b791 52%, #d3a083);
+  color: #1c161a;
+  transform: translateY(-0.1875rem);
+  box-shadow:
+    0 0 0 0.5rem #e0b58c22,
+    0 1.5rem 3.5rem -1rem #e5b287b8;
+}
+.landing-sticky .primary-cta:hover svg,
+.landing-sticky .primary-cta:focus-visible svg {
+  animation: cta-arrow 0.75s var(--ease-out);
+}
+.landing-sticky .primary-cta:hover:after,
+.landing-sticky .primary-cta:focus-visible:after {
+  translate: 110% 0;
+}
+/* The arrow leaves to the right and comes back in from the left. */
+@keyframes cta-arrow {
+  40% {
+    translate: 2.875rem 0;
+    opacity: 0;
+  }
+  41% {
+    translate: -2.875rem 0;
+    opacity: 0;
+  }
+}
+@media (max-height: 864px) and (min-width: 913px) {
+  .landing-sticky .primary-cta {
+    margin-top: 1.5rem;
+  }
+}
+@media (max-width: 912px) {
+  .landing-sticky .primary-cta {
+    min-width: 0;
+    width: min(100%, 18.125rem);
+    min-height: 3.5rem;
+    padding-left: 1.375rem;
+    margin-top: 1.5rem;
+    font-size: 1rem;
+    letter-spacing: 0.1875rem;
+  }
+  .landing-sticky .primary-cta i {
+    width: 4rem;
+  }
+  .archive-card-content {
+    padding: 0.375rem 1.25rem 1.1875rem;
+  }
+  .profile-emblem {
+    width: 5.25rem;
+    height: 5.25rem;
+  }
+}

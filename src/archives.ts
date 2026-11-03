@@ -1,4 +1,5 @@
 import { plural, t } from "./i18n";
+import type { StoryMeta } from "./model/types";
 export type Category = "主线" | "活动" | "密录" | "集成战略";
 /** Categories shown in this version; 集成战略 stays offline, its data is not published. */
 export const categories: Category[] = ["主线", "活动", "密录"];
@@ -10,26 +11,23 @@ const categoryNames: Record<Category | "全部", string> = {
   集成战略: "Integrated Strategies",
 };
 export const categoryName = (c: Category | "全部") => t(c, categoryNames[c]);
-/** Colors for the story categories, validated as a set on the dark surface. */
-export const categoryColors: Record<Category, string> = {
-  主线: "#d95926",
-  活动: "#199e70",
-  密录: "#9085e9",
-  集成战略: "#c98500",
-};
 /** How the English server's story archive splits 活动; Chinese keeps one 活动. */
 export type EventKind = "side" | "collection";
 const eventNames: Record<EventKind, string> = {
   side: "Side Story",
   collection: "Story Collection",
 };
-/** What the report panel and the titles need from a story. */
-export type Archive = {
-  id: string;
-  title: string;
-  category: Category;
-  code: string;
-};
+/** The library's filters: a category, or in English one kind of event. */
+export type Filter = Category | "全部" | EventKind;
+export const filters = (): Filter[] =>
+  t("zh", "en") === "en"
+    ? ["全部", "主线", "side", "collection", "密录"]
+    : ["全部", ...categories];
+export const filterName = (f: Filter) =>
+  f === "side" || f === "collection" ? eventNames[f] : categoryName(f);
+/** One story: what the titles, the library and the report panel need. */
+export type Archive = Pick<StoryMeta, "id" | "title" | "category" | "code"> &
+  Partial<StoryMeta>;
 /** Official English titles and names, written by scripts/build_i18n.py and build_temporal.py. */
 export type English = {
   version: string;
@@ -47,6 +45,9 @@ const eventKind = (a: Archive) =>
 export function archiveCategory(a: Archive) {
   const kind = eventKind(a);
   return kind ? t(a.category, eventNames[kind]) : categoryName(a.category);
+}
+export function visibleArchives<T extends Archive>(archives: T[]) {
+  return archives.filter((a) => categories.includes(a.category));
 }
 /** A story or character name in the current language; Chinese when no English one exists. */
 export const englishName = (zh: string) => t(zh, english.names[zh] || zh);
@@ -66,9 +67,38 @@ export function archiveCode(a: Archive) {
           : ""),
   );
 }
-export const storyCount = (n: number) =>
-  t(`${n.toLocaleString("zh-CN")} 个故事`, plural("story", n, "stories"));
+/** "新" for a story the latest update added, "续" for one it continued. */
+export const newLabel = (kind: StoryMeta["new"]) =>
+  kind === "new" ? t("新", "New") : kind === "updated" ? t("续", "Continued") : "";
 export const dataVersion = (version: string) =>
   t(version, english.version || version);
 export const avatarUrl = (key: string) => "./media/avatars/" + key + ".webp";
 export const mediaUrl = (path: string) => "./" + path.replace(/^\.?\//, "");
+export function searchArchives<T extends Archive>(
+  archives: T[],
+  query: string,
+  category: Filter = "全部",
+) {
+  const q = query.trim().toLocaleLowerCase();
+  return archives.filter(
+    (a) =>
+      (category === "全部" ||
+        a.category === category ||
+        eventKind(a) === category) &&
+      [
+        a.title,
+        a.code,
+        a.category,
+        english.archives[a.id] || "",
+        archiveCode(a),
+        archiveCategory(a),
+        ...(a.top ?? []),
+        ...(a.top ?? []).map((n) => english.names[n] || ""),
+      ]
+        .join(" ")
+        .toLocaleLowerCase()
+        .includes(q),
+  );
+}
+export const storyCount = (n: number) =>
+  t(`${n.toLocaleString("zh-CN")} 段剧情`, plural("story", n, "stories"));
