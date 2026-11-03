@@ -152,7 +152,11 @@ function Loaded({
   );
   const byId = useMemo(() => new Map(dataset.nodes.map((x) => [x.id, x])), [dataset]);
   const fullById = useMemo(() => new Map(full.nodes.map((x) => [x.id, x])), [full]);
-  const maxMessages = useMemo(() => Math.max(10, ...full.nodes.map((x) => x.messages)), [full]);
+  // Lines of everyone in the table, most first: the slider spans down to the 30th person, and the quick choices
+  // below the cast list show the first 200 / 400 / 600 people.
+  const linesDesc = useMemo(() => full.nodes.map((x) => x.messages).sort((a, b) => b - a), [full]);
+  const maxMessages = Math.max(10, linesDesc[Math.min(29, linesDesc.length - 1)] ?? 10);
+  const minFor = (k: number) => (k >= linesDesc.length ? 0 : linesDesc[k - 1]);
   // The table opens on everyone with the most lines; the rest come in from the settings.
   const firstMin = (nodes: typeof full.nodes) => {
     if (nodes.length <= SHOWN) return 0;
@@ -853,6 +857,22 @@ function Loaded({
                       <option value="betweenness">{t("按中介中心性", "By betweenness centrality")}</option>
                       <option value="name">{t("按名称", "By name")}</option>
                     </Select>
+                  </div>
+                  <div className="fs-show" role="group" aria-label={t("显示多少人", "How many to show")}>
+                    <span>{t("显示台词最多的", "Show the top")}</span>
+                    {[200, 400, 600, linesDesc.length].map((k) => {
+                      const v = minFor(k);
+                      return (
+                        <button
+                          key={k}
+                          className={settings.minMessages === v ? "active" : ""}
+                          aria-pressed={settings.minMessages === v}
+                          onClick={() => update("minMessages", v)}
+                        >
+                          {k >= linesDesc.length ? t(`全部 ${num(k)}`, `all ${num(k)}`) : t(`${k} 人`, `${k}`)}
+                        </button>
+                      );
+                    })}
                   </div>
                   <div className="list-heading">
                     <span>
