@@ -1,5 +1,5 @@
 import Select from "./Select";
-import { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef, useDeferredValue } from "react";
 import {
   ArrowUpRight,
   ArrowLeft,
@@ -35,7 +35,7 @@ import { exportGraph } from "./export";
 import type { Core } from "./model/load";
 import { edgeId, nodeId, personOf } from "./model/atlas";
 import {
-  fullAt,
+  fullCache,
   growth,
   historyRows,
   indexFull,
@@ -48,7 +48,7 @@ import {
 import { personHash, storyHash, fullStoryHash } from "./routes";
 type Tab = "stories" | "nodes" | "settings";
 const num = (n: number) => n.toLocaleString(locale());
-const SHOWN = 300;
+const SHOWN = 200;
 /**
  * 全剧情总表: the network of named characters over the main story and the events, as of any story. The
  * timeline steps through the stories in chronological order; a relation shows its value as of that story.
@@ -107,8 +107,32 @@ function Loaded({
     [panelOpen, setPanelOpen] = useState(true),
     [resetKey, setResetKey] = useState(0);
   const metaOf = (t0: number) => core.manifest.stories[ix.data.stories[t0]];
-  const full = useMemo(() => fullAt(core, ix, n - 1, scope, false), [core, ix, scope]);
-  const dataset = useMemo(() => fullAt(core, ix, cur, scope), [core, ix, cur, scope]);
+  // Each story's network is computed once; the graph follows the slider a beat behind, so dragging stays smooth.
+  const cache = useMemo(() => fullCache(core, ix), [core, ix]);
+  const shown = useDeferredValue(cur);
+  const full = useMemo(() => cache(n - 1, scope, false), [cache, scope]);
+  // Betweenness is slow on a thousand people: it is filled in once the timeline has stood still for a moment.
+  const [still, setStill] = useState(cur);
+  useEffect(() => {
+    const timer = setTimeout(() => setStill(cur), 250);
+    return () => clearTimeout(timer);
+  }, [cur]);
+  const needBetweenness = (sort === "betweenness" || selected !== null) && still === shown;
+  const dataset = useMemo(() => cache(shown, scope, needBetweenness), [cache, shown, scope, needBetweenness]);
+  useEffect(() => {
+    // Fill the cache while the page is idle, latest stories first.
+    let t0 = n - 1,
+      handle = 0;
+    const idle = (cb: () => void) =>
+      "requestIdleCallback" in window ? requestIdleCallback(cb) : (setTimeout(cb, 30) as unknown as number);
+    const step = () => {
+      if (t0 < 0) return;
+      cache(t0--, scope, false);
+      handle = idle(step);
+    };
+    handle = idle(step);
+    return () => ("cancelIdleCallback" in window ? cancelIdleCallback(handle) : clearTimeout(handle));
+  }, [cache, scope, n]);
   const series = useMemo(() => growth(ix, scope), [ix, scope]);
   const update = useCallback(
     <K extends keyof Settings>(key: K, value: Settings[K]) => setSettings((s) => ({ ...s, [key]: value })),
@@ -444,6 +468,7 @@ function Loaded({
             }}
             onAnimate={() => update("animate", !settings.animate)}
             resetKey={resetKey}
+            lite
           />
           {!visibleNodes.length && (
             <div className="empty-graph quiet-empty">

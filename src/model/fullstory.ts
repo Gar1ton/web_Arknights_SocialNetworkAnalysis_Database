@@ -322,3 +322,21 @@ export function turnsOf(ix: FullIndex, pair: number, scope: Scope) {
   if (pair < 0) return [];
   return ix.rows[pair].filter((r) => inScope(ix, scope, r[T]) && asOf(r, scope).turn).map((r) => r[T]);
 }
+/**
+ * fullAt by story and scope, computed once. Betweenness (the slow part on a large network) is computed only when
+ * asked for and cached separately.
+ */
+export function fullCache(core: Core, ix: FullIndex) {
+  const plain = new Map<string, FullAt>(),
+    between = new Map<string, FullAt>();
+  return (t: number, scope: Scope, withBetweenness: boolean) => {
+    const key = t + "|" + scope;
+    const store = withBetweenness ? between : plain;
+    let v = store.get(key);
+    if (!v) {
+      v = fullAt(core, ix, t, scope, withBetweenness);
+      store.set(key, v);
+    }
+    return v;
+  };
+}

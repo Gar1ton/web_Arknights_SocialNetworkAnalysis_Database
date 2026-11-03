@@ -41,6 +41,12 @@ type Props = {
   landing?: boolean;
   resetKey: number;
   flowTarget?: HTMLElement | null;
+  /**
+   * For networks far larger than a story's (the full-story table): no moving
+   * particles on the relations and no blurred glow; a relation that just
+   * changed is drawn brighter instead.
+   */
+  lite?: boolean;
 };
 export default function Graph({
   nodes,
@@ -58,6 +64,7 @@ export default function Graph({
   landing = false,
   resetKey,
   flowTarget,
+  lite = false,
 }: Props) {
   const svg = useRef<SVGSVGElement>(null);
   const stage = useRef<HTMLDivElement>(null);
@@ -406,7 +413,7 @@ export default function Graph({
                 className={"relationship" + (glowing ? " fresh" : "")}
                 style={{ color: linkColor(e) }}
               >
-                {glowing && (
+                {glowing && !lite && (
                   <path
                     d={path}
                     fill="none"
@@ -420,7 +427,7 @@ export default function Graph({
                   d={path}
                   fill="none"
                   stroke="currentColor"
-                  strokeWidth={glowing ? w + 0.6 : w}
+                  strokeWidth={glowing ? w + (lite ? 1.2 : 0.6) : w}
                   opacity={glowing ? Math.max(opacity, focus ? opacity : 0.85) : opacity}
                 />
                 {!landing && (
@@ -451,7 +458,7 @@ export default function Graph({
                     </title>
                   </path>
                 )}
-                {(!focus || active) && i % particleStep === 0 && (
+                {!lite && (!focus || active) && i % particleStep === 0 && (
                   <circle
                     r={active ? 2 : 1.3}
                     fill="currentColor"
