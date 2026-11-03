@@ -19,6 +19,8 @@ import {
   SkipBack,
   StepBack,
   StepForward,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import { altName, communityLabel, neighborhood, nodeName, octantKeys, octantName, octants } from "./data";
 import { locale, plural, t } from "./i18n";
@@ -134,10 +136,31 @@ function Loaded({
     return () => ("cancelIdleCallback" in window ? cancelIdleCallback(handle) : clearTimeout(handle));
   }, [cache, scope, n]);
   const series = useMemo(() => growth(ix, scope), [ix, scope]);
-  const update = useCallback(
+  const updateAll = useCallback(
     <K extends keyof Settings>(key: K, value: Settings[K]) => setSettings((s) => ({ ...s, [key]: value })),
     [setSettings],
   );
+  // Every name is on here by default, whatever the story pages use; the settings switch turns it off for this page.
+  const [allNames, setAllNames] = useState(true);
+  const update = useCallback(
+    <K extends keyof Settings>(key: K, value: Settings[K]) =>
+      key === "allLabels" ? setAllNames(value as boolean) : updateAll(key, value),
+    [updateAll],
+  );
+  const shownSettings = useMemo(() => ({ ...settings, allLabels: allNames }), [settings, allNames]);
+  // The timeline dock folds into a slim bar under the graph; the choice is remembered.
+  const [dockMin, setDockMin] = useState(() => {
+    try {
+      return localStorage.getItem("terra:fullstory:dock") === "min";
+    } catch {
+      return false;
+    }
+  });
+  useEffect(() => {
+    try {
+      localStorage.setItem("terra:fullstory:dock", dockMin ? "min" : "full");
+    } catch {}
+  }, [dockMin]);
   const communities = useMemo(
     () => dataset.communities.map((c) => ({ ...c, label: communityLabel(c, full.nodes) })),
     [dataset.communities, full, language],
@@ -394,7 +417,7 @@ function Loaded({
   }, [cur, panelTab, showDetail]);
   return (
     <>
-      <main id="main-content" tabIndex={-1} className={"explorer route-surface fullstory " + (!panelOpen ? "panel-collapsed" : "")}>
+      <main id="main-content" tabIndex={-1} className={"explorer route-surface fullstory " + (!panelOpen ? "panel-collapsed " : "") + (dockMin ? "dock-min" : "")}>
         <section className="canvas-section" aria-label={t("全剧情关系图谱", "Full-story relation graph")}>
           <div className="canvas-heading">
             <div className="workbench-breadcrumb">
@@ -462,7 +485,7 @@ function Loaded({
             layoutEdges={layoutEdges}
             fresh={dataset.fresh}
             communities={communities}
-            settings={settings}
+            settings={shownSettings}
             selected={settings.mode === "ego" ? egoCenter : selected}
             onSelect={choose}
             onEdge={chooseEdge}
@@ -541,7 +564,9 @@ function Loaded({
                   <b>{storyLabel(cur)}</b>
                   <span className="timeline-count">{t(`${num(stats.relations)} 条关系`, plural("relation", stats.relations))}</span>
                 </div>
-                <TimelineCurve series={series} m={n} cur={cur + 1} scenes={chapters} describe={describe} onSeek={timeline.onSeek} />
+                {!dockMin && (
+                  <TimelineCurve series={series} m={n} cur={cur + 1} scenes={chapters} describe={describe} onSeek={timeline.onSeek} />
+                )}
                 <input
                   className="timeline-range"
                   type="range"
@@ -557,6 +582,15 @@ function Loaded({
                   }}
                 />
               </div>
+              <button
+                className="dock-toggle"
+                aria-label={dockMin ? t("展开时间轴", "Expand the timeline") : t("收起时间轴", "Fold the timeline")}
+                title={dockMin ? t("展开时间轴", "Expand the timeline") : t("收起时间轴", "Fold the timeline")}
+                aria-expanded={!dockMin}
+                onClick={() => setDockMin((v) => !v)}
+              >
+                {dockMin ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
+              </button>
             </div>
             <div className="legend">
               <span className="legend-item legend-fresh">
@@ -640,12 +674,13 @@ function Loaded({
           >
             {panelTab === "settings" ? (
               <Controls
-                settings={settings}
+                settings={shownSettings}
                 maxMessages={maxMessages}
                 update={update}
                 setAll={(s) => setSettings(() => s)}
                 onExport={doExport}
                 onReset={() => {
+                  setAllNames(true);
                   setSettings(() => ({ ...defaults, minMessages: firstMin(full.nodes) }));
                   setResetKey((k) => k + 1);
                   onToast(t("已恢复默认设置", "Settings reset"));
