@@ -6,11 +6,7 @@ import "@fontsource/cormorant-garamond/latin-400-italic.css";
 import "@fontsource/dm-sans/latin-400.css";
 import "@fontsource/dm-sans/latin-500.css";
 import "@fontsource/ibm-plex-mono/latin-400.css";
-import "./style.css";
-import "./experience.css";
-import "./refinement.css";
-import "./insight.css";
-import "./media.css";
+import "./app.css";
 import "./report/report.css";
 import "./lang.css";
 createRoot(document.getElementById("root")!).render(

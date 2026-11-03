@@ -150,7 +150,7 @@ export const altName = (n: Pick<AtlasNode, "name" | "en">) => {
   return nodeName(n) === n.name ? "" : n.name;
 };
 /**
- * Community labels are written in Chinese by build_data.py ("凯尔希 等 9 人",
+ * Community labels are written in Chinese by the previous build_data.py ("凯尔希 等 9 人",
  * "其他 12 人"); English mode rebuilds them from the lead's English name.
  */
 export function communityLabel(c: Community | undefined, nodes: AtlasNode[]) {

@@ -1,16 +1,30 @@
-export type Route = { page: "home" | "archives" | "graph"; archiveId: string };
-/** Opened by #atlas / #studio: 主线 第8章 怒号光明. */
-export const defaultArchive = "main-08";
+export type Route =
+  | { page: "home" }
+  | { page: "story"; id: string | null; pair?: [number, number] }
+  | { page: "person"; p: number | null; other?: number };
+/** Opened by #atlas / #studio and the old graph links: 主线 第8章 怒号光明. */
+export const defaultStory = "main-08";
+const ID = /^[a-z]+-[0-9a-z]+$/;
 export function resolveRoute(hash: string): Route {
-  if (hash === "#archives")
-    return { page: "archives", archiveId: defaultArchive };
-  if (hash === "#atlas" || hash === "#studio")
-    return { page: "graph", archiveId: defaultArchive };
-  if (hash.startsWith("#graph/")) {
-    const id = decodeURIComponent(hash.slice(7));
-    return /^[a-z0-9-]+$/.test(id)
-      ? { page: "graph", archiveId: id }
-      : { page: "archives", archiveId: defaultArchive };
+  const parts = hash.replace(/^#\/?/, "").split("/").map(decodeURIComponent);
+  const [head, a, b] = parts;
+  if (head === "archives") return { page: "story", id: null };
+  if (head === "atlas" || head === "studio") return { page: "story", id: defaultStory };
+  if (head === "graph" || head === "story") {
+    if (!a || !ID.test(a)) return { page: "story", id: null };
+    const pair = /^(\d+)-(\d+)$/.exec(b ?? "");
+    return pair ? { page: "story", id: a, pair: [+pair[1], +pair[2]] } : { page: "story", id: a };
   }
-  return { page: "home", archiveId: defaultArchive };
+  if (head === "person" || head === "people") {
+    const p = /^\d+$/.test(a ?? "") ? +a : null;
+    const other = /^\d+$/.test(b ?? "") ? +b : undefined;
+    return other === undefined ? { page: "person", p } : { page: "person", p, other };
+  }
+  return { page: "home" };
+}
+export function hashFor(route: Route): string {
+  if (route.page === "home") return "#/";
+  if (route.page === "story")
+    return route.id ? `#story/${route.id}${route.pair ? `/${route.pair[0]}-${route.pair[1]}` : ""}` : "#story";
+  return route.p === null ? "#person" : `#person/${route.p}${route.other !== undefined ? `/${route.other}` : ""}`;
 }
