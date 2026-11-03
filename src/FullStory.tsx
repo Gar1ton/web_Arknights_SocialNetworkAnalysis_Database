@@ -142,6 +142,14 @@ function Loaded({
     return () => ("cancelIdleCallback" in window ? cancelIdleCallback(handle) : clearTimeout(handle));
   }, [cache, scope, n]);
   const series = useMemo(() => growth(ix, scope), [ix, scope]);
+  // Laid out at build time for each choice of how many people to show; the page only picks one.
+  const layouts = useMemo(
+    () =>
+      (ix.data.layouts ?? []).map(
+        ([k, rows]) => [k, new Map(rows.map(([p, x, y]) => [nodeId(p), { x, y }]))] as const,
+      ),
+    [ix],
+  );
   const updateAll = useCallback(
     <K extends keyof Settings>(key: K, value: Settings[K]) => setSettings((s) => ({ ...s, [key]: value })),
     [setSettings],
@@ -267,6 +275,16 @@ function Loaded({
     [dataset, layoutIds, community],
   );
   const hiddenByMessages = full.nodes.length - layoutBase.length;
+  // The smallest prepared layout that holds everyone shown (the main-story or events filter shows a subset of it).
+  const shownCount = useMemo(
+    () => full.nodes.reduce((m, x) => (x.messages >= settings.minMessages ? m + 1 : m), 0),
+    [full, settings.minMessages],
+  );
+  const fixed = useMemo(() => {
+    const ids = layoutBase.map((x) => x.id);
+    const fits = layouts.find(([k, map]) => k >= shownCount && ids.every((id) => map.has(id)));
+    return (fits ?? layouts[layouts.length - 1])?.[1];
+  }, [layouts, layoutBase, shownCount]);
   const baseEdges = useMemo(() => {
     const ids = new Set(baseNodes.map((x) => x.id));
     return dataset.edges.filter((e) => ids.has(e.source) && ids.has(e.target) && e.weight >= settings.minWeight);
@@ -503,6 +521,7 @@ function Loaded({
             onAnimate={() => update("animate", !settings.animate)}
             resetKey={resetKey}
             lite
+            fixed={fixed}
           />
           {!visibleNodes.length && (
             <div className="empty-graph quiet-empty">

@@ -11,7 +11,7 @@ Reads only:
 Published, data only: per relation and story the story-end value, the value as of that story over all stories and
 within its category (主线 or 活动), turn marks, arcs as of each story and Big Five as of each story. The evidence
 counts and uncertainty that weigh the values stay in TSRA. Positions are story indices into `stories` (0-based,
-chronological); people are site person indices.
+chronological); people are site person indices. Run scripts/layout_fullstory.ts afterwards: it adds the fixed layouts.
 """
 from __future__ import annotations
 

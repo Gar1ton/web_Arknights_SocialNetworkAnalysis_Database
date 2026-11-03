@@ -27,6 +27,8 @@ export interface FullStoryData {
   arcOf: [number, [number, number][]][];
   /** person, [story, Big Five O C E A N in −1..1] at each change. */
   bigFive: [number, [number, (number | null)[]][]][];
+  /** Fixed positions by how many people are shown: people, [person, x, y] (scripts/layout_fullstory.ts). */
+  layouts?: [number, [number, number, number][]][];
 }
 export const PAIR = 0,
   T = 1,

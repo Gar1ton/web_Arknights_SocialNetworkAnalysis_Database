@@ -47,6 +47,8 @@ type Props = {
    * changed is drawn brighter instead.
    */
   lite?: boolean;
+  /** Positions laid out ahead of time (the full-story table): the network view uses them as they are. */
+  fixed?: Map<string, Point>;
 };
 export default function Graph({
   nodes,
@@ -65,6 +67,7 @@ export default function Graph({
   resetKey,
   flowTarget,
   lite = false,
+  fixed,
 }: Props) {
   const svg = useRef<SVGSVGElement>(null);
   const stage = useRef<HTMLDivElement>(null);
@@ -89,8 +92,12 @@ export default function Graph({
   } | null>(null);
   const previous = useRef<Map<string, Point>>(new Map());
   const computed = useMemo(
-    () => makeLayout(layoutNodes, layoutEdges, settings, selected, landing),
+    () =>
+      fixed && settings.mode === "network"
+        ? fixed
+        : makeLayout(layoutNodes, layoutEdges, settings, selected, landing),
     [
+      fixed,
       layoutNodes,
       layoutEdges,
       settings.layout,
@@ -137,7 +144,8 @@ export default function Graph({
   const displayRef = useRef(positions);
   useEffect(() => {
     const from = displayRef.current;
-    if (!settings.animate || landing || !from.size) {
+    // A lite graph jumps: animating a thousand people redraws everything at every frame.
+    if (!settings.animate || landing || lite || !from.size) {
       displayRef.current = positions;
       setDisplayPositions(positions);
       return;

@@ -1387,3 +1387,14 @@
 .graph-stage.lite svg {
   will-change: transform;
 }
+/* No entrance animation on a lite graph: under load it could hold people and relations at their first, invisible frame. */
+.workbench .graph-stage.lite .graph-node,
+.workbench .graph-stage.lite .relationship {
+  animation: none;
+}
+/* The full-story page draws at once: under load an entrance animation could hold the page or the sidebar at its first, invisible frame. */
+.explorer.fullstory.route-surface,
+.fullstory .sidebar-page,
+.fullstory .node-row {
+  animation: none;
+}
