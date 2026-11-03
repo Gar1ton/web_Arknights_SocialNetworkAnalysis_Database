@@ -581,6 +581,7 @@ nav a.active:after {
 }
 .relationship:hover > path:first-child {
   opacity: 1;
+  stroke-opacity: 1;
   stroke-width: 2.2;
 }
 .selection-orbit {

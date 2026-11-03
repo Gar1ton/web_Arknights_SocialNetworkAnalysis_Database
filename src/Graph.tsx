@@ -1,6 +1,7 @@
 import { createPortal } from "react-dom";
 import { gravityLeaders } from "./gravity";
-import { useState, useMemo, useRef, useEffect, type PointerEvent } from "react";
+import { memo, useCallback, useState, useMemo, useRef, useEffect, type PointerEvent } from "react";
+import { useLang } from "./useLang";
 import { Plus, Minus, Maximize, Play, Pause, RotateCcw } from "lucide-react";
 import {
   type AtlasNode,
@@ -70,6 +71,8 @@ export default function Graph({
   fixed,
 }: Props) {
   const svg = useRef<SVGSVGElement>(null);
+  // Names and labels follow the language.
+  const language = useLang();
   const stage = useRef<HTMLDivElement>(null);
   const [fieldHost, setFieldHost] = useState<HTMLElement | null>(null);
   useEffect(() => {
@@ -205,15 +208,19 @@ export default function Graph({
   const prominentCount = Math.max(3, Math.ceil(nodes.length * 0.08));
   const particleStep = edges.length > 400 ? Math.ceil(edges.length / 200) : 2;
   const focus = hover || selected;
-  const connected = new Set(
-    focus
-      ? [
-          focus,
-          ...edges
-            .filter((e) => e.source === focus || e.target === focus)
-            .map((e) => (e.source === focus ? e.target : e.source)),
-        ]
-      : [],
+  const connected = useMemo(
+    () =>
+      new Set(
+        focus
+          ? [
+              focus,
+              ...edges
+                .filter((e) => e.source === focus || e.target === focus)
+                .map((e) => (e.source === focus ? e.target : e.source)),
+            ]
+          : [],
+      ),
+    [focus, edges],
   );
   const clamp = (v: number) => Math.max(0.3, Math.min(2.5, v));
   /** Zoom that shows every node; the layout is centred on (500, 380). */
@@ -311,6 +318,151 @@ export default function Graph({
     const n = byId.get(id);
     return n ? nodeName(n) : "";
   };
+  // Handlers reach the memoised rows through a ref, so a new callback from the parent redraws nothing.
+  const handlers = useRef({ onSelect, onEdge });
+  handlers.current = { onSelect, onEdge };
+  const selectNode = useCallback((id: string) => handlers.current.onSelect(id), []);
+  const selectEdge = useCallback((id: string) => handlers.current.onEdge(id), []);
+  // The scene does not depend on pan or zoom: moving the view only changes the outer transform, and a
+  // timeline step redraws only the relations and people whose drawing changed.
+  const scene = useMemo(() => {
+    const glowId = landing ? "hero-glow" : "node-glow";
+    const chord = settings.mode === "chord";
+    const bg = palettes[settings.palette].bg;
+    const radialLabel =
+      !landing &&
+      settings.mode !== "ego" &&
+      (settings.layout === "circular" || settings.mode === "chord");
+    const edgeEls = edges.map((e, order) => {
+      const a = point(e.source),
+        b = point(e.target);
+      if (!a || !b) return null;
+      const i = bend.get(e.id) ?? order;
+      const active = !!focus && (e.source === focus || e.target === focus);
+      const glowing = !!fresh?.has(e.id);
+      const opacity = focus ? (active ? 0.9 : 0.06) : settings.opacity;
+      const w =
+        settings.width *
+        (settings.weight === "equal"
+          ? 1
+          : settings.weight === "intensity"
+            ? 0.5 + Math.max(e.ab?.intensity ?? 0, e.ba?.intensity ?? 0) * 2.2
+            : 0.5 + e.weight * 1.8);
+      const mutual = isMutual(e);
+      return (
+        <EdgeView
+          key={e.id}
+          id={e.id}
+          a={a}
+          b={b}
+          i={i}
+          chord={chord}
+          color={linkColor(e)}
+          w={w}
+          opacity={opacity}
+          lineOpacity={glowing ? Math.max(opacity, focus ? opacity : 0.85) : opacity}
+          glowing={glowing}
+          lite={lite}
+          landing={landing}
+          glowId={glowId}
+          active={active}
+          particle={!lite && (!focus || active) && i % particleStep === 0}
+          speed={settings.speed}
+          arrowAb={settings.arrows && !!e.ab ? (mutual ? 0.65 : 0.8) : 0}
+          arrowBa={settings.arrows && !!e.ba ? (mutual ? 0.35 : 0.2) : 0}
+          label={settings.edgeLabels && (!focus || active) ? octantName(primary(e).type) : null}
+          ariaLabel={
+            landing
+              ? ""
+              : t(
+                  `${name(e.source)}与${name(e.target)}的关系`,
+                  `Relation between ${name(e.source)} and ${name(e.target)}`,
+                )
+          }
+          title={
+            landing
+              ? ""
+              : `${name(e.source)} ${mutual ? "⇄" : e.ab ? "→" : "←"} ${name(e.target)} · ${octantName(primary(e).type)}`
+          }
+          onEdge={selectEdge}
+        />
+      );
+    });
+    const nodeEls = nodes.map((n) => {
+      const p = point(n.id);
+      if (!p) return null;
+      const d = degrees.get(n.id) || 0,
+        r = (4 + Math.sqrt(d) * 1.6) * settings.nodeSize;
+      const isSelected = selected === n.id;
+      const prominent = rank.get(n.id)! < prominentCount;
+      const showLabel =
+        focus === n.id ||
+        isSelected ||
+        (landing
+          ? prominent
+          : settings.labels &&
+            (settings.allLabels ||
+              !crowded ||
+              rank.get(n.id)! < 45 ||
+              (!!focus && connected.has(n.id))));
+      return (
+        <NodeView
+          key={n.id}
+          id={n.id}
+          p={p}
+          r={r}
+          color={color(n)}
+          bg={bg}
+          isSelected={isSelected}
+          prominent={prominent}
+          showLabel={showLabel}
+          muted={!!focus && !connected.has(n.id)}
+          radialLabel={radialLabel}
+          labelSize={settings.labelSize}
+          landing={landing}
+          lite={lite}
+          glow={nodes.length <= 160 || isSelected || prominent}
+          glowId={glowId}
+          orbit={settings.animate}
+          name={nodeName(n)}
+          en={landing && prominent && n.en && nodeName(n) !== n.en ? n.en.toUpperCase() : null}
+          ariaLabel={`${nodeName(n)} · ${communities[n.community]?.label || ""} · ${t(`${d}组关系`, `${d} relations`)}`}
+          onSelect={selectNode}
+          onHover={setHover}
+        />
+      );
+    });
+    return (
+      <>
+        {edgeEls}
+        {nodeEls}
+      </>
+    );
+  }, [
+    edges,
+    nodes,
+    overrides,
+    displayPositions,
+    positions,
+    bend,
+    focus,
+    connected,
+    fresh,
+    selected,
+    settings,
+    landing,
+    lite,
+    particleStep,
+    degrees,
+    rank,
+    prominentCount,
+    crowded,
+    communities,
+    byId,
+    language,
+    selectEdge,
+    selectNode,
+  ]);
   return (
     <div
       className={"graph-stage " + (landing ? "hero-graph" : "") + (lite ? " lite" : "")}
@@ -398,257 +550,7 @@ export default function Graph({
               />
             ) : null;
           })}
-          {edges.map((e, order) => {
-            const a = point(e.source),
-              b = point(e.target);
-            if (!a || !b) return null;
-            const i = bend.get(e.id) ?? order;
-            const active = focus && (e.source === focus || e.target === focus);
-            const glowing = !!fresh?.has(e.id);
-            const { path } = curve(a, b, i, settings.mode === "chord");
-            const opacity = focus ? (active ? 0.9 : 0.06) : settings.opacity;
-            const w =
-              settings.width *
-              (settings.weight === "equal"
-                ? 1
-                  : settings.weight === "intensity"
-                  ? 0.5 +
-                    Math.max(e.ab?.intensity ?? 0, e.ba?.intensity ?? 0) * 2.2
-                  : 0.5 + e.weight * 1.8);
-            return (
-              <g
-                key={e.id}
-                className={"relationship" + (glowing ? " fresh" : "")}
-                style={{ color: linkColor(e) }}
-              >
-                {glowing && !lite && (
-                  <path
-                    d={path}
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={w + 4}
-                    className="relationship-glow"
-                    filter={`url(#${landing ? "hero-glow" : "node-glow"})`}
-                  />
-                )}
-                <path
-                  d={path}
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={glowing ? w + (lite ? 1.2 : 0.6) : w}
-                  opacity={glowing ? Math.max(opacity, focus ? opacity : 0.85) : opacity}
-                />
-                {!landing && (
-                  <path
-                    d={path}
-                    fill="none"
-                    stroke="transparent"
-                    strokeWidth="12"
-                    className="edge-hit"
-                    role="button"
-                    tabIndex={0}
-                    onPointerDown={(e) => e.stopPropagation()}
-                    onKeyDown={(event) => {
-                      if (event.key === "Enter" || event.key === " ") {
-                        event.preventDefault();
-                        onEdge(e.id);
-                      }
-                    }}
-                    aria-label={t(
-                      `${name(e.source)}与${name(e.target)}的关系`,
-                      `Relation between ${name(e.source)} and ${name(e.target)}`,
-                    )}
-                    onClick={() => onEdge(e.id)}
-                  >
-                    <title>
-                      {name(e.source)} {isMutual(e) ? "⇄" : e.ab ? "→" : "←"}{" "}
-                      {name(e.target)} · {octantName(primary(e).type)}
-                    </title>
-                  </path>
-                )}
-                {!lite && (!focus || active) && i % particleStep === 0 && (
-                  <circle
-                    r={active ? 2 : 1.3}
-                    fill="currentColor"
-                    opacity={active ? 0.9 : 0.7}
-                  >
-                    <animateMotion
-                      dur={`${(8 + (i % 7)) / settings.speed}s`}
-                      repeatCount="indefinite"
-                      path={path}
-                      begin={`-${i * 0.4}s`}
-                    />
-                  </circle>
-                )}
-                {settings.arrows && (
-                  <g fill="currentColor" opacity={opacity}>
-                    {[
-                      ...(e.ab ? [[isMutual(e) ? 0.65 : 0.8, 0]] : []),
-                      ...(e.ba ? [[isMutual(e) ? 0.35 : 0.2, 1]] : []),
-                    ].map(([t, j]) => {
-                      const c = curve(a, b, i, settings.mode === "chord").c;
-                      const x =
-                          (1 - t) ** 2 * a.x +
-                          2 * (1 - t) * t * c.x +
-                          t * t * b.x,
-                        y =
-                          (1 - t) ** 2 * a.y +
-                          2 * (1 - t) * t * c.y +
-                          t * t * b.y;
-                      const angle =
-                        (Math.atan2(
-                          (1 - t) * (c.y - a.y) + t * (b.y - c.y),
-                          (1 - t) * (c.x - a.x) + t * (b.x - c.x),
-                        ) *
-                          180) /
-                          Math.PI +
-                        (j ? 180 : 0);
-                      return (
-                        <path
-                          key={j}
-                          d="M-5 -2.5L1 0L-5 2.5Z"
-                          transform={`translate(${x} ${y}) rotate(${angle})`}
-                        />
-                      );
-                    })}
-                  </g>
-                )}
-                {settings.edgeLabels && (!focus || active) && (
-                  <text
-                    x={(a.x + b.x) / 2}
-                    y={(a.y + b.y) / 2 - 5}
-                    fill="currentColor"
-                    fontSize="12"
-                    textAnchor="middle"
-                  >
-                    {octantName(primary(e).type)}
-                  </text>
-                )}
-              </g>
-            );
-          })}
-          {nodes.map((n) => {
-            const p = point(n.id);
-            if (!p) return null;
-            const d = degrees.get(n.id) || 0,
-              r = (4 + Math.sqrt(d) * 1.6) * settings.nodeSize;
-            const isSelected = selected === n.id;
-            const prominent = rank.get(n.id)! < prominentCount;
-            const showLabel =
-              focus === n.id ||
-              isSelected ||
-              (landing
-                ? prominent
-                : settings.labels &&
-                  (settings.allLabels ||
-                    !crowded ||
-                    rank.get(n.id)! < 45 ||
-                    (!!focus && connected.has(n.id))));
-            const muted = focus && !connected.has(n.id);
-            const radialLabel =
-              !landing &&
-              settings.mode !== "ego" &&
-              (settings.layout === "circular" || settings.mode === "chord");
-            const leftLabel = p.x < 500;
-            const labelAngle =
-              (Math.atan2(p.y - 380, p.x - 500) * 180) / Math.PI +
-              (leftLabel ? 180 : 0);
-            return (
-              <g
-                key={n.id}
-                data-node={n.id}
-                transform={`translate(${p.x} ${p.y})`}
-                opacity={muted ? 0.22 : 1}
-                className="graph-node"
-                role="button"
-                tabIndex={landing ? -1 : 0}
-                aria-label={`${nodeName(n)} · ${communities[n.community]?.label || ""} · ${t(`${d}组关系`, `${d} relations`)}`}
-                aria-pressed={isSelected}
-                // On a crowded graph the pointer is nearly always over some node: hovering would dim and
-                // redraw everything at every move, so a lite graph highlights on click only.
-                onMouseEnter={lite ? undefined : () => setHover(n.id)}
-                onMouseLeave={lite ? undefined : () => setHover(null)}
-                onFocus={() => setHover(n.id)}
-                onBlur={() => setHover(null)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    onSelect(n.id);
-                  }
-                }}
-              >
-                <circle r={r + 13} fill="transparent" />
-                {(nodes.length <= 160 || isSelected || prominent) && (
-                  <circle
-                    r={r * 2.2}
-                    fill={color(n)}
-                    opacity={isSelected ? 0.35 : 0.14}
-                    filter={`url(#${landing ? "hero-glow" : "node-glow"})`}
-                  />
-                )}
-                {(prominent || isSelected) && (
-                  <circle
-                    r={r + 7}
-                    stroke={color(n)}
-                    fill="none"
-                    opacity={isSelected ? 0.8 : 0.3}
-                    strokeWidth=".7"
-                  />
-                )}
-                {isSelected && (
-                  <circle
-                    className={settings.animate ? "selection-orbit" : ""}
-                    r={r + 14}
-                    stroke={color(n)}
-                    fill="none"
-                    opacity=".55"
-                    strokeDasharray="3 7"
-                    strokeWidth=".8"
-                  />
-                )}
-                <circle
-                  r={r}
-                  fill={palettes[settings.palette].bg}
-                  stroke={color(n)}
-                  strokeWidth={isSelected ? 1.8 : 1}
-                />
-                <circle r={r * 0.42} fill={color(n)} />
-                {showLabel && (
-                  <text
-                    x={radialLabel ? (leftLabel ? -1 : 1) * (r + 12) : 0}
-                    y={radialLabel ? 5 : r + 7 + 12 * settings.labelSize}
-                    transform={
-                      radialLabel ? "rotate(" + labelAngle + ")" : undefined
-                    }
-                    textAnchor={
-                      radialLabel ? (leftLabel ? "end" : "start") : "middle"
-                    }
-                    fontSize={(prominent ? 18 : 15) * settings.labelSize}
-                    fill={prominent ? "#eee0d0" : "#b9adaf"}
-                    fontFamily="Inter, Microsoft YaHei, sans-serif"
-                    style={{
-                      paintOrder: "stroke",
-                      stroke: palettes[settings.palette].bg,
-                      strokeWidth: 3,
-                    }}
-                  >
-                    {nodeName(n)}
-                  </text>
-                )}
-                {landing && prominent && n.en && nodeName(n) !== n.en && (
-                  <text
-                    y={r + 33}
-                    textAnchor="middle"
-                    fontSize="9.5"
-                    letterSpacing="1.3"
-                    fill="#8d8089"
-                  >
-                    {n.en.toUpperCase()}
-                  </text>
-                )}
-              </g>
-            );
-          })}
+          {scene}
         </g>
       </svg>
       {!landing && (
@@ -708,3 +610,297 @@ export default function Graph({
     </div>
   );
 }
+type EdgeProps = {
+  id: string;
+  a: Point;
+  b: Point;
+  i: number;
+  chord: boolean;
+  color: string;
+  w: number;
+  opacity: number;
+  /** The relation's own line: a fresh one stands out unless someone is focused. */
+  lineOpacity: number;
+  glowing: boolean;
+  lite: boolean;
+  landing: boolean;
+  glowId: string;
+  active: boolean;
+  particle: boolean;
+  speed: number;
+  /** Where along the curve each arrow sits, or 0 for none. */
+  arrowAb: number;
+  arrowBa: number;
+  label: string | null;
+  ariaLabel: string;
+  title: string;
+  onEdge: (id: string) => void;
+};
+/** One relation; it redraws only when its own drawing changes. */
+const EdgeView = memo(function EdgeView({
+  id,
+  a,
+  b,
+  i,
+  chord,
+  color,
+  w,
+  opacity,
+  lineOpacity,
+  glowing,
+  lite,
+  landing,
+  glowId,
+  active,
+  particle,
+  speed,
+  arrowAb,
+  arrowBa,
+  label,
+  ariaLabel,
+  title,
+  onEdge,
+}: EdgeProps) {
+  const { path, c } = curve(a, b, i, chord);
+  const arrows = [
+    ...(arrowAb ? [[arrowAb, 0]] : []),
+    ...(arrowBa ? [[arrowBa, 1]] : []),
+  ];
+  return (
+    <g
+      className={"relationship" + (glowing ? " fresh" : "")}
+      style={{ color }}
+    >
+      {glowing && !lite && (
+        <path
+          d={path}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={w + 4}
+          className="relationship-glow"
+          filter={`url(#${glowId})`}
+        />
+      )}
+      <path
+        d={path}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={glowing ? w + (lite ? 1.2 : 0.6) : w}
+        // stroke-opacity, not opacity: opacity gives every relation its own compositing step, and a
+        // thousand of them make each frame slow.
+        strokeOpacity={lineOpacity}
+      />
+      {!landing && (
+        <path
+          d={path}
+          fill="none"
+          stroke="transparent"
+          strokeWidth="12"
+          className="edge-hit"
+          role="button"
+          tabIndex={0}
+          onPointerDown={(e) => e.stopPropagation()}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              onEdge(id);
+            }
+          }}
+          aria-label={ariaLabel}
+          onClick={() => onEdge(id)}
+        >
+          <title>{title}</title>
+        </path>
+      )}
+      {particle && (
+        <circle r={active ? 2 : 1.3} fill="currentColor" opacity={active ? 0.9 : 0.7}>
+          <animateMotion
+            dur={`${(8 + (i % 7)) / speed}s`}
+            repeatCount="indefinite"
+            path={path}
+            begin={`-${i * 0.4}s`}
+          />
+        </circle>
+      )}
+      {arrows.length > 0 && (
+        <g fill="currentColor" fillOpacity={opacity}>
+          {arrows.map(([t, j]) => {
+            const x = (1 - t) ** 2 * a.x + 2 * (1 - t) * t * c.x + t * t * b.x,
+              y = (1 - t) ** 2 * a.y + 2 * (1 - t) * t * c.y + t * t * b.y;
+            const angle =
+              (Math.atan2(
+                (1 - t) * (c.y - a.y) + t * (b.y - c.y),
+                (1 - t) * (c.x - a.x) + t * (b.x - c.x),
+              ) *
+                180) /
+                Math.PI +
+              (j ? 180 : 0);
+            return (
+              <path
+                key={j}
+                d="M-5 -2.5L1 0L-5 2.5Z"
+                transform={`translate(${x} ${y}) rotate(${angle})`}
+              />
+            );
+          })}
+        </g>
+      )}
+      {label !== null && (
+        <text
+          x={(a.x + b.x) / 2}
+          y={(a.y + b.y) / 2 - 5}
+          fill="currentColor"
+          fontSize="12"
+          textAnchor="middle"
+        >
+          {label}
+        </text>
+      )}
+    </g>
+  );
+});
+type NodeProps = {
+  id: string;
+  p: Point;
+  r: number;
+  color: string;
+  bg: string;
+  isSelected: boolean;
+  prominent: boolean;
+  showLabel: boolean;
+  muted: boolean;
+  radialLabel: boolean;
+  labelSize: number;
+  landing: boolean;
+  lite: boolean;
+  glow: boolean;
+  glowId: string;
+  orbit: boolean;
+  name: string;
+  en: string | null;
+  ariaLabel: string;
+  onSelect: (id: string) => void;
+  onHover: (id: string | null) => void;
+};
+/** One person; it redraws only when their own drawing changes. */
+const NodeView = memo(function NodeView({
+  id,
+  p,
+  r,
+  color,
+  bg,
+  isSelected,
+  prominent,
+  showLabel,
+  muted,
+  radialLabel,
+  labelSize,
+  landing,
+  lite,
+  glow,
+  glowId,
+  orbit,
+  name,
+  en,
+  ariaLabel,
+  onSelect,
+  onHover,
+}: NodeProps) {
+  const leftLabel = p.x < 500;
+  const labelAngle =
+    (Math.atan2(p.y - 380, p.x - 500) * 180) / Math.PI + (leftLabel ? 180 : 0);
+  // Circles sit at the person's place directly rather than in a translated group: a transform (or an
+  // opacity of 1) on each of a thousand groups makes every frame slow.
+  const { x, y } = p;
+  return (
+    <g
+      data-node={id}
+      opacity={muted ? 0.22 : undefined}
+      className="graph-node"
+      role="button"
+      tabIndex={landing ? -1 : 0}
+      aria-label={ariaLabel}
+      aria-pressed={isSelected}
+      // On a crowded graph the pointer is nearly always over some node: hovering would dim and
+      // redraw everything at every move, so a lite graph highlights on click only.
+      onMouseEnter={lite ? undefined : () => onHover(id)}
+      onMouseLeave={lite ? undefined : () => onHover(null)}
+      onFocus={() => onHover(id)}
+      onBlur={() => onHover(null)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onSelect(id);
+        }
+      }}
+    >
+      <circle cx={x} cy={y} r={r + 13} fill="transparent" />
+      {glow && (
+        <circle
+          cx={x}
+          cy={y}
+          r={r * 2.2}
+          fill={color}
+          fillOpacity={isSelected ? 0.35 : 0.14}
+          filter={`url(#${glowId})`}
+        />
+      )}
+      {(prominent || isSelected) && (
+        <circle
+          cx={x}
+          cy={y}
+          r={r + 7}
+          stroke={color}
+          fill="none"
+          strokeOpacity={isSelected ? 0.8 : 0.3}
+          strokeWidth=".7"
+        />
+      )}
+      {isSelected && (
+        <circle
+          cx={x}
+          cy={y}
+          className={orbit ? "selection-orbit" : ""}
+          r={r + 14}
+          stroke={color}
+          fill="none"
+          strokeOpacity=".55"
+          strokeDasharray="3 7"
+          strokeWidth=".8"
+        />
+      )}
+      <circle cx={x} cy={y} r={r} fill={bg} stroke={color} strokeWidth={isSelected ? 1.8 : 1} />
+      <circle cx={x} cy={y} r={r * 0.42} fill={color} />
+      {showLabel && (
+        <text
+          x={x + (radialLabel ? (leftLabel ? -1 : 1) * (r + 12) : 0)}
+          y={y + (radialLabel ? 5 : r + 7 + 12 * labelSize)}
+          transform={radialLabel ? `rotate(${labelAngle} ${x} ${y})` : undefined}
+          textAnchor={radialLabel ? (leftLabel ? "end" : "start") : "middle"}
+          fontSize={(prominent ? 18 : 15) * labelSize}
+          fill={prominent ? "#eee0d0" : "#b9adaf"}
+          fontFamily="Inter, Microsoft YaHei, sans-serif"
+          style={{
+            paintOrder: "stroke",
+            stroke: bg,
+            strokeWidth: 3,
+          }}
+        >
+          {name}
+        </text>
+      )}
+      {en && (
+        <text
+          x={x}
+          y={y + r + 33}
+          textAnchor="middle"
+          fontSize="9.5"
+          letterSpacing="1.3"
+          fill="#8d8089"
+        >
+          {en}
+        </text>
+      )}
+    </g>
+  );
+});

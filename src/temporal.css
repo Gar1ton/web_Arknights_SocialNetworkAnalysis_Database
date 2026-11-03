@@ -263,6 +263,7 @@
 }
 .relationship.fresh:hover > path:nth-child(2) {
   opacity: 1;
+  stroke-opacity: 1;
 }
 .legend-fresh i {
   width: 0.875rem !important;
