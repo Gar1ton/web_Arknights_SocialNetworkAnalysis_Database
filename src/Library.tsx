@@ -23,7 +23,7 @@ import { useLang } from "./useLang";
 import type { Core } from "./model/load";
 import type { MediaMap } from "./model/types";
 import { personByName, pinnedFirst, type Catalog, type Story } from "./model/catalog";
-import { storyHash } from "./routes";
+import { fullStoryHash, storyHash } from "./routes";
 const PAGE = 24;
 type ArchiveMedia = MediaMap["archives"][string];
 /** Stories and characters: the two indexes share one shell. */
@@ -229,6 +229,57 @@ export function StoryCard({
     </a>
   );
 }
+/** 全剧情总表: the one card that opens every main story and event together, along story time. */
+function FullStoryCard({ core, catalog, byName }: { core: Core; catalog: Catalog; byName: Map<string, number> }) {
+  const stories = catalog.stories.filter((s) => s.category === "主线" || s.category === "活动");
+  const cast = ["博士", "阿米娅", "凯尔希"].map((n) => {
+    const p = byName.get(n);
+    return p === undefined ? null : (core.media.avatars[String(p)] ?? null);
+  });
+  const cover = { ...stories[0], id: "fullstory", color: "#d3a6a0", index: -1, new: undefined } as Story;
+  return (
+    <a
+      href={fullStoryHash()}
+      className="archive-card fullstory-card"
+      style={{ "--archive-color": cover.color, "--card-order": 0 } as React.CSSProperties}
+      aria-label={t("查看全剧情总表", "Open the full-story graph")}
+    >
+      <Cover archive={cover} index={3} cast={cast} />
+      <div className="archive-card-content">
+        <div className="archive-card-top">
+          <span>{t("总览 · 主线 + 活动", "Overview · main story + events")}</span>
+          <span className="archive-category">{t("总览", "Overview")}</span>
+        </div>
+        <div className="archive-card-title">
+          <h2>{t("全剧情总表", "The full story")}</h2>
+          <p>
+            <span>
+              {t(
+                "全部具名角色的一张关系网，沿剧情年代一个故事一个故事地生长。",
+                "One network of every named character, growing story by story in story order.",
+              )}
+            </span>
+          </p>
+        </div>
+        <p className="archive-description">
+          {t(
+            `${stories.length} 段剧情 · 关系取到当时为止的值 · 剧情块随故事重算`,
+            `${plural("story", stories.length, "stories")} · relations as of each story · arcs recomputed per story`,
+          )}
+        </p>
+        <div className="archive-card-bottom">
+          <span>
+            {t("主线", "Main")} {stories.filter((s) => s.category === "主线").length} <i /> {t("活动", "Events")}{" "}
+            {stories.filter((s) => s.category === "活动").length}
+          </span>
+          <span className="card-open">
+            <ArrowUpRight size={19} />
+          </span>
+        </div>
+      </div>
+    </a>
+  );
+}
 export default function Library({
   settings,
   core,
@@ -380,6 +431,9 @@ export default function Library({
           <span>{t("最新加入在前，其余按剧情年代", "Latest first, then in story order")}</span>
         </div>
         <div className="archive-grid">
+          {!query && ["全部", "主线", "活动"].includes(category) && (
+            <FullStoryCard core={core} catalog={catalog} byName={byName} />
+          )}
           {matches.slice(0, shown).map((archive, index) => (
             <Fragment key={archive.id}>
               {index === 0 && pinned > 0 && (

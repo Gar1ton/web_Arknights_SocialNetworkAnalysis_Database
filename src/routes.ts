@@ -3,6 +3,8 @@ export type Route =
   | { page: "archives" }
   | { page: "people" }
   | { page: "person"; p: number; other?: number }
+  /** 全剧情总表: the named characters of the main story and the events, along story time. */
+  | { page: "fullstory"; focus?: number; pair?: [number, number] }
   | {
       page: "graph";
       archiveId: string;
@@ -29,6 +31,11 @@ export function resolveRoute(hash: string): Route {
       }
     });
   if (head === "archives") return { page: "archives" };
+  if (head === "fullstory") {
+    const pair = /^(\d+)-(\d+)$/.exec(a ?? "");
+    if (pair) return { page: "fullstory", pair: [+pair[1], +pair[2]] };
+    return /^\d+$/.test(a ?? "") ? { page: "fullstory", focus: +a } : { page: "fullstory" };
+  }
   if (head === "people") return { page: "people" };
   if (head === "atlas" || head === "studio")
     return { page: "graph", archiveId: defaultArchive };
@@ -51,5 +58,7 @@ export const storyHash = (id: string, focus?: number | [number, number]) =>
   "#graph/" +
   id +
   (focus === undefined ? "" : "/" + (Array.isArray(focus) ? focus.join("-") : focus));
+export const fullStoryHash = (focus?: number | [number, number]) =>
+  "#fullstory" + (focus === undefined ? "" : "/" + (Array.isArray(focus) ? focus.join("-") : focus));
 export const personHash = (p: number, other?: number) =>
   "#person/" + p + (other === undefined ? "" : "/" + other);

@@ -11,6 +11,7 @@ import Landing from "./Landing";
 import Library from "./Library";
 import People, { PersonPage } from "./People";
 import Workbench, { type ReportRequest } from "./Workbench";
+import FullStory from "./FullStory";
 import ReportDialog from "./report/ReportDialog";
 export default function App() {
   useLang();
@@ -90,6 +91,18 @@ export default function App() {
     page = <People settings={settings} core={data} catalog={catalog} />;
   else if (route.page === "person")
     page = <PersonPage settings={settings} core={data} catalog={catalog} p={route.p} other={route.other} />;
+  else if (route.page === "fullstory")
+    page = (
+      <FullStory
+        key={"fullstory|" + (route.focus ?? "") + "|" + (route.pair?.join("-") ?? "")}
+        core={data}
+        focus={route.focus}
+        pair={route.pair}
+        settings={settings}
+        setSettings={setSettings}
+        onToast={setToast}
+      />
+    );
   else {
     const i = Math.max(
       0,
@@ -116,7 +129,7 @@ export default function App() {
     <div
       className={
         "app " +
-        (route.page === "graph" ? "workspace workbench" : route.page === "home" ? "home" : "library-page") +
+        (route.page === "graph" || route.page === "fullstory" ? "workspace workbench" : route.page === "home" ? "home" : "library-page") +
         (settings.animate ? "" : " reduced-motion")
       }
     >

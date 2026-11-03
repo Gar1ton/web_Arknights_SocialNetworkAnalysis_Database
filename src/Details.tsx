@@ -150,11 +150,14 @@ export function EdgeDetail({
   onBack,
   onSelect,
   onReport,
+  across = false,
 }: {
   edge: AtlasEdge;
   byId: Map<string, AtlasNode>;
   /** source → target and target → source, over the whole story. */
   history: { ab: StateRow[]; ba: StateRow[] };
+  /** Positions are stories of the full-story table and `events` counts stories, not events. */
+  across?: boolean;
   timeline: Timeline;
   pairHref: string;
   onBack: () => void;
@@ -211,17 +214,29 @@ export function EdgeDetail({
           />
         </div>
         <div className="detail-metrics">
-          <Metric value={edge.events} label={t("同场事件", "Shared events")} />
+          <Metric
+            value={edge.events}
+            label={
+              across
+                ? t("共同出现的故事", "Shared stories")
+                : t("同场事件", "Shared events")
+            }
+          />
           <Metric
             value={edge.weight.toFixed(2)}
             label={t("关系强度", "Tie strength")}
           />
         </div>
         <p className="control-note">
-          {t(
-            `从剧情开头到当前位置，两人同时出场的事件数；关系强度把它换算到 0–1。这段关系在${timeline.position(formed)}首次出现。`,
-            `Events both appear in, from the start of the story to this point; tie strength scales that to 0–1. The relation first appears at ${timeline.position(formed)}.`,
-          )}
+          {across
+            ? t(
+                `截至当前故事，两人之间有关系的故事数；关系强度把它换算到 0–1。这段关系在${timeline.position(formed)}首次出现。每个方向取到当前故事为止各故事的值，按每个故事里的事件多少加权；遇到转折从转折处重新算。`,
+                `Stories in which the two have a relation, up to this story; tie strength scales that to 0–1. The relation first appears in ${timeline.position(formed)}. Each direction is the mean of its story values up to here, weighted by each story's events, restarting at a turn.`,
+              )
+            : t(
+                `从剧情开头到当前位置，两人同时出场的事件数；关系强度把它换算到 0–1。这段关系在${timeline.position(formed)}首次出现。`,
+                `Events both appear in, from the start of the story to this point; tie strength scales that to 0–1. The relation first appears at ${timeline.position(formed)}.`,
+              )}
         </p>
         <h3 className="mini-heading">
           {t("人际态度（IPC）", "Interpersonal circumplex (IPC)")}
