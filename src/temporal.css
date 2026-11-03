@@ -1380,3 +1380,10 @@
 .fullstory.dock-min .canvas-help {
   display: none;
 }
+/* A lite graph (the full-story table) changes nothing on hover: no fading, so a dense graph does not flicker. */
+.graph-stage.lite .graph-node {
+  transition: none;
+}
+.graph-stage.lite svg {
+  will-change: transform;
+}

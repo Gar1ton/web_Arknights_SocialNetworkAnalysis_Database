@@ -120,7 +120,13 @@ function Loaded({
     return () => clearTimeout(timer);
   }, [cur]);
   const needBetweenness = (sort === "betweenness" || selected !== null) && still === shown;
-  const dataset = useMemo(() => cache(shown, scope, needBetweenness), [cache, shown, scope, needBetweenness]);
+  // The graph never waits for betweenness: it only feeds the cast list's order and the person panel.
+  const dataset = useMemo(() => cache(shown, scope, false), [cache, shown, scope]);
+  const scored = useMemo(
+    () => (needBetweenness ? cache(shown, scope, true) : dataset),
+    [cache, shown, scope, needBetweenness, dataset],
+  );
+  const scoredById = useMemo(() => new Map(scored.nodes.map((x) => [x.id, x])), [scored]);
   useEffect(() => {
     // Fill the cache while the page is idle, latest stories first.
     let t0 = n - 1,
@@ -289,6 +295,7 @@ function Loaded({
   const list = useMemo(
     () =>
       baseNodes
+        .map((x) => scoredById.get(x.id) ?? x)
         .filter((x) =>
           (x.name + " " + x.en + " " + nodeName(x)).toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()),
         )
@@ -301,7 +308,7 @@ function Loaded({
                 ? b.betweenness - a.betweenness
                 : nodeName(a).localeCompare(nodeName(b), locale()),
         ),
-    [baseNodes, query, sort, language],
+    [baseNodes, scoredById, query, sort, language],
   );
   const choose = (id: string) => {
     const x = fullById.get(id);
@@ -729,7 +736,7 @@ function Loaded({
             ) : detailNode ? (
               <div className="detail-scroll" key={detailNode.id}>
                 <NodeDetail
-                  node={byId.get(detailNode.id) ?? { ...detailNode, degree: 0, betweenness: 0 }}
+                  node={scoredById.get(detailNode.id) ?? byId.get(detailNode.id) ?? { ...detailNode, degree: 0, betweenness: 0 }}
                   graphEdges={dataset.edges}
                   byId={byId}
                   communities={communities}

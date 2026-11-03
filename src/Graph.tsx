@@ -305,7 +305,7 @@ export default function Graph({
   };
   return (
     <div
-      className={"graph-stage " + (landing ? "hero-graph" : "")}
+      className={"graph-stage " + (landing ? "hero-graph" : "") + (lite ? " lite" : "")}
       data-testid="graph-stage"
       ref={stage}
     >
@@ -556,8 +556,10 @@ export default function Graph({
                 tabIndex={landing ? -1 : 0}
                 aria-label={`${nodeName(n)} · ${communities[n.community]?.label || ""} · ${t(`${d}组关系`, `${d} relations`)}`}
                 aria-pressed={isSelected}
-                onMouseEnter={() => setHover(n.id)}
-                onMouseLeave={() => setHover(null)}
+                // On a crowded graph the pointer is nearly always over some node: hovering would dim and
+                // redraw everything at every move, so a lite graph highlights on click only.
+                onMouseEnter={lite ? undefined : () => setHover(n.id)}
+                onMouseLeave={lite ? undefined : () => setHover(null)}
                 onFocus={() => setHover(n.id)}
                 onBlur={() => setHover(null)}
                 onKeyDown={(e) => {
