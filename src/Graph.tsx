@@ -532,7 +532,8 @@ export default function Graph({
               (landing
                 ? prominent
                 : settings.labels &&
-                  (!crowded ||
+                  (settings.allLabels ||
+                    !crowded ||
                     rank.get(n.id)! < 45 ||
                     (!!focus && connected.has(n.id))));
             const muted = focus && !connected.has(n.id);

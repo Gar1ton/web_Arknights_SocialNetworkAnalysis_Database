@@ -12,6 +12,8 @@ export type Settings = {
   opacity: number;
   width: number;
   labels: boolean;
+  /** Every name, not only the busiest characters' once the graph is crowded. */
+  allLabels: boolean;
   arrows: boolean;
   edgeLabels: boolean;
   gravity: number;
@@ -47,6 +49,7 @@ export const defaults: Settings = {
   opacity: 0.35,
   width: 1,
   labels: true,
+  allLabels: false,
   arrows: false,
   edgeLabels: false,
   gravity: 1.2,

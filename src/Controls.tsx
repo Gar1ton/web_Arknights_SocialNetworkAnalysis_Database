@@ -290,6 +290,13 @@ export default function Controls({
             checked={s.labels}
             onChange={(v) => update("labels", v)}
           />
+          {s.labels && (
+            <Toggle
+              label={t("显示全部角色名", "Every name")}
+              checked={s.allLabels}
+              onChange={(v) => update("allLabels", v)}
+            />
+          )}
           <Toggle
             label={t("显示关系方向", "Show directions")}
             checked={s.arrows}
