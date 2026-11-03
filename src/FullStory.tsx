@@ -555,6 +555,10 @@ function Loaded({
               </div>
             </div>
             <div className="legend">
+              <span className="legend-item legend-fresh">
+                <i />
+                {t("本故事新出现或变化", "New or changed here")}
+              </span>
               {legend
                 ? legend.map(([label, color]) => (
                     <span key={label} className="legend-item">
@@ -562,7 +566,7 @@ function Loaded({
                       {label}
                     </span>
                   ))
-                : arcsNow.slice(0, 10).map(([i, c]) => (
+                : arcsNow.slice(0, 8).map(([i, c]) => (
                     <button
                       key={i}
                       className={community === i ? "active" : ""}
@@ -576,10 +580,6 @@ function Loaded({
                       {c.label}
                     </button>
                   ))}
-              <span className="legend-item legend-fresh">
-                <i />
-                {t("这个故事里出现或变化的关系", "Formed or changed in this story")}
-              </span>
             </div>
             <div className="canvas-help">
               <span>
