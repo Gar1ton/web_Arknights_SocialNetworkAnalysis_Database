@@ -313,14 +313,6 @@ export default function Landing({
     addEventListener("wheel", wheel, { passive: false });
     addEventListener("keydown", key);
     addEventListener("scrollend", settle);
-    const io = new IntersectionObserver(
-      (entries) =>
-        entries.forEach((e) => {
-          if (e.isIntersecting) e.target.classList.add("revealed");
-        }),
-      { threshold: 0.12 },
-    );
-    root.current?.querySelectorAll(".reveal").forEach((e) => io.observe(e));
     return () => {
       document.documentElement.classList.remove("landing-snap");
       scroller.stop();
@@ -329,9 +321,23 @@ export default function Landing({
       removeEventListener("scrollend", settle);
       removeEventListener("scroll", update);
       cancelAnimationFrame(raf);
-      io.disconnect();
     };
   }, []);
+  // The latest and figures screens render once the data arrives, after the
+  // first paint, so observe again whenever it changes.
+  useEffect(() => {
+    const io = new IntersectionObserver(
+      (entries) =>
+        entries.forEach((e) => {
+          if (e.isIntersecting) e.target.classList.add("revealed");
+        }),
+      { threshold: 0.12 },
+    );
+    root.current
+      ?.querySelectorAll(".reveal:not(.revealed)")
+      .forEach((e) => io.observe(e));
+    return () => io.disconnect();
+  }, [core, catalog]);
   return (
     <main
       id="main-content"
@@ -352,7 +358,7 @@ export default function Landing({
           <span className="eyebrow">
             <i />{" "}
             {t(
-              "明日方舟 · 剧情人物关系分析",
+              "剧情人物 · 社会网络分析",
               "Arknights · story character network analysis",
             )}
           </span>
@@ -364,9 +370,9 @@ export default function Landing({
             </h1>
           ) : (
             <h1>
-              角色之间的
+              明日方舟
               <br />
-              <em>关系图谱</em>
+              <em>叙事社会网络</em>
             </h1>
           )}
           <div className="hero-divider" />

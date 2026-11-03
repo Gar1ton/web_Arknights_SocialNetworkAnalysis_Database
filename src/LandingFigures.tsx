@@ -52,6 +52,10 @@ export function LandingFigures({
     [catalog],
   );
   const vivid = useMemo(() => [...finals].sort((a, b) => b[INT] - a[INT]).slice(0, 6), [finals]);
+  // Operator Records are short and would fill most of the axis with near-empty
+  // columns, so the chronology shows Main Theme and events only.
+  const chronoCategories = categories.filter((c) => c !== "密录");
+  const chronoStories = useMemo(() => stories.filter((s) => s.category !== "密录"), [stories]);
   const byIndex = useMemo(() => new Map(stories.map((s) => [s.index, s])), [stories]);
   const tiles: [number, string][] = [
     [totals.messages, t("句台词", "lines")],
@@ -128,9 +132,9 @@ export function LandingFigures({
         <div className="reveal">
           <span className="eyebrow">{t("剧情年代", "Story order")}</span>
           <h2 id="chronology-heading">
-            {t("沿着剧情", "Along the")}
+            {t("关系网络规模的", "Network size")}
             <br />
-            <em>{t("一段段看过去", "chronology")}</em>
+            <em>{t("历时分布", "across the chronology")}</em>
           </h2>
         </div>
         <article className="figure reveal">
@@ -139,8 +143,8 @@ export function LandingFigures({
             {t("每段剧情结束时有多少关系", "Relations as each story ends")}
           </h3>
           <ChronoStrip
-            legend={categories.map((c) => ({ label: categoryName(c), color: categoryTint[c] }))}
-            items={stories.map((s) => ({
+            legend={chronoCategories.map((c) => ({ label: categoryName(c), color: categoryTint[c] }))}
+            items={chronoStories.map((s) => ({
               key: s.id,
               value: s.relations,
               color: categoryTint[s.category],
@@ -155,8 +159,8 @@ export function LandingFigures({
           />
           <p className="figure-note">
             {t(
-              `每一根柱子是一段剧情，从左到右按剧情年代排列，柱高是剧情结束时${scope}关系的条数（A 对 B、B 对 A 各算一条）。关系最多的是《${archiveTitle(busiest)}》，${num(busiest.relations)} 条；主线一般比活动和密录多，因为出场的人更多、篇幅更长。顶上的金点是最新加入的剧情。点柱子打开那段剧情。`,
-              `Each column is one story, in story order from left to right; its height is the number of relations ${scope} when the story ends (A to B and B to A count separately). The most is in ${archiveTitle(busiest)}, ${num(busiest.relations)}. Main Theme chapters usually lead, with larger casts and longer scripts. Gold dots mark the latest additions. Click a column to open the story.`,
+              `每一根柱子是一段主线或活动剧情，从左到右按剧情年代排列，柱高是剧情结束时${scope}关系的条数（A 对 B、B 对 A 各算一条）。干员密录篇幅短、关系少，不列入此图。关系最多的是《${archiveTitle(busiest)}》，${num(busiest.relations)} 条；主线一般比活动多，因为出场的人更多、篇幅更长。顶上的金点是最新加入的剧情。点柱子打开那段剧情。`,
+              `Each column is one Main Theme or event story, in story order from left to right; its height is the number of relations ${scope} when the story ends (A to B and B to A count separately). Operator Records are short with few relations and are left out. The most is in ${archiveTitle(busiest)}, ${num(busiest.relations)}. Main Theme chapters usually lead, with larger casts and longer scripts. Gold dots mark the latest additions. Click a column to open the story.`,
             )}
           </p>
         </article>

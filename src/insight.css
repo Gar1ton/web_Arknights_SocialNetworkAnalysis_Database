@@ -354,7 +354,9 @@
     margin-top: auto;
   }
   .scene-introduction > .intro-signoff,
-  .scene-introduction > .intro-note {
+  .scene-introduction > .intro-note,
+  .scene-latest > :last-child,
+  .scene-figures > :last-child {
     margin-bottom: auto;
   }
 }
