@@ -193,6 +193,11 @@
     flex: 1 1 0;
     min-height: 0;
   }
+  /* The graph stays in its own box when zoomed: it never runs under the top bar or the legend. */
+  .workbench .graph-stage,
+  .workbench .graph-stage > svg {
+    overflow: hidden;
+  }
   .workbench .empty-graph {
     order: 3;
   }
@@ -815,14 +820,6 @@
   .person-card {
     min-width: 0;
   }
-  .library-brand-row {
-    flex-wrap: wrap;
-    gap: 0.375rem 0.75rem;
-  }
-  .library-brand-tools {
-    gap: 0.5rem;
-    margin-left: auto;
-  }
 }
 /* The smallest phones: the brand and the main button stay on one line. */
 @media (max-width: 380px) {
@@ -838,5 +835,306 @@
   }
   .landing-sticky .primary-cta i {
     width: 2.75rem;
+  }
+}
+
+/* ── The landing page on a phone: one continuous page ────────────────
+   The desktop screens each scroll inside themselves between snap stops; on a touch screen those two scrolls
+   fight, so here the sections simply follow one another. */
+@media (max-width: 912px) {
+  html.landing-snap {
+    scroll-snap-type: none;
+  }
+  .landing-experience .landing-sticky {
+    height: auto;
+    min-height: 100svh;
+    padding: 1rem 1rem 1rem;
+    scroll-snap-align: none;
+  }
+  .landing-experience .landing-sticky .hero-copy {
+    padding: 1.25rem 0 1rem;
+  }
+  .landing-sticky .hero-copy h1 {
+    margin-top: 0.75rem;
+    line-height: 1.12;
+  }
+  .landing-sticky .hero-divider {
+    margin: 0.875rem 0 0.75rem;
+  }
+  .landing-sticky .hero-description {
+    line-height: 1.7;
+  }
+  .landing-sticky .primary-cta {
+    margin-top: 1rem;
+    min-height: 2.75rem;
+  }
+  .landing-experience .scene-introduction {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+    padding: 1.75rem 1rem 1.25rem;
+    scroll-snap-align: none;
+    scroll-snap-stop: normal;
+    scrollbar-gutter: auto;
+  }
+  .landing-experience .scene-introduction h2 {
+    margin: 0.625rem 0 0.75rem;
+    font-size: 2rem;
+    line-height: 1.15;
+    letter-spacing: 0.125rem;
+  }
+  .landing-experience .intro-lead,
+  .scene-head-row .intro-lead {
+    font-size: 0.8125rem;
+    line-height: 1.65;
+  }
+  .landing-experience .intro-prose,
+  .landing-experience .intro-chapters p,
+  .landing-experience .figure-note {
+    font-size: 0.6875rem;
+    line-height: 1.7;
+  }
+  /* Latest stories: one column of compact rows. */
+  .latest-list {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.375rem;
+    margin-top: 0.75rem;
+  }
+  .latest-list a {
+    grid-template-columns: 3.5rem minmax(0, 1fr) auto;
+    gap: 0.5rem;
+    padding: 0.3125rem 0.5rem 0.3125rem 0.3125rem;
+  }
+  .latest-list a:hover {
+    transform: none;
+  }
+  .latest-list a > svg {
+    width: 0.8125rem;
+    height: 0.8125rem;
+    color: #a798a2;
+  }
+  .latest-art {
+    height: 2.75rem;
+  }
+  .latest-art .cast-faces .portrait {
+    width: 1rem;
+    height: 1rem;
+  }
+  .latest-text {
+    gap: 0.0625rem;
+  }
+  .latest-text small {
+    gap: 0.375rem;
+    letter-spacing: 0;
+  }
+  .latest-text b {
+    font-size: 0.875rem;
+    letter-spacing: 0.0625rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .latest-text > span {
+    font-size: 0.5625rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  /* Figures: a number never touches its neighbour. */
+  .figure-tiles {
+    margin-bottom: 1rem;
+    column-gap: 0.5rem;
+  }
+  .figure-tiles > div {
+    min-width: 0;
+    padding: 0.5rem 0;
+    gap: 0.1875rem;
+  }
+  .figure-tiles dd {
+    font-size: min(1.375rem, 7vw);
+  }
+  .figure-tiles dt {
+    letter-spacing: 0;
+    white-space: nowrap;
+  }
+  .figure {
+    padding: 0.75rem 0 0.875rem;
+  }
+  .figure-pair {
+    gap: 0;
+  }
+  /* Pages with the brand header: name and language on one line, the page switch under them. */
+  .library-brand-row {
+    flex-wrap: wrap;
+    gap: 0.5rem 0.75rem;
+    justify-content: space-between;
+  }
+  .library-brand-row .brand small {
+    display: none;
+  }
+  .library-brand-tools {
+    display: contents;
+  }
+  .library-brand-tools .lang-switch {
+    margin-left: auto;
+  }
+  .library-brand-tools .index-switch {
+    order: 3;
+    flex: 1 1 100%;
+    margin: 0;
+  }
+  .library-brand-tools .index-switch a {
+    flex: 1 1 0;
+    justify-content: center;
+    text-align: center;
+  }
+  .library-brand-tools .quiet-link {
+    display: none;
+  }
+  .library-shell {
+    padding-top: 1rem;
+  }
+  .library-intro {
+    margin: 1.25rem 0 1rem;
+  }
+  .library-intro h1 {
+    font-size: 2.25rem;
+    letter-spacing: 0.125rem;
+    line-height: 1.15;
+  }
+}
+
+/* ── Story and character directories on a phone ────────────────────── */
+@media (max-width: 912px) {
+  .archive-grid {
+    gap: 0.5rem;
+  }
+  .archive-toolbar {
+    gap: 0.5rem;
+  }
+  .archive-tabs button {
+    padding-bottom: 0.5rem;
+  }
+  .archive-result-count {
+    margin: 0.5rem 0;
+  }
+  .archive-card,
+  .archive-total {
+    min-height: 0;
+  }
+  /* A banner stays; without one the card's own faces say enough, and a strip only holds the number. */
+  .archive-cover:not(.has-banner) {
+    aspect-ratio: auto;
+    height: 1.75rem;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .archive-cover:not(.has-banner) .cover-new {
+    top: 0.3125rem;
+    left: 0.75rem;
+    padding: 0.0625rem 0.375rem;
+    letter-spacing: 0;
+    line-height: 1.4;
+  }
+  .archive-card:not(.is-new) .archive-cover:not(.has-banner),
+  .fullstory-card .archive-cover {
+    display: none;
+  }
+  .archive-card:not(.is-new):not(:has(.has-banner)) .archive-card-content {
+    padding-top: 0.5rem;
+  }
+  .archive-cover:not(.has-banner) .cover-index,
+  .archive-cover:not(.has-banner) .cover-faces,
+  .archive-cover:not(.has-banner) svg {
+    display: none;
+  }
+  .archive-card-content {
+    padding: 0.125rem 0.75rem 0.5rem;
+  }
+  .archive-category {
+    display: none;
+  }
+  .archive-card-title {
+    margin-top: 0.25rem;
+  }
+  .archive-card-title h2 {
+    font-size: 1.0625rem;
+    line-height: 1.3;
+  }
+  .archive-card-title p {
+    margin-top: 0.25rem;
+    gap: 0.375rem;
+    font-size: 0.6875rem;
+    line-height: 1.4;
+  }
+  .archive-card-title .portrait {
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+  .archive-description {
+    margin: 0.25rem 0;
+    font-size: 0.5625rem;
+    line-height: 1.5;
+  }
+  .archive-card-bottom small {
+    font-size: 0.5rem;
+    letter-spacing: 0;
+  }
+  .card-open {
+    width: 1.375rem;
+    height: 1.375rem;
+  }
+  .card-open svg {
+    width: 0.75rem;
+    height: 0.75rem;
+  }
+  /* A character row: the name first; the Big Five bars are on their page. */
+  .person-grid {
+    gap: 0.375rem;
+  }
+  .person-card {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 0.5rem;
+    padding: 0.375rem 0.5rem;
+  }
+  .person-card > svg,
+  .person-card-ocean {
+    display: none;
+  }
+  .person-card .portrait {
+    width: 2rem;
+    height: 2rem;
+  }
+  .person-card-stats {
+    gap: 0;
+    font-size: 0.625rem;
+  }
+  /* A character's page. */
+  .person-hero {
+    gap: 0.875rem;
+    padding: 1rem 0 0.875rem;
+  }
+  .person-hero .profile-emblem.large {
+    width: 4.5rem;
+    height: 4.5rem;
+    margin-left: 0.5rem;
+  }
+  .person-hero h1 {
+    margin-top: 0.25rem;
+    font-size: 1.75rem;
+    line-height: 1.2;
+  }
+  .person-crumbs {
+    margin-top: 0.75rem;
+  }
+}
+/* The widest table on the narrowest phones. */
+@media (max-width: 360px) {
+  .figure-table {
+    font-size: 0.5625rem;
+  }
+  .figure-table th {
+    font-size: 0.5rem;
+    letter-spacing: 0;
   }
 }

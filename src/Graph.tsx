@@ -95,6 +95,8 @@ export default function Graph({
     y: number;
     start: Point;
     distance: number;
+    /** The relation a finger came down on, opened if the finger lifts without moving. */
+    edge?: string | null;
   } | null>(null);
   const previous = useRef<Map<string, Point>>(new Map());
   // Phones: the scene takes the shape of the screen at a readable scale instead of a tiny 1000×760 letterbox,
@@ -259,7 +261,8 @@ export default function Graph({
       ),
     [focus, edges],
   );
-  const clamp = (v: number) => Math.max(0.3, Math.min(2.5, v));
+  // A phone's stretched view may need to go further out to fit a big network.
+  const clamp = (v: number) => Math.max(compact ? 0.12 : 0.3, Math.min(compact ? 4 : 2.5, v));
   /** Zoom that shows every node; the layout is centred on (500, 380). */
   const fitZoom = () => {
     let dx = 0,
@@ -279,6 +282,8 @@ export default function Graph({
     const m = svg.current!.getScreenCTM();
     return new DOMPoint(e.clientX, e.clientY).matrixTransform(m!.inverse());
   };
+  // On a phone's crowded graph a finger always lands on someone: moving it pans, and people stay put.
+  const fixedNodes = compact && lite;
   const down = (e: PointerEvent<SVGSVGElement>) => {
     if (e.button !== 0) return;
     const p = coordinate(e);
@@ -297,13 +302,14 @@ export default function Graph({
     const el = (e.target as Element).closest("[data-node]");
     const id = el?.getAttribute("data-node") || null;
     if (landing && !id) return;
-    if (id && !settings.locked) setDraggedId(id);
+    if (id && !settings.locked && !fixedNodes) setDraggedId(id);
     drag.current = {
       id,
       x: p.x,
       y: p.y,
-      start: id ? point(id) : pan,
+      start: id && !fixedNodes ? point(id) : pan,
       distance: 0,
+      edge: id ? null : (e.target as Element).closest("[data-edge]")?.getAttribute("data-edge"),
     };
     svg.current!.setPointerCapture(e.pointerId);
   };
@@ -325,12 +331,12 @@ export default function Graph({
     const dx = p.x - d.x,
       dy = p.y - d.y;
     d.distance = Math.hypot(dx, dy);
-    if (d.id && !settings.locked)
+    if (d.id && !settings.locked && !fixedNodes)
       setOverrides((old) => ({
         ...old,
         [d.id!]: { x: d.start.x + dx / zoom, y: d.start.y + dy / zoom },
       }));
-    else if (!d.id) setPan({ x: d.start.x + dx, y: d.start.y + dy });
+    else if (!d.id || fixedNodes) setPan({ x: d.start.x + dx, y: d.start.y + dy });
   };
   const release = (e: PointerEvent<SVGSVGElement>) => {
     pointers.current.delete(e.pointerId);
@@ -341,8 +347,10 @@ export default function Graph({
     release(e);
     if (pinching) return;
     const d = drag.current;
-    if (d && d.distance < 5) {
+    // A finger shakes more than a mouse; the distance is in scene units.
+    if (d && d.distance < (compact ? 14 : 5)) {
       if (d.id) onSelect(d.id);
+      else if (d.edge) onEdge(d.edge);
       else onBackground?.();
     }
     drag.current = null;
@@ -365,8 +373,8 @@ export default function Graph({
   // A phone is a map: names keep their size while pinching and more of them appear closer in. Only named
   // people redraw, and only when the zoom crosses a step, so a pinch stays as cheap as the scene below intends.
   const labelZoom = compact ? Math.pow(1.15, Math.round(Math.log(zoom) / Math.log(1.15))) : 1;
-  const labelScale = 1 / labelZoom;
-  const labelLimit = compact ? Math.max(12, Math.round(30 * labelZoom * labelZoom)) : 45;
+  // Names shrink a little with a far-out view so more of them fit; closer in they keep their full size.
+  const labelScale = compact ? Math.pow(Math.min(labelZoom, 1), 0.3) / labelZoom : 1;
   // Names that would collide give way, the selection and the best connected first; zooming in brings them back.
   const placed = useMemo(() => {
     const radial = settings.mode !== "ego" && (settings.layout === "circular" || settings.mode === "chord");
@@ -382,19 +390,18 @@ export default function Graph({
     for (const n of order) {
       const p = overrides[n.id] || displayPositions.get(n.id) || positions.get(n.id);
       if (!p) continue;
-      if (crowded && !connected.has(n.id) && rank.get(n.id)! >= labelLimit) continue;
-      const size = (rank.get(n.id)! < prominentCount ? 18 : 15) * settings.labelSize;
+      const size = (rank.get(n.id)! < prominentCount ? 18 : 15) * settings.labelSize * labelScale * labelZoom;
       const width = [...nodeName(n)].reduce((w, c) => w + (c.charCodeAt(0) < 128 ? 0.55 : 1), 0) * size;
       const r = (4 + Math.sqrt(degrees.get(n.id) || 0) * 1.6) * settings.nodeSize;
       const x = (p.x - 500) * labelZoom,
-        y = (p.y - 380 + r) * labelZoom + 7 + 12 * settings.labelSize;
-      const box: [number, number, number, number] = [x - width / 2, y - size, x + width / 2, y + 2];
+        y = (p.y - 380 + r) * labelZoom + (7 + 12 * settings.labelSize) * labelScale * labelZoom;
+      const box: [number, number, number, number] = [x - width / 2, y - size * 0.85, x + width / 2, y + size * 0.15];
       if (boxes.some((b) => box[0] < b[2] && b[0] < box[2] && box[1] < b[3] && b[1] < box[3])) continue;
       boxes.push(box);
       kept.add(n.id);
     }
     return kept;
-  }, [compact, settings, nodes, focus, connected, rank, degrees, crowded, prominentCount, overrides, displayPositions, positions, labelZoom, labelLimit, language]);
+  }, [compact, settings, nodes, focus, connected, rank, degrees, crowded, prominentCount, overrides, displayPositions, positions, labelZoom, labelScale, language]);
   // The scene does not depend on pan or zoom: moving the view only changes the outer transform, and a
   // timeline step redraws only the relations and people whose drawing changed.
   const scene = useMemo(() => {
@@ -477,7 +484,7 @@ export default function Graph({
             : settings.labels &&
             (settings.allLabels ||
               !crowded ||
-              rank.get(n.id)! < labelLimit ||
+              rank.get(n.id)! < 45 ||
               (!!focus && connected.has(n.id))));
       return (
         <NodeView
@@ -540,7 +547,6 @@ export default function Graph({
     selectNode,
     placed,
     labelScale,
-    labelLimit,
     compact,
   ]);
   return (
@@ -779,7 +785,12 @@ const EdgeView = memo(function EdgeView({
           className="edge-hit"
           role="button"
           tabIndex={0}
-          onPointerDown={(e) => e.stopPropagation()}
+          data-edge={id}
+          // A mouse click on a relation is only a click. A finger on one may be starting a pan or a pinch, and on
+          // a dense graph nearly every touch lands on a relation; the graph sorts out which it was on release.
+          onPointerDown={(e) => {
+            if (e.pointerType === "mouse") e.stopPropagation();
+          }}
           onKeyDown={(event) => {
             if (event.key === "Enter" || event.key === " ") {
               event.preventDefault();
