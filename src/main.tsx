@@ -14,6 +14,7 @@ import "./media.css";
 import "./report/report.css";
 import "./temporal.css";
 import "./lang.css";
+import "./mobile.css";
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <App />

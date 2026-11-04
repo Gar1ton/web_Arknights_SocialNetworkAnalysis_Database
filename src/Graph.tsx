@@ -1,6 +1,7 @@
 import { createPortal } from "react-dom";
 import { gravityLeaders } from "./gravity";
-import { memo, useCallback, useState, useMemo, useRef, useEffect, type PointerEvent } from "react";
+import { memo, useCallback, useLayoutEffect, useState, useMemo, useRef, useEffect, type PointerEvent } from "react";
+import { useCompact } from "./compact";
 import { useLang } from "./useLang";
 import { Plus, Minus, Maximize, Play, Pause, RotateCcw } from "lucide-react";
 import {
@@ -51,6 +52,8 @@ type Props = {
   /** Positions laid out ahead of time (the full-story table): the network view uses them as they are. */
   fixed?: Map<string, Point>;
 };
+/** Screen pixels per scene unit on a phone: 15-unit labels stay near 11 px. */
+const MIN_UNIT = 0.72;
 export default function Graph({
   nodes,
   edges,
@@ -94,6 +97,37 @@ export default function Graph({
     distance: number;
   } | null>(null);
   const previous = useRef<Map<string, Point>>(new Map());
+  // Phones: the scene takes the shape of the screen at a readable scale instead of a tiny 1000×760 letterbox,
+  // and the layout is stretched to fill it. It follows the stage, so opening the panel reflows the graph.
+  const compact = useCompact() && !landing;
+  const [stageSize, setStageSize] = useState<{ w: number; h: number } | null>(null);
+  useLayoutEffect(() => {
+    const el = stage.current;
+    if (!compact || !el) return setStageSize(null);
+    const measure = () => {
+      const w = el.clientWidth,
+        h = el.clientHeight;
+      // A hidden stage (the panel at full height) keeps its last shape.
+      if (w && h) setStageSize((old) => (old && old.w === w && old.h === h ? old : { w, h }));
+    };
+    measure();
+    const watcher = new ResizeObserver(measure);
+    watcher.observe(el);
+    return () => watcher.disconnect();
+  }, [compact]);
+  const view = useMemo(() => {
+    if (!stageSize) return { w: 1000, h: 760, sx: 1, sy: 1 };
+    const unit = Math.max(MIN_UNIT, Math.min(stageSize.w / 1000, stageSize.h / 760));
+    const w = stageSize.w / unit,
+      h = stageSize.h / unit;
+    // A little air around the stretched network, for the corner controls.
+    const sx = (w / 1000) * 0.97,
+      sy = (h / 760) * 0.9;
+    // Rings stay round; a network can stretch.
+    const round = settings.mode !== "network" || settings.layout === "circular";
+    const s = Math.min(sx, sy);
+    return { w, h, sx: round ? s : sx, sy: round ? s : sy };
+  }, [stageSize, settings.mode, settings.layout]);
   const computed = useMemo(
     () =>
       fixed && settings.mode === "network"
@@ -122,8 +156,11 @@ export default function Graph({
       const p = previous.current.get(n.id);
       if (p) next.set(n.id, p);
     }
+    if (view.sx !== 1 || view.sy !== 1)
+      for (const [id, p] of next)
+        next.set(id, { x: 500 + (p.x - 500) * view.sx, y: 380 + (p.y - 380) * view.sy });
     return next;
-  }, [computed, settings.locked]);
+  }, [computed, settings.locked, view.sx, view.sy]);
   // Curves bend by their place in the full network, so a relation keeps its
   // shape when others appear before it.
   const bend = useMemo(
@@ -133,7 +170,7 @@ export default function Graph({
   useEffect(() => {
     setOverrides({});
     setPan({ x: 0, y: 0 });
-    setZoom(1);
+    setZoom(compact ? fitZoom() : 1);
   }, [computed, resetKey]);
   useEffect(() => {
     if (settings.animate) svg.current?.unpauseAnimations();
@@ -231,7 +268,9 @@ export default function Graph({
       dx = Math.max(dx, Math.abs(p.x - 500));
       dy = Math.max(dy, Math.abs(p.y - 380));
     }
-    return clamp(Math.min(1, 440 / Math.max(1, dx), 330 / Math.max(1, dy)));
+    return clamp(
+      Math.min(1, (view.w / 2 - 60) / Math.max(1, dx), (view.h / 2 - 50) / Math.max(1, dy)),
+    );
   };
   // Active touch / pen / mouse pointers in scene coordinates, for pinch zoom.
   const pointers = useRef(new Map<number, Point>());
@@ -323,6 +362,39 @@ export default function Graph({
   handlers.current = { onSelect, onEdge };
   const selectNode = useCallback((id: string) => handlers.current.onSelect(id), []);
   const selectEdge = useCallback((id: string) => handlers.current.onEdge(id), []);
+  // A phone is a map: names keep their size while pinching and more of them appear closer in. Only named
+  // people redraw, and only when the zoom crosses a step, so a pinch stays as cheap as the scene below intends.
+  const labelZoom = compact ? Math.pow(1.15, Math.round(Math.log(zoom) / Math.log(1.15))) : 1;
+  const labelScale = 1 / labelZoom;
+  const labelLimit = compact ? Math.max(12, Math.round(30 * labelZoom * labelZoom)) : 45;
+  // Names that would collide give way, the selection and the best connected first; zooming in brings them back.
+  const placed = useMemo(() => {
+    const radial = settings.mode !== "ego" && (settings.layout === "circular" || settings.mode === "chord");
+    if (!compact || radial || settings.allLabels || !settings.labels) return null;
+    const order = [...nodes].sort(
+      (a, b) =>
+        Number(b.id === focus) - Number(a.id === focus) ||
+        Number(connected.has(b.id)) - Number(connected.has(a.id)) ||
+        rank.get(a.id)! - rank.get(b.id)!,
+    );
+    const boxes: [number, number, number, number][] = [];
+    const kept = new Set<string>();
+    for (const n of order) {
+      const p = overrides[n.id] || displayPositions.get(n.id) || positions.get(n.id);
+      if (!p) continue;
+      if (crowded && !connected.has(n.id) && rank.get(n.id)! >= labelLimit) continue;
+      const size = (rank.get(n.id)! < prominentCount ? 18 : 15) * settings.labelSize;
+      const width = [...nodeName(n)].reduce((w, c) => w + (c.charCodeAt(0) < 128 ? 0.55 : 1), 0) * size;
+      const r = (4 + Math.sqrt(degrees.get(n.id) || 0) * 1.6) * settings.nodeSize;
+      const x = (p.x - 500) * labelZoom,
+        y = (p.y - 380 + r) * labelZoom + 7 + 12 * settings.labelSize;
+      const box: [number, number, number, number] = [x - width / 2, y - size, x + width / 2, y + 2];
+      if (boxes.some((b) => box[0] < b[2] && b[0] < box[2] && box[1] < b[3] && b[1] < box[3])) continue;
+      boxes.push(box);
+      kept.add(n.id);
+    }
+    return kept;
+  }, [compact, settings, nodes, focus, connected, rank, degrees, crowded, prominentCount, overrides, displayPositions, positions, labelZoom, labelLimit, language]);
   // The scene does not depend on pan or zoom: moving the view only changes the outer transform, and a
   // timeline step redraws only the relations and people whose drawing changed.
   const scene = useMemo(() => {
@@ -400,10 +472,12 @@ export default function Graph({
         isSelected ||
         (landing
           ? prominent
-          : settings.labels &&
+          : placed
+            ? placed.has(n.id)
+            : settings.labels &&
             (settings.allLabels ||
               !crowded ||
-              rank.get(n.id)! < 45 ||
+              rank.get(n.id)! < labelLimit ||
               (!!focus && connected.has(n.id))));
       return (
         <NodeView
@@ -419,6 +493,8 @@ export default function Graph({
           muted={!!focus && !connected.has(n.id)}
           radialLabel={radialLabel}
           labelSize={settings.labelSize}
+          labelScale={showLabel ? labelScale : 1}
+          hitPad={compact ? 20 : 13}
           landing={landing}
           lite={lite}
           glow={nodes.length <= 160 || isSelected || prominent}
@@ -462,6 +538,10 @@ export default function Graph({
     language,
     selectEdge,
     selectNode,
+    placed,
+    labelScale,
+    labelLimit,
+    compact,
   ]);
   return (
     <div
@@ -492,7 +572,7 @@ export default function Graph({
       <svg
         ref={svg}
         id={landing ? "hero-svg" : "network-svg"}
-        viewBox="0 0 1000 760"
+        viewBox={`${500 - view.w / 2} ${380 - view.h / 2} ${view.w} ${view.h}`}
         role="group"
         aria-label={t(
           "关系图：点击角色查看详情，点击空白处返回全图，拖拽平移，滚轮或双指缩放",
@@ -771,6 +851,10 @@ type NodeProps = {
   muted: boolean;
   radialLabel: boolean;
   labelSize: number;
+  /** Undoes the view's zoom on a phone, so a name keeps its size on screen. */
+  labelScale: number;
+  /** Tap margin around the node. */
+  hitPad: number;
   landing: boolean;
   lite: boolean;
   glow: boolean;
@@ -795,6 +879,8 @@ const NodeView = memo(function NodeView({
   muted,
   radialLabel,
   labelSize,
+  labelScale,
+  hitPad,
   landing,
   lite,
   glow,
@@ -834,7 +920,7 @@ const NodeView = memo(function NodeView({
         }
       }}
     >
-      <circle cx={x} cy={y} r={r + 13} fill="transparent" />
+      <circle cx={x} cy={y} r={r + hitPad} fill="transparent" />
       {glow && (
         <circle
           cx={x}
@@ -874,16 +960,16 @@ const NodeView = memo(function NodeView({
       {showLabel && (
         <text
           x={x + (radialLabel ? (leftLabel ? -1 : 1) * (r + 12) : 0)}
-          y={y + (radialLabel ? 5 : r + 7 + 12 * labelSize)}
+          y={y + (radialLabel ? 5 : r + (7 + 12 * labelSize) * labelScale)}
           transform={radialLabel ? `rotate(${labelAngle} ${x} ${y})` : undefined}
           textAnchor={radialLabel ? (leftLabel ? "end" : "start") : "middle"}
-          fontSize={(prominent ? 18 : 15) * labelSize}
+          fontSize={(prominent ? 18 : 15) * labelSize * labelScale}
           fill={prominent ? "#eee0d0" : "#b9adaf"}
           fontFamily="Inter, Microsoft YaHei, sans-serif"
           style={{
             paintOrder: "stroke",
             stroke: bg,
-            strokeWidth: 3,
+            strokeWidth: 3 * labelScale,
           }}
         >
           {name}

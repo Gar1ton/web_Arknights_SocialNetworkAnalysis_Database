@@ -1,0 +1,842 @@
+/* The graph pages on a phone (1rem is 19.2px here, see style.css).
+
+   One screen, no page scroll, nothing floating over the graph:
+     top bar      back · title · where we are · previous / next
+     graph        takes whatever is left
+     legend       one line, scrolled sideways
+     timeline     a slim bar in the flow; unfolding it adds the curve
+     panel        opened by the tabs, a person or a relation; half or full height
+     tabs         always at the bottom
+   Loaded last so it overrides the older width rules of style/experience/refinement. */
+
+/* The title always fits: six characters of its size plus tracking, whatever the phone. */
+@media (max-width: 912px) {
+  .landing-sticky .hero-copy h1 {
+    font-size: min(4.5625rem, calc((100vw - 4.875rem) / 6.2));
+  }
+}
+@media (max-width: 560px) {
+  .landing-brand .brand small {
+    display: none;
+  }
+}
+
+@media (max-width: 912px) {
+  .workbench .explorer {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .workbench .canvas-section {
+    height: auto;
+    min-height: 0;
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .workbench .workspace-footer,
+  .workbench .panel-toggle,
+  .workbench .canvas-help,
+  .workbench .graph-corner {
+    display: none;
+  }
+
+  /* ── Top bar ─────────────────────────────────────────── */
+  .workbench .canvas-heading {
+    position: relative;
+    top: 0;
+    left: 0;
+    z-index: 5;
+    flex: none;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 0.125rem;
+    padding: 0.25rem 0.25rem 0.25rem 0;
+    background: #17141bf2;
+    border-bottom: 1px solid var(--line);
+    pointer-events: auto;
+  }
+  .workbench .workbench-breadcrumb {
+    display: contents;
+  }
+  .workbench .workbench-breadcrumb > span {
+    display: none;
+  }
+  .workbench .workbench-breadcrumb a {
+    grid-column: 1;
+    grid-row: 1 / 3;
+    font-size: 0;
+    gap: 0;
+    padding: 0.5rem 0.5rem 0.5rem 0.625rem;
+  }
+  .workbench .workbench-breadcrumb a svg {
+    width: 1.0625rem;
+    height: 1.0625rem;
+  }
+  .workbench .canvas-heading h1 {
+    grid-column: 2;
+    grid-row: 1;
+    display: block;
+    margin: 0;
+    font-size: 0.9375rem;
+    line-height: 1.3;
+    letter-spacing: 0.0625rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .workbench .canvas-heading p {
+    grid-column: 2;
+    grid-row: 2;
+    margin: 0;
+    font-size: 0.5625rem;
+    line-height: 1.35;
+    letter-spacing: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .workbench .canvas-heading p i {
+    margin: 0 0.3125rem;
+  }
+  .heading-code {
+    display: inline;
+  }
+  .workbench .story-steps {
+    grid-column: 3;
+    grid-row: 1 / 3;
+    margin: 0;
+    gap: 0;
+  }
+  .workbench .story-steps a {
+    font-size: 0;
+    gap: 0;
+    padding: 0.5rem 0.375rem;
+  }
+  .workbench .story-steps a svg {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  /* ── Graph: view switch and report float in its top corners, tools in the bottom one ── */
+  .workbench .view-switch {
+    position: relative;
+    top: 0;
+    left: 0;
+    right: auto;
+    z-index: 4;
+    flex: none;
+    align-self: flex-start;
+    flex-wrap: wrap;
+    height: 1.75rem;
+    margin: 0.3125rem 0 -2.0625rem 0.375rem;
+    padding: 0.0625rem;
+    gap: 0;
+    background: #1a171fd9;
+  }
+  .workbench .view-switch button {
+    display: flex;
+    align-items: center;
+    gap: 0.1875rem;
+    padding: 0.1875rem 0.3125rem;
+    font-size: 0.5625rem;
+    white-space: nowrap;
+  }
+  .workbench .view-switch .art-select {
+    width: auto;
+  }
+  .workbench .view-switch .art-select > button {
+    gap: 0.125rem;
+  }
+  .workbench .report-cta {
+    position: relative;
+    inset: auto;
+    z-index: 4;
+    flex: none;
+    align-self: flex-end;
+    scale: 1;
+    width: 1.75rem;
+    min-width: 0;
+    height: 1.75rem;
+    margin: 0.3125rem 0.375rem -2.0625rem 0;
+    padding: 0;
+    display: grid;
+    place-items: center;
+    background: #1a171fd9;
+    border: 1px solid #d1bda12e;
+    border-radius: 0.25rem;
+    box-shadow: none;
+    transform: none;
+  }
+  .workbench .report-cta > span,
+  .workbench .report-cta > i {
+    display: none;
+  }
+  .workbench .report-cta > svg {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+  .workbench .view-switch {
+    order: 1;
+  }
+  .workbench .canvas-heading {
+    order: 0;
+  }
+  .workbench .report-cta {
+    order: 2;
+  }
+  .workbench .graph-stage {
+    order: 3;
+    position: relative;
+    inset: auto;
+    flex: 1 1 0;
+    min-height: 0;
+  }
+  .workbench .empty-graph {
+    order: 3;
+  }
+  .workbench .canvas-bottom {
+    order: 4;
+  }
+  .workbench .graph-tools {
+    left: auto;
+    right: 0.375rem;
+    bottom: 0.375rem;
+    flex-direction: column;
+    padding: 0.0625rem;
+    background: #1a171fd9;
+  }
+  .workbench .graph-tools button {
+    padding: 0.4375rem;
+  }
+  .workbench .graph-tools button svg {
+    width: 0.8125rem;
+    height: 0.8125rem;
+  }
+  /* Pinching does the rest: keep zoom and fit, the settings tab has the others. */
+  .workbench .graph-tools i,
+  .workbench .graph-tools button:nth-of-type(n + 4) {
+    display: none;
+  }
+
+  /* ── Legend and timeline: in the flow under the graph ── */
+  .workbench .canvas-bottom {
+    position: relative;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 4;
+    flex: none;
+    display: flex;
+    flex-direction: column-reverse;
+  }
+  .workbench .legend {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: 0.625rem;
+    padding: 0.125rem 0.5rem 0.1875rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    mask-image: linear-gradient(90deg, #000 92%, transparent);
+  }
+  .workbench .legend::-webkit-scrollbar {
+    display: none;
+  }
+  .workbench .legend > * {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .workbench .legend button,
+  .workbench .legend-item {
+    font-size: 0.5625rem;
+    padding: 0.125rem 0;
+  }
+  .workbench .story-timeline,
+  .workbench.workbench .dock-min .story-timeline {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0.1875rem 0.125rem 0.1875rem 0.25rem;
+    background: #1a171f;
+    border: 0;
+    border-top: 1px solid var(--line);
+    border-radius: 0;
+    backdrop-filter: none;
+  }
+  .workbench .timeline-controls,
+  .workbench.workbench .dock-min .timeline-controls {
+    flex: none;
+    gap: 0;
+    padding: 0;
+    border: 0;
+  }
+  .workbench .timeline-controls button,
+  .workbench.workbench .dock-min .timeline-controls button {
+    padding: 0.375rem 0.25rem;
+  }
+  .workbench .timeline-controls button svg {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+  .workbench .timeline-controls .timeline-play,
+  .workbench.workbench .dock-min .timeline-controls .timeline-play {
+    width: 1.875rem;
+    height: 1.875rem;
+    margin: 0 0.125rem;
+    padding: 0;
+  }
+  .workbench .dock-min .timeline-controls button:first-child {
+    display: none;
+  }
+  .workbench .timeline-body,
+  .workbench.workbench .dock-min .timeline-body {
+    gap: 0;
+    justify-content: center;
+    padding-left: 0.25rem;
+  }
+  .workbench .timeline-now-line {
+    gap: 0.375rem;
+    align-items: baseline;
+  }
+  .workbench .timeline-now-line b {
+    order: 1;
+    flex: 1 1 0;
+    min-width: 0;
+    font-size: 0.625rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .workbench .timeline-now-line .timeline-pos {
+    order: 2;
+    flex: none;
+    font-size: 0.5rem;
+    letter-spacing: 0;
+    white-space: nowrap;
+  }
+  .workbench .timeline-count,
+  .workbench .timeline-scene-no {
+    display: none;
+  }
+  .workbench .timeline-curve {
+    height: 2.75rem;
+  }
+  /* A wider strip than the 4 px line, so a thumb can catch it. */
+  .workbench .timeline-range {
+    height: 1.125rem;
+    margin: 0;
+    background: linear-gradient(to right, #d4a785 var(--range), #5d475b66 var(--range)) center / 100% 0.1875rem no-repeat;
+  }
+  .workbench .timeline-range::-webkit-slider-thumb {
+    width: 1rem;
+    height: 1rem;
+  }
+  .workbench .dock-toggle {
+    flex: none;
+    padding: 0.5rem 0.25rem;
+  }
+
+  /* ── Panel and tabs ──────────────────────────────────── */
+  .workbench .side-panel {
+    flex: none;
+    height: auto;
+    min-height: 0;
+    border-left: 0;
+    border-top: 1px solid var(--line);
+    background: #1e1923;
+  }
+  .workbench .sidebar-tabs {
+    order: 3;
+    flex: none;
+    margin: 0;
+    border-bottom: 0;
+    border-top: 1px solid var(--line);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .workbench .sidebar-tabs button {
+    flex-direction: column;
+    gap: 0.0625rem;
+    padding: 0.3125rem 0 0.25rem;
+    font-size: 0.5625rem;
+  }
+  .workbench .sidebar-tabs button svg {
+    width: 0.9375rem;
+    height: 0.9375rem;
+  }
+  .workbench .sidebar-tabs button > span {
+    display: none;
+  }
+  .workbench .sidebar-tabs button:after {
+    top: -1px;
+    bottom: auto;
+  }
+  .sheet-grip {
+    order: 1;
+    flex: none;
+    position: relative;
+    height: 1.25rem;
+  }
+  .sheet-handle {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    touch-action: none;
+  }
+  .sheet-handle i {
+    width: 2.25rem;
+    height: 0.1875rem;
+    border-radius: 1rem;
+    background: #8a748188;
+  }
+  .sheet-close {
+    position: absolute;
+    top: 0;
+    right: 0.25rem;
+    bottom: 0;
+    padding: 0 0.375rem;
+    display: flex;
+    align-items: center;
+    color: #a798a2;
+  }
+  .workbench .sidebar-page {
+    order: 2;
+    flex: none;
+    height: 46svh;
+    animation: none;
+  }
+  .workbench .sidebar-page .node-row {
+    animation: none;
+  }
+  /* Full height: the panel takes over from the graph, the timeline stays so the events can follow it. */
+  .explorer[data-sheet="full"] .canvas-section {
+    flex: none;
+  }
+  .explorer[data-sheet="full"] .side-panel {
+    flex: 1 1 0;
+  }
+  .explorer[data-sheet="full"] .sidebar-page {
+    flex: 1 1 0;
+    height: auto;
+    min-height: 0;
+  }
+  .explorer[data-sheet="full"] .graph-stage,
+  .explorer[data-sheet="full"] .view-switch,
+  .explorer[data-sheet="full"] .report-cta,
+  .explorer[data-sheet="full"] .empty-graph,
+  .explorer[data-sheet="full"] .legend,
+  .explorer[data-sheet="half"] .legend {
+    display: none;
+  }
+
+  /* The tab already names the list; its heading only took the room of the rows. */
+  .workbench .sidebar-page > .panel-heading {
+    display: none;
+  }
+  .workbench .sidebar-page .workbench-context {
+    height: auto;
+    padding: 0.25rem 0.75rem 0.5rem;
+  }
+
+  /* ── Cast: one row of search and filters stays on top, the rows scroll under it ── */
+  .sidebar-page[data-pane="nodes"] {
+    overflow-y: auto;
+  }
+  .sidebar-page[data-pane="nodes"] > *,
+  .sidebar-page[data-pane="nodes"] .navigation-controls > * {
+    flex: none;
+  }
+  .sidebar-page[data-pane="nodes"] .navigation-controls {
+    display: contents;
+  }
+  .nav-row {
+    order: -1;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    flex: none;
+    display: flex;
+    align-items: stretch;
+    gap: 0.25rem;
+    padding: 0 0.5rem 0.25rem;
+    background: #1e1923;
+  }
+  .nav-row .search-box {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 0 0.4375rem;
+    height: 1.875rem;
+  }
+  /* 16px: iOS zooms the whole page into any smaller field. */
+  .nav-row .search-box input {
+    font-size: 16px;
+  }
+  .nav-row .search-box input::placeholder {
+    font-size: 0.6875rem;
+  }
+  .nav-row .filter-row {
+    flex: none;
+    gap: 0.25rem;
+    margin: 0;
+  }
+  .nav-row .art-select {
+    width: 4.5rem;
+  }
+  .nav-row .art-select > button {
+    height: 1.875rem;
+    padding: 0 0.3125rem;
+    gap: 0.125rem;
+    font-size: 0.5625rem;
+    white-space: nowrap;
+  }
+  .nav-row .art-select > button > span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .nav-row .art-select > button > svg {
+    flex: none;
+    width: 0.625rem;
+    height: 0.625rem;
+  }
+  .sidebar-page[data-pane="nodes"] .network-stats {
+    order: 0;
+    padding: 0.25rem 0.75rem 0.375rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .sidebar-page[data-pane="nodes"] .network-stats > div > strong {
+    font-size: 0.875rem;
+    line-height: 1.2;
+  }
+  .sidebar-page[data-pane="nodes"] .network-stats > div > span {
+    font-size: 0.5rem;
+  }
+  .sidebar-page[data-pane="nodes"] .network-octants {
+    margin-top: 0.25rem;
+  }
+  .sidebar-page[data-pane="nodes"] .fs-show {
+    order: 1;
+    flex-wrap: nowrap;
+    margin: 0;
+    padding: 0.0625rem 0.625rem 0.25rem;
+    font-size: 0.5rem;
+    white-space: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .sidebar-page[data-pane="nodes"] .fs-show button {
+    flex: none;
+    padding: 0.125rem 0.375rem;
+  }
+  .sidebar-page[data-pane="nodes"] .list-heading {
+    order: 2;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0 0.625rem 0.1875rem;
+    font-size: 0.5rem;
+  }
+  .sidebar-page[data-pane="nodes"] .list-heading > span:first-child {
+    flex: 1 1 0;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .sidebar-page[data-pane="nodes"] .list-heading > span:nth-child(2) {
+    font-size: 0.5rem;
+    white-space: nowrap;
+  }
+  .stats-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.125rem;
+    padding: 0.125rem 0;
+    font-size: 0.5rem;
+    color: var(--gold);
+    white-space: nowrap;
+  }
+  .sidebar-page[data-pane="nodes"] .node-list {
+    order: 3;
+    flex: none;
+    overflow: visible;
+    min-height: 0;
+    padding: 0 0.25rem 1rem;
+  }
+  .workbench .node-row {
+    gap: 0.5rem;
+    padding: 0.4375rem 0.5rem;
+  }
+  .workbench .panel-bottom {
+    display: none;
+  }
+
+  /* ── Events ──────────────────────────────────────────── */
+  .workbench .event-list {
+    padding: 0 0 1rem;
+  }
+  .workbench .scene-head {
+    margin: 0.5rem 0.75rem 0.125rem;
+  }
+
+  /* ── Details: the same blocks, less air ──────────────── */
+  .workbench .back-link {
+    padding: 0.125rem 0.625rem 0.25rem;
+  }
+  .workbench .detail-content {
+    padding: 0.25rem 0.75rem 1.5rem;
+  }
+  .workbench .panel-scroll {
+    padding: 0 0.75rem;
+  }
+  .workbench .detail-content .profile-emblem {
+    float: left;
+    width: 3rem;
+    height: 3rem;
+    margin: 0.25rem 0.75rem 0.25rem 0.125rem;
+  }
+  .workbench .detail-content .profile-emblem i {
+    display: none;
+  }
+  .workbench .detail-content > .eyebrow {
+    display: none;
+  }
+  .workbench .profile-name {
+    margin-top: 0;
+    font-size: 1.0625rem;
+    letter-spacing: 0.0625rem;
+  }
+  .workbench .profile-name em {
+    display: inline;
+    margin: 0 0 0 0.375rem;
+    font-size: 0.875rem;
+  }
+  .workbench .detail-content .tags {
+    margin-top: 0.25rem;
+    align-items: center;
+  }
+  .workbench .detail-content .tag {
+    padding: 0.125rem 0.3125rem;
+    font-size: 0.5625rem;
+  }
+  .workbench .detail-prose {
+    clear: both;
+    margin-top: 0.5rem;
+    padding-top: 0.25rem;
+    font-size: 0.6875rem;
+    line-height: 1.6;
+  }
+  .workbench .detail-metrics {
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin: 0.5rem 0;
+    padding: 0.375rem 0;
+  }
+  .workbench .detail-metrics .metric strong {
+    font-size: 1.125rem;
+  }
+  .workbench .edge-names {
+    margin-top: 0;
+    font-size: 1.0625rem;
+  }
+
+  .workbench .detail-content .report-link {
+    padding: 0.125rem 0.375rem;
+    font-size: 0.5625rem;
+    letter-spacing: 0;
+    box-shadow: none;
+  }
+  .workbench .sidebar-page .control-note {
+    margin: 0.25rem 0 0.5rem;
+    font-size: 0.5625rem;
+    line-height: 1.5;
+  }
+  .workbench .sidebar-page .mini-heading,
+  .workbench .sidebar-page .control-section h3 {
+    margin-top: 0.75rem;
+    margin-bottom: 0.25rem;
+    font-size: 0.75rem;
+  }
+  .workbench .sidebar-page .wide-button {
+    margin-top: 0.375rem;
+    padding: 0.4375rem 0.625rem;
+    font-size: 0.6875rem;
+  }
+
+  /* Settings: a working list, not a page. */
+  .workbench .control-section {
+    padding: 0.5rem 0;
+  }
+  .workbench .preset-row button {
+    padding: 0.375rem;
+    font-size: 0.6875rem;
+  }
+  .workbench .select-control,
+  .workbench .range-control > span,
+  .workbench .toggle-control {
+    font-size: 0.6875rem;
+  }
+  .workbench .range-control {
+    margin-top: 0.5rem;
+  }
+  .workbench .toggle-control {
+    padding: 0.25rem 0;
+  }
+  .workbench .sidebar-page .select-control > .art-select {
+    margin-top: 0.1875rem;
+  }
+  .workbench .sidebar-page .select-control .art-select > button {
+    min-height: 0;
+    padding: 0.3125rem 0.5rem;
+    font-size: 0.6875rem;
+  }
+
+  /* The compact forms of the shared controls. */
+  .workbench .report-cta {
+    color: var(--gold);
+    background: #1a171fd9;
+  }
+  .workbench .report-cta > svg {
+    margin: 0;
+  }
+  .workbench .view-switch .art-select > button {
+    height: 100%;
+    min-height: 0;
+    padding: 0.125rem 0.3125rem;
+    border: 0;
+    background: none;
+    font-size: 0.5625rem;
+  }
+  .workbench .view-switch .art-select > button > svg {
+    width: 0.625rem;
+    height: 0.625rem;
+  }
+  .nav-row .filter-row > .art-select {
+    width: 4.25rem;
+  }
+  .nav-row .filter-row .art-select > button {
+    min-height: 0;
+    padding: 0 0.3125rem;
+    font-size: 0.5625rem;
+  }
+  .workbench .node-row .row-index {
+    width: 1rem;
+    font-size: 0.5rem;
+  }
+  .workbench .node-row .node-symbol {
+    flex: none;
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+  .workbench .node-row .row-name {
+    flex: 1 1 0;
+    min-width: 0;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .workbench .node-row .row-name small {
+    display: inline;
+    margin-left: 0.375rem;
+    font-size: 0.625rem;
+  }
+  .workbench .node-row .row-degree {
+    display: flex;
+    align-items: baseline;
+    gap: 0.1875rem;
+    flex: none;
+    font-size: 0.75rem;
+  }
+  .workbench .node-row .row-degree small {
+    margin: 0;
+  }
+  .workbench .node-row > svg {
+    display: none;
+  }
+}
+
+/* A phone on its side: the panel sits beside the graph as a rail, not under it. */
+@media (max-width: 912px) and (orientation: landscape) {
+  .workbench .explorer {
+    flex-direction: row;
+  }
+  .workbench .canvas-section {
+    min-width: 0;
+  }
+  .workbench .side-panel {
+    flex-direction: row;
+    border-top: 0;
+    border-left: 1px solid var(--line);
+  }
+  .workbench .sidebar-tabs,
+  .workbench .sidebar-tabs.three,
+  .workbench .sidebar-tabs.four {
+    grid-template-columns: 3rem;
+    grid-auto-rows: min-content;
+    align-content: start;
+    border-top: 0;
+    border-left: 1px solid var(--line);
+    padding: 0;
+  }
+  .workbench .sidebar-tabs button {
+    padding: 0.375rem 0;
+  }
+  .sheet-grip {
+    display: none;
+  }
+  .workbench .sidebar-page,
+  .explorer[data-sheet="full"] .sidebar-page {
+    flex: none;
+    width: 19rem;
+    height: auto;
+  }
+  .explorer[data-sheet="full"] .canvas-section {
+    flex: 1 1 0;
+  }
+  .explorer[data-sheet="full"] .side-panel {
+    flex: none;
+  }
+  .explorer[data-sheet="full"] .graph-stage {
+    display: block;
+  }
+}
+
+/* Lists and page headers outside the graph: nothing wider than the phone. */
+@media (max-width: 560px) {
+  :lang(en) .landing-sticky .hero-copy h1 {
+    font-size: min(2.75rem, calc((100vw - 4rem) / 7.7));
+  }
+  .person-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .person-card {
+    min-width: 0;
+  }
+  .library-brand-row {
+    flex-wrap: wrap;
+    gap: 0.375rem 0.75rem;
+  }
+  .library-brand-tools {
+    gap: 0.5rem;
+    margin-left: auto;
+  }
+}
+/* The smallest phones: the brand and the main button stay on one line. */
+@media (max-width: 380px) {
+  .landing-brand .brand > span:last-child {
+    font-size: 0.875rem;
+    letter-spacing: 0.0625rem;
+    white-space: nowrap;
+  }
+  .landing-sticky .primary-cta {
+    padding-left: 0.875rem;
+    letter-spacing: 0.0625rem;
+    white-space: nowrap;
+  }
+  .landing-sticky .primary-cta i {
+    width: 2.75rem;
+  }
+}

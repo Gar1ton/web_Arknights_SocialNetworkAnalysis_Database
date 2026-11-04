@@ -34,6 +34,7 @@ import Controls from "./Controls";
 import { NodeDetail, EdgeDetail, type Timeline } from "./Details";
 import { TimelineCurve } from "./charts";
 import { exportGraph } from "./export";
+import { SheetGrip, useCompact, useDockFold, type Sheet } from "./compact";
 import type { Core } from "./model/load";
 import { edgeId, nodeId, personOf } from "./model/atlas";
 import {
@@ -108,6 +109,10 @@ function Loaded({
     [sort, setSort] = useState("degree"),
     [panelOpen, setPanelOpen] = useState(true),
     [resetKey, setResetKey] = useState(0);
+  const compact = useCompact();
+  // Phones: the graph has the screen until a tab, a person or a relation opens the panel over it.
+  const [sheet, setSheet] = useState<Sheet>(focus !== undefined || pair ? "half" : "closed");
+  const [statsOpen, setStatsOpen] = useState(false);
   const metaOf = (t0: number) => core.manifest.stories[ix.data.stories[t0]];
   // Each story's network is computed once; the graph follows the slider a beat behind, so dragging stays smooth.
   const cache = useMemo(() => fullCache(core, ix), [core, ix]);
@@ -155,26 +160,15 @@ function Loaded({
     [setSettings],
   );
   // Every name is on here by default, whatever the story pages use; the settings switch turns it off for this page.
-  const [allNames, setAllNames] = useState(true);
+  // A phone has no room for them: it starts with the best-connected names only.
+  const [allNames, setAllNames] = useState(!compact);
   const update = useCallback(
     <K extends keyof Settings>(key: K, value: Settings[K]) =>
       key === "allLabels" ? setAllNames(value as boolean) : updateAll(key, value),
     [updateAll],
   );
   const shownSettings = useMemo(() => ({ ...settings, allLabels: allNames }), [settings, allNames]);
-  // The timeline dock folds into a slim bar under the graph; the choice is remembered.
-  const [dockMin, setDockMin] = useState(() => {
-    try {
-      return localStorage.getItem("terra:fullstory:dock") === "min";
-    } catch {
-      return false;
-    }
-  });
-  useEffect(() => {
-    try {
-      localStorage.setItem("terra:fullstory:dock", dockMin ? "min" : "full");
-    } catch {}
-  }, [dockMin]);
+  const [dockMin, toggleDock] = useDockFold();
   const communities = useMemo(
     () => dataset.communities.map((c) => ({ ...c, label: communityLabel(c, full.nodes) })),
     [dataset.communities, full, language],
@@ -336,12 +330,14 @@ function Loaded({
     setSelected(id);
     setSelectedEdge(null);
     setPanelOpen(true);
+    setSheet((v) => (v === "closed" ? "half" : v));
     if (panelTab === "settings") setPanelTab("nodes");
   };
   const chooseEdge = (id: string) => {
     setSelectedEdge(id);
     setSelected(id.split("-")[0]);
     setPanelOpen(true);
+    setSheet((v) => (v === "closed" ? "half" : v));
     if (panelTab === "settings") setPanelTab("nodes");
   };
   const clearDetails = () => {
@@ -426,6 +422,15 @@ function Loaded({
     ["settings", t("设置", "Display"), SlidersHorizontal, null],
   ];
   const showDetail = panelTab !== "settings" && (!!shownEdge || !!detailNode);
+  const context = (
+    <div className="workbench-context">
+      <a href="#" aria-label={t("返回首页", "Back to home")}>
+        <Orbit size={17} />
+        <span>{t("方舟关系图谱", "Arknights SNA")}</span>
+      </a>
+      <LangSwitch />
+    </div>
+  );
   const noReport = () => onToast(t("请在对应剧情的图谱里提交纠错", "Report errors from the story's own graph"));
   const storyList = useRef<HTMLDivElement>(null);
   const scrolled = useRef(false);
@@ -439,10 +444,10 @@ function Loaded({
       behavior: scrolled.current && !matchMedia("(prefers-reduced-motion: reduce)").matches ? "smooth" : "auto",
     });
     scrolled.current = true;
-  }, [cur, panelTab, showDetail]);
+  }, [cur, panelTab, showDetail, sheet]);
   return (
     <>
-      <main id="main-content" tabIndex={-1} className={"explorer route-surface fullstory " + (!panelOpen ? "panel-collapsed " : "") + (dockMin ? "dock-min" : "")}>
+      <main id="main-content" tabIndex={-1} className={"explorer route-surface fullstory " + (!panelOpen ? "panel-collapsed " : "") + (dockMin ? "dock-min" : "")} data-sheet={compact ? sheet : undefined}>
         <section className="canvas-section" aria-label={t("全剧情关系图谱", "Full-story relation graph")}>
           <div className="canvas-heading">
             <div className="workbench-breadcrumb">
@@ -454,6 +459,10 @@ function Loaded({
             </div>
             <h1>{title}</h1>
             <p>
+              <span className="heading-code">
+                {t("总览", "Overview")}
+                <i />
+              </span>
               {ego && nodeOf(egoCenter!)
                 ? t(nodeName(nodeOf(egoCenter!)!) + " 的关系圈", nodeName(nodeOf(egoCenter!)!) + "'s circle")
                 : t(
@@ -516,6 +525,7 @@ function Loaded({
             onEdge={chooseEdge}
             onBackground={() => {
               clearDetails();
+              if (showDetail) setSheet("closed");
               if (settings.mode === "ego") update("mode", "network");
             }}
             onAnimate={() => update("animate", !settings.animate)}
@@ -613,7 +623,7 @@ function Loaded({
                 aria-label={dockMin ? t("展开时间轴", "Expand the timeline") : t("收起时间轴", "Fold the timeline")}
                 title={dockMin ? t("展开时间轴", "Expand the timeline") : t("收起时间轴", "Fold the timeline")}
                 aria-expanded={!dockMin}
-                onClick={() => setDockMin((v) => !v)}
+                onClick={toggleDock}
               >
                 {dockMin ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
               </button>
@@ -659,13 +669,7 @@ function Loaded({
           </div>
         </section>
         <aside className="side-panel" aria-label={t("图谱侧栏", "Graph sidebar")}>
-          <div className="workbench-context">
-            <a href="#" aria-label={t("返回首页", "Back to home")}>
-              <Orbit size={17} />
-              <span>{t("方舟关系图谱", "Arknights SNA")}</span>
-            </a>
-            <LangSwitch />
-          </div>
+          {!compact && context}
           <div className="sidebar-tabs three" role="tablist" aria-label={t("侧栏", "Sidebar")}>
             {tabs.map(([key, label, Icon, count], i) => (
               <button
@@ -673,11 +677,14 @@ function Loaded({
                 id={key + "-tab"}
                 role="tab"
                 aria-controls="sidebar-pane"
-                aria-selected={panelTab === key}
+                aria-selected={panelTab === key && (!compact || sheet !== "closed")}
                 tabIndex={panelTab === key ? 0 : -1}
                 onClick={() => {
+                  // On a phone the tab that is already open closes the panel again.
+                  if (compact && sheet !== "closed" && panelTab === key && !showDetail) return setSheet("closed");
                   if (key !== "settings") clearDetails();
                   setPanelTab(key);
+                  setSheet((v) => (v === "closed" ? "half" : v));
                 }}
                 onKeyDown={(e) => {
                   const step = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
@@ -691,14 +698,18 @@ function Loaded({
               </button>
             ))}
           </div>
-          <div
+          {compact && sheet !== "closed" && <SheetGrip sheet={sheet} onSheet={setSheet} />}
+          {(!compact || sheet !== "closed") && <div
             className="sidebar-page"
             id="sidebar-pane"
             role="tabpanel"
             aria-labelledby={panelTab + "-tab"}
+            data-pane={showDetail ? "detail" : panelTab}
             key={panelTab + (showDetail ? "-detail" : "")}
           >
             {panelTab === "settings" ? (
+              <>
+              {compact && context}
               <Controls
                 settings={shownSettings}
                 maxMessages={maxMessages}
@@ -706,12 +717,13 @@ function Loaded({
                 setAll={(s) => setSettings(() => s)}
                 onExport={doExport}
                 onReset={() => {
-                  setAllNames(true);
+                  setAllNames(!compact);
                   setSettings(() => ({ ...defaults, minMessages: firstMin(full.nodes) }));
                   setResetKey((k) => k + 1);
                   onToast(t("已恢复默认设置", "Settings reset"));
                 }}
               />
+              </>
             ) : shownEdge ? (
               <div className="detail-scroll" key={shownEdge.id}>
                 <EdgeDetail
@@ -840,7 +852,7 @@ function Loaded({
                     )}
                   </p>
                 </div>
-                <div className="network-stats" aria-label={t("网络概况", "Network overview")}>
+                {(!compact || statsOpen) && <div className="network-stats" aria-label={t("网络概况", "Network overview")}>
                   <div>
                     <strong>{stats.pairs}</strong>
                     <span>{t("组关系", "relations")}</span>
@@ -880,8 +892,9 @@ function Loaded({
                       </small>
                     </div>
                   )}
-                </div>
+                </div>}
                 <div className="navigation-controls">
+                  <div className="nav-row">
                   <label className="search-box">
                     <Search size={15} />
                     <input
@@ -919,6 +932,7 @@ function Loaded({
                       <option value="name">{t("按名称", "By name")}</option>
                     </Select>
                   </div>
+                  </div>
                   <div className="fs-show" role="group" aria-label={t("显示多少人", "How many to show")}>
                     <span>{t("显示台词最多的", "Show the top")}</span>
                     {[200, 400, 600, linesDesc.length].map((k) => {
@@ -945,6 +959,11 @@ function Loaded({
                         : t("只含具名角色", "Named characters only")}
                     </span>
                     <span>{t(`共 ${list.length} 人`, plural("person", list.length, "people"))}</span>
+                    {compact && (
+                      <button className="stats-toggle" aria-expanded={statsOpen} onClick={() => setStatsOpen((v) => !v)}>
+                        {t("概况", "Overview")} {statsOpen ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+                      </button>
+                    )}
                   </div>
                 </div>
                 <div className="node-list">
@@ -985,7 +1004,7 @@ function Loaded({
                 </div>
               </>
             )}
-          </div>
+          </div>}
         </aside>
       </main>
       <footer className="workspace-footer">
