@@ -26,8 +26,6 @@ export interface StoryMeta {
 export interface Manifest {
   info: {
     version: string;
-    run: string;
-    model: string;
     newFrom: number;
     updated: string;
     totals: {

@@ -35,7 +35,6 @@ def build(data: dict, view: dict, manifest: dict) -> dict:
         raise SystemExit(f'{len(gone)} stories of the table are not on the site, e.g. {gone[:3]}')
     p = [person[pid] for pid in data['people']]
     return {
-        'run': data['run'],
         'stories': [story[s] for s in data['stories']],
         'lines': [[p[a], t, n] for a, t, n in data['lines']],
         'pairs': [[p[a], p[b]] for a, b in data['pairs']],

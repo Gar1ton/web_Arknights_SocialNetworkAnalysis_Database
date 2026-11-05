@@ -16,8 +16,8 @@ Published, data only: story and event positions, each event's title, scene, mess
 model's summary (what happened, who, how), the relation states over each story once formed (type, friendliness,
 dominance, intensity), Big Five histories and character descriptions. Not published, since they describe how the data
 was made rather than the data: event salience, the story lines quoted as relation evidence, evidence counts,
-confidences, review reasons and the per-update change log. check() fails the build if an evidence quote reaches the
-output.
+confidences, review reasons, the per-update change log, and the run's id and model. check() fails the build if an
+evidence quote, the run id or the model id reaches the output.
 """
 from __future__ import annotations
 
@@ -225,7 +225,6 @@ def build(args):
         if s['category'] == '活动' and s['id'] not in events:
             events[s['id']] = 'side'
 
-    run = view['run']
     named = lambda p: people[p][1] < 3
     totals = {
         'stories': len(stories), 'messages': sum(s['m'] for s in stories), 'scenes': sum(s['sc'] for s in stories),
@@ -235,7 +234,7 @@ def build(args):
         'namedPeople': len({p for s in stories for p, *_ in files[s['id']]['who'] if named(p)}),
     }
     manifest = {
-        'info': {'version': args.version, 'run': run['id'], 'model': run['model'], 'newFrom': args.new_from,
+        'info': {'version': args.version, 'newFrom': args.new_from,
                  'updated': args.updated, 'totals': totals},
         'stories': stories,
     }
@@ -260,13 +259,16 @@ QUOTE_FIELDS = ('line_keys', 'quotes')
 
 
 def check(view, out: Path):
-    """Nothing quoted as relation evidence may reach the published files."""
+    """Nothing quoted as relation evidence, and neither the run id nor the model id, may reach the published files."""
     quotes = set()
     for s in view['stories']:
         for e in s['ev']:
             for x in e[8]:
                 quotes.update(q for q in x[6] if len(q) >= 12)
     published = ''.join(p.read_text(encoding='utf-8') for p in out.rglob('*.json'))
+    for label, value in (('run id', view['run']['id']), ('model id', view['run']['model'])):
+        if value in published:
+            raise SystemExit(f'the {label} {value!r} found in the output')
     leaked = [q for q in quotes if q in published]
     if leaked:
         raise SystemExit(f'{len(leaked)} evidence quotes found in the output, e.g. {leaked[0]!r}')
@@ -283,8 +285,8 @@ def main():
     ap.add_argument('--out', type=Path, required=True)
     ap.add_argument('--new-from', type=int, required=True)
     ap.add_argument('--updated', default='2026-11-03')
-    ap.add_argument('--version', default='全剧情第二轮（fullstory_r4），2026-11-03')
-    ap.add_argument('--version-en', default='Full story, second round (fullstory_r4), 2026-11-03')
+    ap.add_argument('--version', default='全剧情第二轮，2026-11-03')
+    ap.add_argument('--version-en', default='Full story, second round, 2026-11-03')
     args = ap.parse_args()
     manifest, files, people, overview, media, en = build(args)
     out = args.out

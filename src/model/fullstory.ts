@@ -12,7 +12,6 @@ import type { StateRow } from "./types";
  * the value. The values exist over all stories and within each category, for the 主线 / 活动 filter.
  */
 export interface FullStoryData {
-  run: string;
   /** Site story index of each table story, in chronological order. */
   stories: number[];
   /** person, story, lines in that story. */
