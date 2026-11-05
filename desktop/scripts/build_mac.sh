@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Run on a Mac, after `npm run build:offline`. Writes desktop/release/ArknightsRelationAtlas.app (Apple silicon and
-# Intel in one file) and a zip of it. Linking needs Apple's SDK, so this cannot run from WSL.
+# Run on a Mac, after `npm run build:offline`. Writes desktop/release/ArknightsRelationAtlas/ with the app (Apple silicon
+# and Intel in one file), LICENSE.txt and 免责声明.txt, and a zip of that folder. Linking needs Apple's SDK, so this cannot run from WSL.
 set -euo pipefail
 scripts="$(cd "$(dirname "$0")" && pwd)"
 desktop="$(dirname "$scripts")"
@@ -16,7 +16,8 @@ for target in aarch64-apple-darwin x86_64-apple-darwin; do
   cargo build --release --locked --target "$target"
 done
 
-app=release/ArknightsRelationAtlas.app
+folder=release/ArknightsRelationAtlas
+app=$folder/ArknightsRelationAtlas.app
 rm -rf release && mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources"
 lipo -create -output "$app/Contents/MacOS/$binary" \
   "target/aarch64-apple-darwin/release/$binary" "target/x86_64-apple-darwin/release/$binary"
@@ -42,6 +43,7 @@ cat > "$app/Contents/Info.plist" <<PLIST
 PLIST
 # Ad-hoc: Apple silicon refuses unsigned code. It is not a Developer ID, so Gatekeeper still warns on first open.
 codesign --force --deep --sign - "$app"
+python3 "$scripts/legal_files.py" "$folder"
 python3 "$scripts/audit_release.py" dist --exe "$app/Contents/MacOS/$binary"
-ditto -c -k --keepParent "$app" "release/ArknightsRelationAtlas-$version-macos.zip"
+ditto -c -k --keepParent "$folder" "release/ArknightsRelationAtlas-$version-macos.zip"
 ls -l release

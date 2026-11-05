@@ -18,6 +18,7 @@ A build of the site for Windows and macOS that needs no install and no network. 
 | `scripts/build_exe.sh`, `scripts/build_mac.sh` | Compile and assemble a release |
 | `scripts/audit_release.py` | The check a release must pass |
 | `scripts/make_icons.py` | Draws `icons/` from the site's favicon |
+| `scripts/legal_files.py` | Puts the licence and the disclaimer into a package |
 | `toolchain/`, `dist/`, `target/`, `gen/`, `release/` | Generated and git-ignored; safe to delete |
 
 ## Build
@@ -30,14 +31,14 @@ npm run build:exe    # Windows, cross-built on WSL
 npm run build:mac    # macOS, on a Mac
 ```
 
-Results land in `desktop/release/`, zipped and named by version. The Windows exe needs `WebView2Loader.dll` beside it, because the MinGW target cannot link the loader statically. The macOS app is one universal `.app`. Without a Mac, run the `desktop-mac` workflow by hand on GitHub or push a `desktop-v*` tag; its artifact can be downloaded by any signed-in GitHub user.
+Results land in `desktop/release/`, zipped and named by version. Each package carries `LICENSE.txt` and `免责声明.txt`, written by `scripts/legal_files.py` from `LICENSE` and README's 「一、声明」. The Windows exe needs `WebView2Loader.dll` beside it, because the MinGW target cannot link the loader statically. The macOS app is one universal `.app`. Without a Mac, run the `desktop-mac` workflow by hand on GitHub or push a `desktop-v*` tag; its artifact can be downloaded by any signed-in GitHub user.
 
 `audit_release.py` runs on the web files and on the binary, and fails the build on unknown data fields, run or model identifiers, machine paths, outside addresses, image metadata or evidence quotes. Evidence quotes are only checked where `work/view_data.json` exists, so not on the GitHub runner.
 
 ## Limits
 
 - Windows needs the WebView2 runtime, which Windows 11 ships. Without it the program shows a message box and exits.
-- macOS 11.3 or later. The app has no Developer ID, so the first open needs right-click > Open or System Settings > Privacy & Security. Removing that warning needs an Apple Developer account and notarization.
+- macOS 11.3 or later. The app is signed ad hoc, not with a Developer ID, so macOS blocks the first open of a downloaded copy. Since macOS 15 the way through is System Settings > Privacy & Security > Open Anyway (right-click > Open no longer works). Removing that step needs an Apple Developer account and notarization.
 - Safari's engine is not Chromium: the macOS edition has to be checked by eye on a Mac. Cmd +/- page zoom is not available there, because it would need a page permission.
 - The Windows exe is unsigned, so a downloaded copy triggers SmartScreen.
 - It is a snapshot: new data means a new build.
