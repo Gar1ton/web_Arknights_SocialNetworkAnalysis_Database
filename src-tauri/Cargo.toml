@@ -1,0 +1,21 @@
+[package]
+name = "arknights-relation-atlas"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[build-dependencies]
+tauri-build = { version = "2", default-features = false, features = [] }
+
+[dependencies]
+tauri = { version = "2", default-features = false, features = ["wry", "compression", "common-controls-v6", "custom-protocol"] }
+open = "5"
+windows-sys = { version = "0.59", features = ["Win32_UI_WindowsAndMessaging", "Win32_Foundation"] }
+
+[profile.release]
+opt-level = "s"
+lto = "thin"
+codegen-units = 4
+panic = "abort"
+strip = true
+debug = false

@@ -20,7 +20,7 @@ import {
   type Draft,
   type ReportTarget,
 } from "./report";
-import { countSent, feedbackOpen, sendReport, spamCheck } from "./api";
+import { countSent, feedbackOpen, offline, sendReport, spamCheck } from "./api";
 import { archiveCode, archiveTitle } from "../archives";
 import { t } from "../i18n";
 export function ReportButton({ onClick }: { onClick: () => void }) {
@@ -138,7 +138,9 @@ export default function ReportDialog({
           : t(`还差 ${issues.length} 项`, `${issues.length} left to fill in`)
         : feedbackOpen
           ? t("可以提交了", "Ready to send")
-          : t("已填写完整，开放后即可提交", "Complete; sending opens soon");
+          : offline
+            ? t("离线版不能发送", "Cannot send from the offline edition")
+            : t("已填写完整，开放后即可提交", "Complete; sending opens soon");
   return (
     <dialog
       ref={dialog}
@@ -185,10 +187,15 @@ export default function ReportDialog({
           <div className="report-body">
             {!feedbackOpen && (
               <p className="report-closed">
-                {t(
-                  "纠错提交即将开放。现在可以先看看需要填写哪些内容，但暂时还不能发送。",
-                  "Reports open soon. You can see what to fill in, but nothing can be sent yet.",
-                )}
+                {offline
+                  ? t(
+                      "这是离线版，不能在这里发送纠错。请到网站版提交，或写邮件给我们（地址在首页底部）。",
+                      "This is the offline edition, so reports cannot be sent from here. Please use the website, or email us (address at the bottom of the home page).",
+                    )
+                  : t(
+                      "纠错提交即将开放。现在可以先看看需要填写哪些内容，但暂时还不能发送。",
+                      "Reports open soon. You can see what to fill in, but nothing can be sent yet.",
+                    )}
               </p>
             )}
             <fieldset className="report-section">
@@ -373,7 +380,9 @@ export default function ReportDialog({
                 disabled={!feedbackOpen || phase === "sending"}
               >
                 {!feedbackOpen
-                  ? t("即将开放", "Opening soon")
+                  ? offline
+                    ? t("离线版不可发送", "Offline edition")
+                    : t("即将开放", "Opening soon")
                   : phase === "sending"
                     ? t("提交中…", "Sending…")
                     : phase === "failed"

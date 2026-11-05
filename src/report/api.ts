@@ -4,7 +4,10 @@ import { t } from "../i18n";
  * The report service: a Pages Function on Cloudflare's default domain
  * (feedback/). It only accepts reports; nothing on the web can read them back.
  */
-export const feedbackUrl: string = "https://atlas-feedback.pages.dev/reports";
+declare const __OFFLINE__: boolean | undefined;
+/** The desktop build (vite --mode offline): nothing leaves the machine, so no report can be sent. */
+export const offline = typeof __OFFLINE__ !== "undefined" && __OFFLINE__;
+export const feedbackUrl: string = offline ? "" : "https://atlas-feedback.pages.dev/reports";
 export const feedbackOpen = feedbackUrl !== "";
 export async function sendReport(report: Report) {
   // text/plain keeps this a simple request, so the browser sends no preflight.

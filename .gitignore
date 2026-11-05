@@ -4,3 +4,7 @@ dist/
 work/
 .wrangler/
 .env*
+dist-offline/
+release/
+src-tauri/target/
+src-tauri/gen/

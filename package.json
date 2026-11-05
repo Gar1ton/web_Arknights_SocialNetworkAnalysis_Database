@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 4178",
     "build": "tsc -b && vite build",
+    "build:offline": "tsc -b && vite build --mode offline && python3 scripts/audit_release.py dist-offline",
+    "build:exe": "npm run build:offline && bash scripts/build_exe.sh",
     "preview": "vite preview --host 0.0.0.0 --port 4178",
     "test": "node --import tsx --test tests/*.test.ts"
   },
