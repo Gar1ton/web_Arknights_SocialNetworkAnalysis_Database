@@ -2,12 +2,15 @@
   "name": "terra-relation-atlas",
   "private": true,
   "version": "0.1.0",
+  "author": "Gar1ton & MKiyoaki",
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 4178",
     "build": "tsc -b && vite build",
-    "build:offline": "tsc -b && vite build --mode offline && python3 scripts/audit_release.py dist-offline",
-    "build:exe": "npm run build:offline && bash scripts/build_exe.sh",
+    "build:offline": "tsc -b && vite build --mode offline && python3 desktop/scripts/audit_release.py desktop/dist",
+    "setup:desktop": "bash desktop/scripts/setup_toolchain.sh",
+    "build:exe": "npm run build:offline && bash desktop/scripts/build_exe.sh",
+    "build:mac": "npm run build:offline && bash desktop/scripts/build_mac.sh",
     "preview": "vite preview --host 0.0.0.0 --port 4178",
     "test": "node --import tsx --test tests/*.test.ts"
   },

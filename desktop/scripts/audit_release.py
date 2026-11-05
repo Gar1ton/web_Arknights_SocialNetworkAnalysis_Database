@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Fail if an offline build holds anything beyond the published data and the page that shows it.
 
-    audit_release.py BUILD_DIR [--view work/view_data.json] [--exe PATH.exe]
+    desktop/scripts/audit_release.py BUILD_DIR [--view work/view_data.json] [--exe PATH.exe]
 
 BUILD_DIR  is checked for file types, source maps, field names, run and model identifiers, machine paths,
            network addresses and image metadata.
@@ -18,6 +18,7 @@ import struct
 import sys
 from pathlib import Path
 
+ROOT = Path(__file__).resolve().parents[2]
 FILE_TYPES = {'.html', '.js', '.css', '.json', '.webp', '.woff', '.woff2', '.svg'}
 # Every field name the site publishes. A new one has to be looked at and added here on purpose.
 FIELDS = set("""arcOf archives arcs avatars banner bigFive cast category ch code color d ev events finals group h id info
@@ -34,7 +35,7 @@ INTERNAL = re.compile(
 ALLOWED_URLS = re.compile(
     r'https?://(www\.w3\.org/|github\.com/(Gar1ton|MKiyoaki)\b|creativecommons\.org/licenses/by-nc-sa/4\.0/|react\.dev/errors/)')
 URL = re.compile(r'https?://[A-Za-z0-9./_%-]+')
-BINARY_INTERNAL = re.compile(rb'/home/[a-z0-9_-]+|drgar|qwen|fullstory_r\d', re.I)
+BINARY_INTERNAL = re.compile(rb'/home/[a-z0-9_-]+|/Users/[A-Za-z0-9_-]+|drgar|qwen|fullstory_r\d', re.I)
 
 
 def walk(value, found, parent=''):
@@ -62,7 +63,7 @@ def webp_metadata(raw: bytes):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('build', type=Path)
-    ap.add_argument('--view', type=Path, default=Path('work/view_data.json'))
+    ap.add_argument('--view', type=Path, default=ROOT / 'work' / 'view_data.json')
     ap.add_argument('--exe', type=Path)
     args = ap.parse_args()
 

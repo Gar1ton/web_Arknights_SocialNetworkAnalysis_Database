@@ -1,6 +1,10 @@
 [package]
 name = "arknights-relation-atlas"
-version = "0.1.0"
+version = "0.1.0" # keep equal to package.json; tauri.conf.json reads it from there
+authors = ["Gar1ton", "MKiyoaki"]
+description = "方舟关系图谱 offline edition"
+license = "CC-BY-NC-SA-4.0"
+repository = "https://github.com/Gar1ton/web_Arknights_SocialNetworkAnalysis_Database"
 edition = "2021"
 publish = false
 
@@ -10,6 +14,8 @@ tauri-build = { version = "2", default-features = false, features = [] }
 [dependencies]
 tauri = { version = "2", default-features = false, features = ["wry", "compression", "common-controls-v6", "custom-protocol"] }
 open = "5"
+
+[target.'cfg(windows)'.dependencies]
 windows-sys = { version = "0.59", features = ["Win32_UI_WindowsAndMessaging", "Win32_Foundation"] }
 
 [profile.release]

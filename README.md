@@ -43,6 +43,19 @@ npm test
 
 `scripts/build_media.py`（头像与横幅）和 `scripts/build_i18n.py`（英文名）读取的是上一版数据格式，这一版沿用它们之前生成的 `public/media/` 和 `en.json`；新加入的角色暂时没有头像和英文名。
 
+离线版（Windows、macOS，免安装）的构建都在 `desktop/` 里，见 [desktop/README.md](desktop/README.md)。
+
+## 仓库结构
+
+| 目录 | 内容 |
+| --- | --- |
+| `src/`、`tests/`、`public/` | 网站代码、测试、公开数据与图片 |
+| `scripts/` | 生成 `public/data` 的脚本、拉取纠错报告的脚本 |
+| `feedback/` | 接收纠错报告的服务 |
+| `desktop/` | 离线版：外壳、构建脚本、发布前审计 |
+| `docs/archive/` | 早期 demo 的计划与验收记录 |
+| `work/`（不进 git） | 本地中间数据 |
+
 ## 团队与联系
 
 - GitHub：[@Gar1ton](https://github.com/Gar1ton)、[@MKiyoaki](https://github.com/MKiyoaki)

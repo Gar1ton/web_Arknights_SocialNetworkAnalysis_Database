@@ -1,0 +1,29 @@
+name: Build the macOS offline edition
+
+# Runs only when asked: a push to a branch does not start it. Artifacts of a public repository can be downloaded by
+# any signed-in GitHub user.
+on:
+  workflow_dispatch:
+  push:
+    tags: ["desktop-v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run setup:desktop
+      - run: npm run build:mac
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-offline
+          path: desktop/release/*.zip
+          retention-days: 14

@@ -2,7 +2,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowUpRight, ArrowDown, ArrowRight, Pause, Play } from "lucide-react";
 import Brand from "./Brand";
 import Graph from "./Graph";
-import { archiveCode, archiveTitle, mediaUrl, newLabel } from "./archives";
+import { archiveCode, archiveTitle, dataVersion, mediaUrl, newLabel } from "./archives";
+import { appVersion, offline } from "./edition";
 import { lang, locale, t } from "./i18n";
 import LangSwitch from "./LangSwitch";
 import { type Settings, showcaseFlow } from "./settings";
@@ -616,6 +617,17 @@ export default function Landing({
             ))}
           </div>
           <dl className="intro-team reveal">
+            {offline && (
+              <div>
+                <dt>{t("版本", "Version")}</dt>
+                <dd>
+                  <span>
+                    {t(`离线版 v${appVersion}`, `Offline edition v${appVersion}`)}
+                    {core && " · " + dataVersion(core.manifest.info.version)}
+                  </span>
+                </dd>
+              </div>
+            )}
             <div>
               <dt>{t("制作与开源", "Made by")}</dt>
               <dd>
